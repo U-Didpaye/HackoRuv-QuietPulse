@@ -14,84 +14,90 @@ export const InsightsPage: React.FC<InsightsPageProps> = ({ metrics }) => {
   const lowPct = Math.round((metrics.lowPriorityCount / total) * 100);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-7xl mx-auto py-4">
       {/* Top Banner */}
-      <div className="p-6 rounded-2xl bg-gradient-to-r from-navy-card via-slate-900 to-navy-card border border-navy-border">
-        <span className="text-[10px] font-bold tracking-widest text-cyan-400 uppercase">Attention ROI</span>
-        <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 mt-1">
-          <h2 className="text-3xl font-black text-white">
+      <div className="p-7 rounded-2xl bg-v-surface border border-v-border shadow-xl">
+        <span className="text-[10px] font-mono tracking-widest text-v-accent uppercase">
+          ATTENTION RETURN ON INVESTMENT
+        </span>
+        <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 mt-2">
+          <h2 className="text-3xl sm:text-4xl font-black font-editorial text-v-text">
             {metrics.estimatedInterruptionsDeflected} Interruptions Deflected
           </h2>
-          <span className="text-xs text-slate-400">
-            (~{Math.round(metrics.estimatedInterruptionsDeflected * 2.5)} minutes of cognitive context-switching saved)
+          <span className="text-xs text-v-text-muted font-sans">
+            (~{Math.round(metrics.estimatedInterruptionsDeflected * 2.5)} minutes of cognitive context-switching preserved)
           </span>
         </div>
-        <p className="text-xs text-slate-400 mt-2">
-          Calculated by measuring alerts triaged to Attention Airlock and background batch digest instead of disrupting your active focus state.
+        <p className="text-xs text-v-text-muted mt-2 font-sans max-w-2xl leading-relaxed">
+          Calculated by measuring non-urgent notifications triaged to Attention Airlock and background batch digests instead of triggering active device vibrations.
         </p>
       </div>
 
       {/* Category Breakdown Cards */}
       <div className="space-y-3">
-        <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wider">Classification Triage Breakdown</h3>
+        <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-v-text-muted">
+          Cognitive Triage Distribution
+        </h3>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <div className="p-4 rounded-xl bg-navy-card border border-navy-border">
-            <span className="text-xs font-semibold text-rose-400">Urgent</span>
-            <div className="text-2xl font-black text-white mt-1">{metrics.urgentCount}</div>
-            <div className="w-full bg-navy-surface rounded-full h-1.5 mt-2">
+          <div className="p-4 rounded-xl bg-v-surface border border-v-border">
+            <span className="text-xs font-mono font-bold text-rose-400">Urgent</span>
+            <div className="text-2xl font-black font-editorial text-v-text mt-1">{metrics.urgentCount}</div>
+            <div className="w-full bg-v-secondary rounded-full h-1.5 mt-2">
               <div className="bg-rose-500 h-1.5 rounded-full" style={{ width: `${urgentPct}%` }} />
             </div>
-            <span className="text-[10px] text-slate-400 mt-1 block">{urgentPct}% of total</span>
+            <span className="text-[10px] font-mono text-v-text-muted mt-1 block">{urgentPct}% of stream</span>
           </div>
 
-          <div className="p-4 rounded-xl bg-navy-card border border-navy-border">
-            <span className="text-xs font-semibold text-amber-400">Important</span>
-            <div className="text-2xl font-black text-white mt-1">{metrics.importantCount}</div>
-            <div className="w-full bg-navy-surface rounded-full h-1.5 mt-2">
+          <div className="p-4 rounded-xl bg-v-surface border border-v-border">
+            <span className="text-xs font-mono font-bold text-amber-400">Important</span>
+            <div className="text-2xl font-black font-editorial text-v-text mt-1">{metrics.importantCount}</div>
+            <div className="w-full bg-v-secondary rounded-full h-1.5 mt-2">
               <div className="bg-amber-500 h-1.5 rounded-full" style={{ width: `${importantPct}%` }} />
             </div>
-            <span className="text-[10px] text-slate-400 mt-1 block">{importantPct}% of total</span>
+            <span className="text-[10px] font-mono text-v-text-muted mt-1 block">{importantPct}% of stream</span>
           </div>
 
-          <div className="p-4 rounded-xl bg-navy-card border border-navy-border">
-            <span className="text-xs font-semibold text-blue-400">Batched</span>
-            <div className="text-2xl font-black text-white mt-1">{metrics.batchedCount}</div>
-            <div className="w-full bg-navy-surface rounded-full h-1.5 mt-2">
+          <div className="p-4 rounded-xl bg-v-surface border border-v-border">
+            <span className="text-xs font-mono font-bold text-blue-400">Batched</span>
+            <div className="text-2xl font-black font-editorial text-v-text mt-1">{metrics.batchedCount}</div>
+            <div className="w-full bg-v-secondary rounded-full h-1.5 mt-2">
               <div className="bg-blue-500 h-1.5 rounded-full" style={{ width: `${batchedPct}%` }} />
             </div>
-            <span className="text-[10px] text-slate-400 mt-1 block">{batchedPct}% of total</span>
+            <span className="text-[10px] font-mono text-v-text-muted mt-1 block">{batchedPct}% of stream</span>
           </div>
 
-          <div className="p-4 rounded-xl bg-navy-card border border-navy-border">
-            <span className="text-xs font-semibold text-slate-400">Low Priority</span>
-            <div className="text-2xl font-black text-white mt-1">{metrics.lowPriorityCount}</div>
-            <div className="w-full bg-navy-surface rounded-full h-1.5 mt-2">
-              <div className="bg-slate-500 h-1.5 rounded-full" style={{ width: `${lowPct}%` }} />
+          <div className="p-4 rounded-xl bg-v-surface border border-v-border">
+            <span className="text-xs font-mono font-bold text-v-text-muted">Low Priority</span>
+            <div className="text-2xl font-black font-editorial text-v-text mt-1">{metrics.lowPriorityCount}</div>
+            <div className="w-full bg-v-secondary rounded-full h-1.5 mt-2">
+              <div className="bg-v-accent h-1.5 rounded-full" style={{ width: `${lowPct}%` }} />
             </div>
-            <span className="text-[10px] text-slate-400 mt-1 block">{lowPct}% of total</span>
+            <span className="text-[10px] font-mono text-v-text-muted mt-1 block">{lowPct}% of stream</span>
           </div>
         </div>
       </div>
 
       {/* Telemetry Summary Table */}
-      <div className="p-5 rounded-2xl bg-navy-card border border-navy-border">
-        <h4 className="text-sm font-bold text-white mb-4">Deep Telemetry & Audit Log</h4>
-        <div className="divide-y divide-navy-border text-xs">
+      <div className="p-6 rounded-2xl bg-v-surface border border-v-border">
+        <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-v-text mb-4">
+          Deep Telemetry Register
+        </h4>
+        <div className="divide-y divide-v-border text-xs font-sans">
           <div className="py-2.5 flex justify-between">
-            <span className="text-slate-400">Total Notification Events Observed</span>
-            <span className="font-bold text-white">{metrics.totalNotificationsObserved}</span>
+            <span className="text-v-text-muted">Total Events Evaluated</span>
+            <span className="font-mono font-bold text-v-text">{metrics.totalNotificationsObserved}</span>
           </div>
           <div className="py-2.5 flex justify-between">
-            <span className="text-slate-400">Notification Storms Intercepted</span>
-            <span className="font-bold text-rose-400">{metrics.burstsDetected}</span>
+            <span className="text-v-text-muted">Notification Storms Detected</span>
+            <span className="font-mono font-bold text-rose-400">{metrics.burstsDetected}</span>
           </div>
           <div className="py-2.5 flex justify-between">
-            <span className="text-slate-400">Total Focus Minutes Protected</span>
-            <span className="font-bold text-cyan-400">{metrics.totalFocusMinutes} mins</span>
+            <span className="text-v-text-muted">Total Focus Minutes Logged</span>
+            <span className="font-mono font-bold text-v-text">{metrics.totalFocusMinutes} mins</span>
           </div>
           <div className="py-2.5 flex justify-between">
-            <span className="text-slate-400">User Classification Feedback Adjustments</span>
-            <span className="font-bold text-emerald-400">{metrics.userCorrectionCount}</span>
+            <span className="text-v-text-muted">Local Learning Calibrations</span>
+            <span className="font-mono font-bold text-v-accent">{metrics.userCorrectionCount}</span>
           </div>
         </div>
       </div>

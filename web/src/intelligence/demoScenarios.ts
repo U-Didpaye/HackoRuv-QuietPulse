@@ -10,15 +10,15 @@ export interface DemoScenario {
 export const DEMO_SCENARIOS: DemoScenario[] = [
   {
     id: 'normal',
-    title: '1. Normal Day Traffic',
-    description: 'A regular flow with standard email updates and calendar invitations.',
+    title: '1. Standard Baseline Traffic',
+    description: 'A regular flow with standard calendar meetings and asynchronous technical documents.',
     events: (baseTime) => [
       {
         id: 'scen_norm_1',
         packageName: 'com.google.android.gm',
         appName: 'Gmail',
-        title: 'Project Roadmap Review',
-        text: 'Arnav sent you the updated presentation slides for tomorrow.',
+        title: 'Architecture Review: Micro-kernels',
+        text: 'The engineering team shared the updated RFC specification.',
         category: 'email',
         timestamp: baseTime - 180000,
         sourceType: 'SIMULATED'
@@ -27,8 +27,8 @@ export const DEMO_SCENARIOS: DemoScenario[] = [
         id: 'scen_norm_2',
         packageName: 'com.google.android.calendar',
         appName: 'Calendar',
-        title: 'CASCADE \'26 Hackathon Check-in',
-        text: 'Event starts in 30 minutes in Auditorium Hall B.',
+        title: 'Executive Sync in 30 Minutes',
+        text: 'Quarterly Attention Infrastructure Planning.',
         category: 'reminder',
         timestamp: baseTime - 60000,
         sourceType: 'SIMULATED'
@@ -37,18 +37,18 @@ export const DEMO_SCENARIOS: DemoScenario[] = [
   },
   {
     id: 'storm',
-    title: '2. Interruption Storm (Burst)',
-    description: 'Rapid burst of 8 promotional and social notifications within 30s triggering the burst detector.',
+    title: '2. Interruption Storm (Burst Stress Test)',
+    description: 'High-frequency burst of 8 promotional and algorithmic engagement alerts within 30s triggering the rolling window burst detector.',
     events: (baseTime) => {
       const apps = [
-        ['com.instagram.android', 'Instagram', 'Someone liked your recent reel', 'social'],
-        ['com.snapchat.android', 'Snapchat', 'Keep your 42-day streak alive!', 'social'],
-        ['com.flipkart.android', 'Flipkart', 'Flash Sale: 70% off electronics ending in 10m!', 'promo'],
-        ['in.swiggy.android', 'Swiggy', 'Craving biryani? Extra 100 off with code HUNGRY', 'promo'],
-        ['com.twitter.android', 'X', 'Trending in India: #CASCADE26 #IIITNagpur', 'social'],
-        ['com.whatsapp', 'WhatsApp', '[Meme Hub] 18 new unread messages', 'msg'],
-        ['com.amazon.mShop.android.shopping', 'Amazon', 'Price dropped on an item in your wishlist', 'promo'],
-        ['com.spotify.music', 'Spotify', 'Your Discover Weekly is ready for playback', 'recommendation']
+        ['com.instagram.android', 'Instagram', 'Someone liked your recent update', 'social'],
+        ['com.snapchat.android', 'Snapchat', 'Keep your continuous streak alive!', 'social'],
+        ['com.flipkart.android', 'E-Store', 'Flash Sale: 70% off electronics ending in 10m!', 'promo'],
+        ['in.swiggy.android', 'Food Delivery', 'Special dinner offer available nearby', 'promo'],
+        ['com.twitter.android', 'Network', 'Trending topic: System Reliability Engineering', 'social'],
+        ['com.whatsapp', 'Messaging Hub', 'Team: 18 unread messages in group', 'msg'],
+        ['com.amazon.mShop.android.shopping', 'Retail Platform', 'Price dropped on an item in your wishlist', 'promo'],
+        ['com.spotify.music', 'Audio Service', 'Your focus playlist has been updated', 'recommendation']
       ];
       return apps.map(([pkg, name, text, cat], i) => ({
         id: `scen_storm_${i}`,
@@ -64,14 +64,14 @@ export const DEMO_SCENARIOS: DemoScenario[] = [
   },
   {
     id: 'repetitive',
-    title: '3. Repetitive Shopping Spam',
-    description: 'Single shopping app spamming repeated alerts testing de-duplication and dark-pattern detection.',
+    title: '3. Repetitive Marketing Harassment',
+    description: 'Single e-commerce vendor spamming repeated countdown alerts, testing deduplication and dark-pattern detection.',
     events: (baseTime) => [
       {
         id: 'scen_rep_1',
         packageName: 'com.shopping.deals',
         appName: 'SuperDeals',
-        title: 'Deal of the Hour',
+        title: 'Flash Sale Alert',
         text: 'Hurry! 50% discount on headphones expires in 15 mins!',
         category: 'promo',
         timestamp: baseTime - 40000,
@@ -81,7 +81,7 @@ export const DEMO_SCENARIOS: DemoScenario[] = [
         id: 'scen_rep_2',
         packageName: 'com.shopping.deals',
         appName: 'SuperDeals',
-        title: 'Deal of the Hour',
+        title: 'Flash Sale Alert',
         text: 'Hurry! 50% discount on headphones expires in 10 mins!',
         category: 'promo',
         timestamp: baseTime - 20000,
@@ -91,7 +91,7 @@ export const DEMO_SCENARIOS: DemoScenario[] = [
         id: 'scen_rep_3',
         packageName: 'com.shopping.deals',
         appName: 'SuperDeals',
-        title: 'Deal of the Hour',
+        title: 'Flash Sale Alert',
         text: 'Final Call! Flash sale closing in 2 minutes!',
         category: 'promo',
         timestamp: baseTime - 5000,
@@ -101,15 +101,15 @@ export const DEMO_SCENARIOS: DemoScenario[] = [
   },
   {
     id: 'critical',
-    title: '4. Critical Urgency During Focus',
-    description: 'A bank OTP and family emergency call breaks cleanly through active Deep Work mode.',
+    title: '4. Critical Urgency Bypass During Focus',
+    description: 'A bank two-factor OTP verification and VIP contact phone call cleanly bypasses an active focus gateway.',
     events: (baseTime) => [
       {
         id: 'scen_crit_1',
         packageName: 'com.sbi.banking',
-        appName: 'SBI YONO',
-        title: 'Security Alert: OTP',
-        text: 'Your OTP for verification code is 849201. Valid for 10 minutes.',
+        appName: 'Secure Bank',
+        title: 'Security Alert: Two-Factor OTP',
+        text: 'Your authorization verification code is 849201. Valid for 10 minutes.',
         category: 'msg',
         timestamp: baseTime - 12000,
         sourceType: 'SIMULATED'
@@ -119,7 +119,7 @@ export const DEMO_SCENARIOS: DemoScenario[] = [
         packageName: 'com.google.android.dialer',
         appName: 'Phone',
         title: 'Urgent Call',
-        text: 'Mom (+91 98230 XXXXX) - Calling',
+        text: 'Priority Contact (+1 555-0199) - Calling',
         category: 'call',
         timestamp: baseTime - 2000,
         sourceType: 'SIMULATED'
@@ -128,15 +128,15 @@ export const DEMO_SCENARIOS: DemoScenario[] = [
   },
   {
     id: 'study',
-    title: '5. Deep Work / Study Airlock',
-    description: 'Discord pings and Reddit notifications are quietly routed to Attention Airlock during study.',
+    title: '5. Deep Work / Airlock Routing',
+    description: 'Non-urgent community chats and discussion threads are quietly routed to the Attention Airlock during active work blocks.',
     events: (baseTime) => [
       {
         id: 'scen_study_1',
         packageName: 'com.discord',
         appName: 'Discord',
-        title: '#general in CS26',
-        text: 'Anyone free for a quick gaming session?',
+        title: '#general discussion',
+        text: 'Team member shared a new research paper on cognitive load.',
         category: 'social',
         timestamp: baseTime - 25000,
         sourceType: 'SIMULATED'
@@ -144,9 +144,9 @@ export const DEMO_SCENARIOS: DemoScenario[] = [
       {
         id: 'scen_study_2',
         packageName: 'com.reddit.frontpage',
-        appName: 'Reddit',
-        title: 'r/developers',
-        text: 'Top 10 software architectural patterns for 2026',
+        appName: 'Tech Feed',
+        title: 'r/architecture',
+        text: 'Zero-latency local-first software design patterns.',
         category: 'recommendation',
         timestamp: baseTime - 8000,
         sourceType: 'SIMULATED'
@@ -155,15 +155,15 @@ export const DEMO_SCENARIOS: DemoScenario[] = [
   },
   {
     id: 'learning',
-    title: '6. Adaptive Local Learning',
-    description: 'Demonstrates immediate adaptation after a user corrects an app classification.',
+    title: '6. Adaptive Local Weight Adjustment',
+    description: 'Demonstrates deterministic local heuristic adaptation after user feedback modifies category weights.',
     events: (baseTime) => [
       {
         id: 'scen_learn_1',
         packageName: 'com.medium.reader',
-        appName: 'Medium',
-        title: 'Daily Tech Briefing',
-        text: 'How to build privacy-first attention firewalls without cloud tracking.',
+        appName: 'Tech Daily',
+        title: 'Engineering Deep Dive',
+        text: 'Designing resilient offline attention firewalls without remote telemetry tracking.',
         category: 'recommendation',
         timestamp: baseTime,
         sourceType: 'SIMULATED'

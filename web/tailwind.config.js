@@ -7,23 +7,20 @@ export default {
   theme: {
     extend: {
       colors: {
-        navy: {
-          dark: '#0A0F1D',
-          surface: '#111827',
-          card: '#1E293B',
-          hover: '#283548',
-          border: '#334155',
-        },
-        shield: {
-          cyan: '#06B6D4',
-          cyanLight: '#22D3EE',
-          indigo: '#6366F1',
-          urgent: '#EF4444',
-          important: '#F59E0B',
-          batch: '#3B82F6',
-          low: '#64748B',
-          success: '#10B981',
-        }
+        'v-bg': 'var(--v-bg)',
+        'v-surface': 'var(--v-surface)',
+        'v-secondary': 'var(--v-secondary)',
+        'v-elevated': 'var(--v-elevated)',
+        'v-text': 'var(--v-primary-text)',
+        'v-text-muted': 'var(--v-secondary-text)',
+        'v-border': 'var(--v-border)',
+        'v-border-subtle': 'var(--v-border-subtle)',
+        'v-accent': 'var(--v-accent)',
+        'v-badge': 'var(--v-badge-bg)',
+      },
+      fontFamily: {
+        sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        editorial: ['Cinzel', 'Trajan Pro', 'Georgia', 'serif'],
       }
     },
   },

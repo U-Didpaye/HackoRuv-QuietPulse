@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Timer, Play, Square, Sparkles, CheckCircle2, ShieldAlert, Info } from 'lucide-react';
+import { Timer, Play, Square, Sparkles, CheckCircle2, Info } from 'lucide-react';
 import { AnalyticsMetrics } from '../types';
 
 interface FocusPageProps {
@@ -29,19 +29,24 @@ export const FocusPage: React.FC<FocusPageProps> = ({
   const progressPercent = isFocusActive ? Math.min(100, Math.max(0, (1 - remainingSeconds / targetSecs) * 100)) : 0;
 
   return (
-    <div className="space-y-6 max-w-2xl mx-auto">
+    <div className="space-y-6 max-w-2xl mx-auto py-4">
       {/* Title */}
       <div className="text-center">
-        <h2 className="text-2xl font-black text-white tracking-wide">Focus Sessions & Gateways</h2>
-        <p className="text-xs text-slate-400 mt-1">
-          Lock in your attention. Non-urgent alerts are automatically triaged into the Attention Airlock.
+        <span className="text-[10px] font-mono tracking-[0.25em] uppercase text-v-accent">
+          COGNITIVE GATEWAYS
+        </span>
+        <h2 className="text-3xl font-black text-v-text uppercase font-editorial tracking-wide mt-1">
+          Focus Sessions
+        </h2>
+        <p className="text-xs text-v-text-muted mt-1 font-sans">
+          Lock in your attention. Non-urgent interruptions are routed to the Attention Airlock.
         </p>
       </div>
 
       {/* Main Focus Dial Card */}
-      <div className="p-8 rounded-3xl bg-navy-card border border-navy-border shadow-2xl flex flex-col items-center">
-        <span className="text-[11px] font-bold tracking-widest text-cyan-400 uppercase mb-4">
-          {isFocusActive ? 'Active Focus Session' : 'Ready to Start'}
+      <div className="p-8 rounded-3xl bg-v-surface border border-v-border shadow-2xl flex flex-col items-center">
+        <span className="text-[10px] font-mono font-bold tracking-widest text-v-accent uppercase mb-4">
+          {isFocusActive ? 'Active Focus Session' : 'Ready to Initialize'}
         </span>
 
         {/* Circular Progress Display */}
@@ -51,16 +56,16 @@ export const FocusPage: React.FC<FocusPageProps> = ({
               cx="112"
               cy="112"
               r="96"
-              className="stroke-navy-border"
-              strokeWidth="8"
+              className="stroke-v-border"
+              strokeWidth="6"
               fill="transparent"
             />
             <circle
               cx="112"
               cy="112"
               r="96"
-              className="stroke-cyan-400 transition-all duration-1000 ease-linear"
-              strokeWidth="8"
+              className="stroke-v-accent transition-all duration-1000 ease-linear"
+              strokeWidth="6"
               strokeDasharray={2 * Math.PI * 96}
               strokeDashoffset={2 * Math.PI * 96 * (1 - progressPercent / 100)}
               strokeLinecap="round"
@@ -69,10 +74,10 @@ export const FocusPage: React.FC<FocusPageProps> = ({
           </svg>
 
           <div className="absolute flex flex-col items-center justify-center">
-            <div className="text-4xl font-mono font-black text-white">
+            <div className="text-4xl font-mono font-black text-v-text">
               {isFocusActive ? formatTime(remainingSeconds) : `${customDuration}:00`}
             </div>
-            <span className="text-xs font-semibold text-slate-400 mt-1">
+            <span className="text-xs font-mono text-v-text-muted mt-1">
               {isFocusActive ? 'Remaining' : 'Target Duration'}
             </span>
           </div>
@@ -82,7 +87,7 @@ export const FocusPage: React.FC<FocusPageProps> = ({
         {isFocusActive ? (
           <button
             onClick={onEndFocus}
-            className="w-full max-w-sm mt-4 py-3 text-sm font-bold rounded-xl bg-rose-500/20 text-rose-400 hover:bg-rose-500/30 border border-rose-500/40 flex items-center justify-center gap-2 transition"
+            className="w-full max-w-sm mt-4 py-3 text-xs font-mono font-bold rounded-xl bg-v-secondary hover:bg-v-elevated border border-v-border text-v-text flex items-center justify-center gap-2 transition"
           >
             <Square className="w-4 h-4 fill-current" />
             End Focus Session Early
@@ -91,23 +96,23 @@ export const FocusPage: React.FC<FocusPageProps> = ({
           <div className="w-full max-w-sm space-y-4 mt-2">
             <div className="grid grid-cols-2 gap-3">
               <button
-                onClick={() => onStartFocus('25m Pomodoro', 25)}
-                className="py-2.5 px-4 text-xs font-bold rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white transition shadow-lg shadow-indigo-600/30"
+                onClick={() => onStartFocus('25m Pomodoro Focus', 25)}
+                className="py-2.5 px-4 text-xs font-mono font-bold rounded-xl bg-v-text text-v-bg hover:opacity-90 transition shadow-md"
               >
                 25m Pomodoro
               </button>
               <button
-                onClick={() => onStartFocus('50m Deep Work', 50)}
-                className="py-2.5 px-4 text-xs font-bold rounded-xl bg-navy-hover hover:bg-slate-700 text-slate-200 border border-navy-border transition"
+                onClick={() => onStartFocus('50m Deep Work Block', 50)}
+                className="py-2.5 px-4 text-xs font-mono font-bold rounded-xl bg-v-secondary hover:bg-v-elevated text-v-text border border-v-border transition"
               >
                 50m Deep Work
               </button>
             </div>
 
             <div className="space-y-1.5 pt-2">
-              <div className="flex justify-between text-xs text-slate-400">
+              <div className="flex justify-between text-xs font-mono text-v-text-muted">
                 <span>Custom Duration</span>
-                <span className="font-bold text-cyan-400">{customDuration} minutes</span>
+                <span className="font-bold text-v-text">{customDuration} minutes</span>
               </div>
               <input
                 type="range"
@@ -116,16 +121,16 @@ export const FocusPage: React.FC<FocusPageProps> = ({
                 step="5"
                 value={customDuration}
                 onChange={e => setCustomDuration(parseInt(e.target.value))}
-                className="w-full accent-cyan-400 cursor-pointer"
+                className="w-full accent-v-text cursor-pointer"
               />
             </div>
 
             <button
-              onClick={() => onStartFocus('Custom Focus', customDuration)}
-              className="w-full py-3 text-sm font-bold rounded-xl bg-cyan-500 text-navy-dark hover:bg-cyan-400 flex items-center justify-center gap-2 transition shadow-lg shadow-cyan-500/20"
+              onClick={() => onStartFocus('Custom Focus Window', customDuration)}
+              className="w-full py-3 text-xs font-mono font-bold rounded-xl bg-v-text text-v-bg hover:opacity-90 flex items-center justify-center gap-2 transition shadow-lg"
             >
-              <Play className="w-4 h-4 fill-current" />
-              Start Focus Session
+              <Play className="w-3.5 h-3.5 fill-current" />
+              Initialize Custom Session
             </button>
           </div>
         )}
@@ -133,25 +138,25 @@ export const FocusPage: React.FC<FocusPageProps> = ({
 
       {/* Focus Analytics Row */}
       <div className="grid grid-cols-3 gap-3">
-        <div className="p-4 rounded-xl bg-navy-card border border-navy-border text-center">
-          <span className="text-[11px] font-semibold text-slate-400">Total Focus</span>
-          <div className="text-xl font-black text-cyan-400 mt-1">{metrics.totalFocusMinutes}m</div>
+        <div className="p-4 rounded-xl bg-v-surface border border-v-border text-center">
+          <span className="text-[10px] font-mono text-v-text-muted uppercase">Total Logged</span>
+          <div className="text-xl font-bold font-editorial text-v-text mt-1">{metrics.totalFocusMinutes}m</div>
         </div>
-        <div className="p-4 rounded-xl bg-navy-card border border-navy-border text-center">
-          <span className="text-[11px] font-semibold text-slate-400">Completed</span>
-          <div className="text-xl font-black text-emerald-400 mt-1">{metrics.completedSessionsCount}</div>
+        <div className="p-4 rounded-xl bg-v-surface border border-v-border text-center">
+          <span className="text-[10px] font-mono text-v-text-muted uppercase">Completed</span>
+          <div className="text-xl font-bold font-editorial text-v-text mt-1">{metrics.completedSessionsCount}</div>
         </div>
-        <div className="p-4 rounded-xl bg-navy-card border border-navy-border text-center">
-          <span className="text-[11px] font-semibold text-slate-400">Deflected</span>
-          <div className="text-xl font-black text-indigo-400 mt-1">{metrics.estimatedInterruptionsDeflected}</div>
+        <div className="p-4 rounded-xl bg-v-surface border border-v-border text-center">
+          <span className="text-[10px] font-mono text-v-text-muted uppercase">Deflected</span>
+          <div className="text-xl font-bold font-editorial text-v-accent mt-1">{metrics.estimatedInterruptionsDeflected}</div>
         </div>
       </div>
 
-      {/* Platform Transparency Notice */}
-      <div className="p-4 rounded-xl bg-navy-surface border border-navy-border flex items-start gap-3">
-        <Info className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
-        <p className="text-xs text-slate-400 leading-relaxed">
-          <strong>Technical Integrity Notice:</strong> FocusShield AI works within Android operating system permissions. It buffers notifications into your in-app Attention Airlock and issues quiet digests. It does not falsely claim to mute system phone calls or override low-level OS audio drivers.
+      {/* Platform Architecture Notice */}
+      <div className="p-4 rounded-xl bg-v-surface/60 border border-v-border flex items-start gap-3">
+        <Info className="w-5 h-5 text-v-accent shrink-0 mt-0.5" />
+        <p className="text-xs text-v-text-muted leading-relaxed font-sans">
+          <strong>Technical Integrity:</strong> VYROX prioritizes notifications into your local Attention Airlock. It does not falsely claim to mute system phone calls or override low-level OS audio drivers without explicit user permission.
         </p>
       </div>
     </div>

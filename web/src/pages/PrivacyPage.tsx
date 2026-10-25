@@ -13,78 +13,82 @@ export const PrivacyPage: React.FC<PrivacyPageProps> = ({
   feedbackRecordsCount
 }) => {
   return (
-    <div className="space-y-6 max-w-2xl mx-auto">
+    <div className="space-y-6 max-w-3xl mx-auto py-4">
       <div>
-        <h2 className="text-xl font-bold text-white tracking-wide">Privacy & Data Governance</h2>
-        <p className="text-xs text-slate-400 mt-0.5">
-          FocusShield is designed with zero-cloud data collection principles.
+        <h2 className="text-xl font-bold text-v-text tracking-wide uppercase font-mono">
+          Privacy &amp; Data Governance
+        </h2>
+        <p className="text-xs text-v-text-muted mt-0.5 font-sans">
+          VYROX is engineered with zero-cloud data collection principles.
         </p>
       </div>
 
       {/* Trust Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="p-4 rounded-xl bg-navy-card border border-navy-border flex items-start gap-3">
-          <ServerOff className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+        <div className="p-5 rounded-2xl bg-v-surface border border-v-border flex items-start gap-3.5">
+          <ServerOff className="w-5 h-5 text-v-text shrink-0 mt-0.5" />
           <div>
-            <h4 className="text-xs font-bold text-white">100% Offline Core</h4>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Notification parsing, scoring heuristics, and burst analysis run strictly in on-device local memory.
+            <h4 className="text-xs font-bold text-v-text uppercase font-mono">100% Offline Core</h4>
+            <p className="text-xs text-v-text-muted mt-1 leading-relaxed font-sans">
+              Notification parsing, scoring heuristics, and rolling burst analysis execute strictly in local memory.
             </p>
           </div>
         </div>
 
-        <div className="p-4 rounded-xl bg-navy-card border border-navy-border flex items-start gap-3">
-          <EyeOff className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+        <div className="p-5 rounded-2xl bg-v-surface border border-v-border flex items-start gap-3.5">
+          <EyeOff className="w-5 h-5 text-v-text shrink-0 mt-0.5" />
           <div>
-            <h4 className="text-xs font-bold text-white">No External AI / LLM Calls</h4>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Your messages are never sent to third-party language models or remote telemetry collectors.
+            <h4 className="text-xs font-bold text-v-text uppercase font-mono">Zero External LLMs</h4>
+            <p className="text-xs text-v-text-muted mt-1 leading-relaxed font-sans">
+              Personal messages are never transmitted to third-party cloud models or remote behavioral aggregators.
             </p>
           </div>
         </div>
 
-        <div className="p-4 rounded-xl bg-navy-card border border-navy-border flex items-start gap-3">
-          <Lock className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />
+        <div className="p-5 rounded-2xl bg-v-surface border border-v-border flex items-start gap-3.5">
+          <Lock className="w-5 h-5 text-v-text shrink-0 mt-0.5" />
           <div>
-            <h4 className="text-xs font-bold text-white">Strict Minimal Permissions</h4>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Zero requests for SMS, Contacts, Phone Logs, Location, or Accessibility Service abuse.
+            <h4 className="text-xs font-bold text-v-text uppercase font-mono">Minimal Permissions</h4>
+            <p className="text-xs text-v-text-muted mt-1 leading-relaxed font-sans">
+              Zero requests for SMS, Contacts, Phone Logs, GPS Location, or Android Accessibility privileges.
             </p>
           </div>
         </div>
 
-        <div className="p-4 rounded-xl bg-navy-card border border-navy-border flex items-start gap-3">
-          <Database className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+        <div className="p-5 rounded-2xl bg-v-surface border border-v-border flex items-start gap-3.5">
+          <Database className="w-5 h-5 text-v-text shrink-0 mt-0.5" />
           <div>
-            <h4 className="text-xs font-bold text-white">Bounded Local Learning</h4>
-            <p className="text-xs text-slate-400 mt-0.5">
-              User corrections adjust bounded package weights locally without syncing behavioral profiles.
+            <h4 className="text-xs font-bold text-v-text uppercase font-mono">Bounded Local Adaptation</h4>
+            <p className="text-xs text-v-text-muted mt-1 leading-relaxed font-sans">
+              User calibrations adjust bounded package weights locally without syncing behavioral profiles.
             </p>
           </div>
         </div>
       </div>
 
       {/* Local Data Management */}
-      <div className="p-5 rounded-2xl bg-navy-card border border-navy-border space-y-3">
-        <h3 className="text-sm font-bold text-white">Local Data Management</h3>
-        <p className="text-xs text-slate-400">
-          You maintain full ownership of all data generated during focus sessions.
+      <div className="p-6 rounded-2xl bg-v-surface border border-v-border space-y-4">
+        <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-v-text">
+          Local Data Controls
+        </h3>
+        <p className="text-xs text-v-text-muted font-sans">
+          You retain sovereign ownership of all data generated during focus sessions.
         </p>
 
         <div className="pt-2 flex flex-col sm:flex-row gap-3">
           <button
             onClick={onResetLearning}
-            className="flex-1 py-2.5 px-4 text-xs font-bold rounded-xl bg-navy-surface hover:bg-slate-700 text-amber-400 border border-navy-border flex items-center justify-center gap-2 transition"
+            className="flex-1 py-2.5 px-4 text-xs font-mono font-bold rounded-xl bg-v-secondary hover:bg-v-elevated text-v-text border border-v-border flex items-center justify-center gap-2 transition"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            Reset Local Learning Weights ({feedbackRecordsCount} records)
+            Reset Calibrated Weights ({feedbackRecordsCount} records)
           </button>
           <button
             onClick={onClearHistory}
-            className="flex-1 py-2.5 px-4 text-xs font-bold rounded-xl bg-navy-surface hover:bg-rose-500/20 text-rose-400 border border-navy-border flex items-center justify-center gap-2 transition"
+            className="flex-1 py-2.5 px-4 text-xs font-mono font-bold rounded-xl bg-v-secondary hover:bg-v-elevated text-rose-400 border border-v-border flex items-center justify-center gap-2 transition"
           >
             <Trash2 className="w-3.5 h-3.5" />
-            Wipe Queue & Local Analytics
+            Wipe Queue &amp; Local Telemetry
           </button>
         </div>
       </div>

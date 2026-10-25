@@ -1,0 +1,192 @@
+import React, { useState } from 'react';
+import { useTheme, VyroxTheme } from '../context/ThemeContext';
+import { Menu, X, Sparkles, Shield, ChevronDown } from 'lucide-react';
+
+interface NavbarProps {
+  currentRoute: string;
+  onNavigate: (route: string) => void;
+  onOpenChokas: () => void;
+  queueCount: number;
+}
+
+export const Navbar: React.FC<NavbarProps> = ({
+  currentRoute,
+  onNavigate,
+  onOpenChokas,
+  queueCount
+}) => {
+  const { theme, setTheme, themes } = useTheme();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [themeDropdownOpen, setThemeDropdownOpen] = useState(false);
+
+  const navLinks = [
+    { id: 'home', label: 'Overview' },
+    { id: 'engine', label: 'Firewall Engine' },
+    { id: 'queue', label: `Airlock Queue ${queueCount > 0 ? `(${queueCount})` : ''}` },
+    { id: 'focus', label: 'Focus Gateways' },
+    { id: 'insights', label: 'Telemetry' },
+    { id: 'chokas', label: 'ChokasAI' },
+    { id: 'contact', label: 'Contact' },
+  ];
+
+  return (
+    <header className="sticky top-0 z-40 bg-v-bg/90 backdrop-blur-md border-b border-v-border transition-colors duration-250">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        
+        {/* Brand Logo & Wordmark */}
+        <button
+          onClick={() => onNavigate('home')}
+          className="flex items-center gap-3 group focus:outline-none"
+        >
+          <div className="w-8 h-8 relative flex items-center justify-center">
+            <img
+              src="/vyrox-emblem.svg"
+              alt="VYROX"
+              className="w-full h-full object-contain filter group-hover:brightness-125 transition"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).src = '/vyrox-emblem.png';
+              }}
+            />
+          </div>
+          <div className="flex flex-col text-left">
+            <span className="text-base font-black tracking-[0.2em] uppercase font-editorial text-v-text group-hover:text-v-accent transition">
+              VYROX
+            </span>
+            <span className="text-[9px] tracking-[0.25em] uppercase text-v-text-muted font-mono -mt-0.5">
+              ATTENTION FIREWALL
+            </span>
+          </div>
+        </button>
+
+        {/* Desktop Nav Items */}
+        <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
+          {navLinks.map((link) => {
+            const isActive = currentRoute === link.id;
+            return (
+              <button
+                key={link.id}
+                onClick={() => {
+                  if (link.id === 'chokas') {
+                    onOpenChokas();
+                  } else {
+                    onNavigate(link.id);
+                  }
+                }}
+                className={`px-3 py-1.5 text-xs font-semibold rounded-md tracking-wider transition-colors ${
+                  isActive
+                    ? 'text-v-text bg-v-surface border border-v-border'
+                    : 'text-v-text-muted hover:text-v-text hover:bg-v-secondary/50'
+                }`}
+              >
+                {link.label}
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Right Utility: Theme Selector & Action */}
+        <div className="flex items-center gap-3">
+          {/* Theme Selector Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setThemeDropdownOpen(!themeDropdownOpen)}
+              className="flex items-center gap-2 px-2.5 py-1.5 text-xs font-medium rounded-lg bg-v-surface border border-v-border text-v-text hover:border-v-accent transition"
+              title="Select Visual Theme"
+            >
+              <div
+                className="w-3.5 h-3.5 rounded-full border border-v-border"
+                style={{
+                  backgroundColor: themes.find((t) => t.id === theme)?.swatchBg,
+                  borderColor: themes.find((t) => t.id === theme)?.swatchAccent,
+                }}
+              />
+              <span className="hidden sm:inline capitalize font-mono text-[11px]">
+                {themes.find((t) => t.id === theme)?.name}
+              </span>
+              <ChevronDown className="w-3 h-3 text-v-text-muted" />
+            </button>
+
+            {themeDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-52 p-2 rounded-xl bg-v-surface border border-v-border shadow-2xl z-50 animate-reveal">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-v-text-muted px-2 py-1 block">
+                  Select Theme
+                </span>
+                <div className="space-y-1 mt-1">
+                  {themes.map((t) => {
+                    const isSelected = t.id === theme;
+                    return (
+                      <button
+                        key={t.id}
+                        onClick={() => {
+                          setTheme(t.id);
+                          setThemeDropdownOpen(false);
+                        }}
+                        className={`w-full flex items-center justify-between p-2 rounded-lg text-left text-xs transition ${
+                          isSelected ? 'bg-v-elevated text-v-text font-bold' : 'text-v-text-muted hover:bg-v-secondary hover:text-v-text'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <div
+                            className="w-4 h-4 rounded-full border"
+                            style={{
+                              backgroundColor: t.swatchBg,
+                              borderColor: t.swatchAccent,
+                            }}
+                          />
+                          <div>
+                            <div className="font-semibold text-xs">{t.name}</div>
+                            <div className="text-[10px] text-v-text-muted">{t.character}</div>
+                          </div>
+                        </div>
+                        {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-v-accent" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Quick ChokasAI Launcher Button */}
+          <button
+            onClick={onOpenChokas}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-v-text text-v-bg hover:opacity-90 transition font-mono"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>ChokasAI</span>
+          </button>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lg:hidden p-2 rounded-lg text-v-text-muted hover:text-v-text hover:bg-v-surface border border-v-border"
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Drawer */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden border-t border-v-border bg-v-surface px-4 py-4 space-y-2">
+          {navLinks.map((link) => (
+            <button
+              key={link.id}
+              onClick={() => {
+                setMobileMenuOpen(false);
+                if (link.id === 'chokas') {
+                  onOpenChokas();
+                } else {
+                  onNavigate(link.id);
+                }
+              }}
+              className="w-full text-left py-2 px-3 rounded-lg text-xs font-semibold text-v-text hover:bg-v-secondary tracking-wider"
+            >
+              {link.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </header>
+  );
+};

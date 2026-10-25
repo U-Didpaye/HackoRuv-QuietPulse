@@ -2,25 +2,149 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  background-color: #0A0F1D;
-  color: #F8FAFC;
+:root {
+  /* Default: Theme A — Obsidian Silver */
+  --v-bg: #000000;
+  --v-surface: #101010;
+  --v-secondary: #181818;
+  --v-elevated: #202020;
+  --v-primary-text: #F5F5F5;
+  --v-secondary-text: #A3A3A3;
+  --v-border: #303030;
+  --v-border-subtle: #242424;
+  --v-accent: #C6C6C6;
+  --v-accent-glow: rgba(198, 198, 198, 0.15);
+  --v-badge-bg: #1C1C1C;
+  --v-hero-glow: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
 }
 
-/* Custom scrollbar for cyber aesthetic */
+[data-theme="obsidian"] {
+  --v-bg: #000000;
+  --v-surface: #101010;
+  --v-secondary: #181818;
+  --v-elevated: #202020;
+  --v-primary-text: #F5F5F5;
+  --v-secondary-text: #A3A3A3;
+  --v-border: #303030;
+  --v-border-subtle: #242424;
+  --v-accent: #C6C6C6;
+  --v-accent-glow: rgba(198, 198, 198, 0.15);
+  --v-badge-bg: #1C1C1C;
+  --v-hero-glow: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
+}
+
+[data-theme="graphite"] {
+  --v-bg: #111214;
+  --v-surface: #191A1E;
+  --v-secondary: #222328;
+  --v-elevated: #292A30;
+  --v-primary-text: #F4F4F5;
+  --v-secondary-text: #A7A7AC;
+  --v-border: #36373D;
+  --v-border-subtle: #2B2C32;
+  --v-accent: #D0D0D0;
+  --v-accent-glow: rgba(208, 208, 208, 0.12);
+  --v-badge-bg: #22242B;
+  --v-hero-glow: radial-gradient(circle at 50% 30%, rgba(208, 208, 208, 0.07) 0%, rgba(17, 18, 20, 0) 70%);
+}
+
+[data-theme="pearl"] {
+  --v-bg: #F5F4F0;
+  --v-surface: #FFFFFF;
+  --v-secondary: #ECEBE7;
+  --v-elevated: #FFFFFF;
+  --v-primary-text: #171717;
+  --v-secondary-text: #666666;
+  --v-border: #DAD9D4;
+  --v-border-subtle: #E5E4DE;
+  --v-accent: #737373;
+  --v-accent-glow: rgba(115, 115, 115, 0.10);
+  --v-badge-bg: #EAE9E4;
+  --v-hero-glow: radial-gradient(circle at 50% 30%, rgba(0, 0, 0, 0.03) 0%, rgba(245, 244, 240, 0) 70%);
+}
+
+body {
+  margin: 0;
+  background-color: var(--v-bg);
+  color: var(--v-primary-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  transition: background-color 0.25s ease, color 0.25s ease;
+  overflow-x: hidden;
+}
+
+/* Editorial display font styling */
+.font-editorial {
+  font-family: "Cinzel", "Trajan Pro", "Didot", "Bodoni MT", -apple-system, BlinkMacSystemFont, "Times New Roman", serif;
+  letter-spacing: 0.08em;
+}
+
+/* Metallic Sweep Animation for Splash and Logo */
+@keyframes metallic-sweep {
+  0% {
+    transform: translateX(-150%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(250%) skewX(-20deg);
+  }
+}
+
+.animate-metallic-sweep {
+  animation: metallic-sweep 3.5s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Subtle Breathing Motion for Large Background Emblem */
+@keyframes subtle-float {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+    opacity: 0.12;
+  }
+  50% {
+    transform: translateY(-8px) scale(1.015);
+    opacity: 0.16;
+  }
+}
+
+.animate-subtle-float {
+  animation: subtle-float 12s ease-in-out infinite;
+}
+
+/* Scroll Reveal System */
+.reveal-init {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-init {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .animate-metallic-sweep,
+  .animate-subtle-float {
+    animation: none !important;
+  }
+}
+
+/* Custom Scrollbar matching current theme */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0A0F1D;
+  background: var(--v-bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: #1E293B;
-  border-radius: 4px;
+  background: var(--v-border);
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: var(--v-accent);
 }

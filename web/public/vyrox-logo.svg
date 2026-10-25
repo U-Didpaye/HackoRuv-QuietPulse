@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 240" width="100%" height="100%" fill="none">
+  <defs>
+    <linearGradient id="v-chrome-l" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="35%" stop-color="#D1D5DB"/>
+      <stop offset="70%" stop-color="#6B7280"/>
+      <stop offset="100%" stop-color="#1F2937"/>
+    </linearGradient>
+    <linearGradient id="v-chrome-r" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="40%" stop-color="#9CA3AF"/>
+      <stop offset="75%" stop-color="#4B5563"/>
+      <stop offset="100%" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="text-metallic" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="40%" stop-color="#E5E7EB"/>
+      <stop offset="75%" stop-color="#9CA3AF"/>
+      <stop offset="100%" stop-color="#D1D5DB"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Left Emblem Group -->
+  <g transform="translate(40, 20) scale(0.5)">
+    <!-- Outer Shield Frame -->
+    <polygon points="200,40 320,130 270,300 200,360 130,300 80,130" fill="none" stroke="url(#v-chrome-l)" stroke-width="6" stroke-opacity="0.5"/>
+    <!-- Left Wing -->
+    <path d="M 110,130 L 200,320 L 200,240 L 140,110 Z" fill="url(#v-chrome-l)"/>
+    <!-- Right Wing -->
+    <path d="M 290,130 L 200,320 L 200,240 L 260,110 Z" fill="url(#v-chrome-r)"/>
+    <!-- Central Crystal -->
+    <polygon points="200,90 235,160 200,270 165,160" fill="#E5E7EB" opacity="0.9"/>
+    <!-- Razor Line -->
+    <line x1="200" y1="75" x2="200" y2="335" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- Wordmark "VYROX" -->
+  <text x="270" y="138" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Cinzel', 'Trajan Pro', 'Montserrat', sans-serif" font-size="88" font-weight="900" letter-spacing="14" fill="url(#text-metallic)">
+    VYROX
+  </text>
+
+  <!-- Discreet Tagline -->
+  <text x="274" y="178" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" letter-spacing="7" fill="#8E8E93" opacity="0.85">
+    ATTENTION FIREWALL SYSTEM
+  </text>
+</svg>
