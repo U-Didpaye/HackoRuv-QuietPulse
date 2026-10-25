@@ -14,6 +14,7 @@ import { RulesPage } from './pages/RulesPage';
 import { PrivacyPage } from './pages/PrivacyPage';
 import { ContactPage } from './pages/ContactPage';
 import { LoginPage } from './pages/LoginPage';
+import { PageBackground } from './components/PageBackground';
 
 import { BurstDetector } from './intelligence/burstDetector';
 import { LocalLearningEngine } from './intelligence/localLearning';
@@ -272,99 +273,115 @@ function QuietPulseApp() {
           />
         )}
 
-        {/* NotiFy: Live Interception Feed */}
+        {/* NotiFy: Live Interception Feed (Cosmic Monolith Overlook Background) */}
         {(currentRoute === 'notify' || currentRoute === 'engine') && (
-          <div className="px-4 sm:px-6 lg:px-8">
-            <DashboardPage
-              isFocusActive={isFocusActive}
-              remainingFocusSeconds={remainingFocusSeconds}
-              burstRate={burstRate}
-              isBurstActive={isBurstActive}
-              metrics={metrics}
-              recentItems={items}
-              onStartFocus={handleStartFocus}
-              onEndFocus={handleEndFocus}
-              onNavigate={navigateTo}
-            />
-          </div>
+          <PageBackground imageSrc="/backgrounds/bg-monolith-overlook.jpg">
+            <div className="px-4 sm:px-6 lg:px-8">
+              <DashboardPage
+                isFocusActive={isFocusActive}
+                remainingFocusSeconds={remainingFocusSeconds}
+                burstRate={burstRate}
+                isBurstActive={isBurstActive}
+                metrics={metrics}
+                recentItems={items}
+                onStartFocus={handleStartFocus}
+                onEndFocus={handleEndFocus}
+                onNavigate={navigateTo}
+              />
+            </div>
+          </PageBackground>
         )}
 
-        {/* FlowQueue */}
+        {/* FlowQueue (Bioluminescent Flowing River Background) */}
         {(currentRoute === 'flowqueue' || currentRoute === 'queue') && (
-          <div className="px-4 sm:px-6 lg:px-8">
-            <QueuePage
-              items={items}
-              onMarkReviewed={handleMarkReviewed}
-              onDismiss={handleDismiss}
-              onReviewAll={handleReviewAll}
-              onClearQueue={handleClearQueue}
-              onFeedback={handleFeedback}
-            />
-          </div>
+          <PageBackground imageSrc="/backgrounds/bg-bioluminescent-river.png">
+            <div className="px-4 sm:px-6 lg:px-8">
+              <QueuePage
+                items={items}
+                onMarkReviewed={handleMarkReviewed}
+                onDismiss={handleDismiss}
+                onReviewAll={handleReviewAll}
+                onClearQueue={handleClearQueue}
+                onFeedback={handleFeedback}
+              />
+            </div>
+          </PageBackground>
         )}
 
-        {/* DeepFocus */}
+        {/* DeepFocus (Golden Summit Sanctuary Background) */}
         {(currentRoute === 'deepfocus' || currentRoute === 'focus') && (
-          <div className="px-4 sm:px-6 lg:px-8">
-            <FocusPage
-              isFocusActive={isFocusActive}
-              remainingSeconds={remainingFocusSeconds}
-              metrics={metrics}
-              onStartFocus={handleStartFocus}
-              onEndFocus={handleEndFocus}
-            />
-          </div>
+          <PageBackground imageSrc="/backgrounds/bg-golden-summit.png" overlayStyle="focused">
+            <div className="px-4 sm:px-6 lg:px-8">
+              <FocusPage
+                isFocusActive={isFocusActive}
+                remainingSeconds={remainingFocusSeconds}
+                metrics={metrics}
+                onStartFocus={handleStartFocus}
+                onEndFocus={handleEndFocus}
+              />
+            </div>
+          </PageBackground>
         )}
 
-        {/* PulseInsights */}
+        {/* PulseInsights (Violet Cosmic Energy Stream Background) */}
         {(currentRoute === 'pulseinsights' || currentRoute === 'insights') && (
-          <div className="px-4 sm:px-6 lg:px-8">
-            <InsightsPage metrics={metrics} />
-          </div>
+          <PageBackground imageSrc="/backgrounds/bg-violet-stream.png">
+            <div className="px-4 sm:px-6 lg:px-8">
+              <InsightsPage metrics={metrics} />
+            </div>
+          </PageBackground>
         )}
 
-        {/* Rules */}
+        {/* Rules (Sovereign Metallic Crest Background) */}
         {currentRoute === 'rules' && (
-          <div className="px-4 sm:px-6 lg:px-8">
-            <RulesPage
-              rules={rules}
-              onAddRule={rule => setRules(prev => ({ ...prev, [rule.packageName]: rule }))}
-              onRemoveRule={pkg => {
-                setRules(prev => {
-                  const copy = { ...prev };
-                  delete copy[pkg];
-                  return copy;
-                });
-              }}
-            />
-          </div>
+          <PageBackground imageSrc="/backgrounds/bg-metallic-portrait-emblem.png" overlayStyle="focused">
+            <div className="px-4 sm:px-6 lg:px-8">
+              <RulesPage
+                rules={rules}
+                onAddRule={rule => setRules(prev => ({ ...prev, [rule.packageName]: rule }))}
+                onRemoveRule={pkg => {
+                  setRules(prev => {
+                    const copy = { ...prev };
+                    delete copy[pkg];
+                    return copy;
+                  });
+                }}
+              />
+            </div>
+          </PageBackground>
         )}
 
-        {/* Privacy & Permissions */}
+        {/* Privacy & Permissions (Sovereign Metallic Crest Background) */}
         {currentRoute === 'privacy' && (
-          <div className="px-4 sm:px-6 lg:px-8">
-            <PrivacyPage
-              onResetLearning={() => learningEngineRef.current.reset()}
-              onClearHistory={handleClearQueue}
-              feedbackRecordsCount={learningEngineRef.current.getHistory().length}
-            />
-          </div>
+          <PageBackground imageSrc="/backgrounds/bg-metallic-portrait-emblem.png" overlayStyle="focused">
+            <div className="px-4 sm:px-6 lg:px-8">
+              <PrivacyPage
+                onResetLearning={() => learningEngineRef.current.reset()}
+                onClearHistory={handleClearQueue}
+                feedbackRecordsCount={learningEngineRef.current.getHistory().length}
+              />
+            </div>
+          </PageBackground>
         )}
 
-        {/* Stress Testing Lab */}
+        {/* Stress Testing Lab (Ringed Horizon Sunrise Background) */}
         {currentRoute === 'demo' && (
-          <div className="px-4 sm:px-6 lg:px-8">
-            <DemoLabPage
-              onRunScenario={handleRunScenario}
-              onResetDemo={handleResetDemo}
-              simulatedCount={items.filter(i => i.event.sourceType === 'SIMULATED').length}
-            />
-          </div>
+          <PageBackground imageSrc="/backgrounds/bg-ringed-sunrise-landscape.jpg">
+            <div className="px-4 sm:px-6 lg:px-8">
+              <DemoLabPage
+                onRunScenario={handleRunScenario}
+                onResetDemo={handleResetDemo}
+                simulatedCount={items.filter(i => i.event.sourceType === 'SIMULATED').length}
+              />
+            </div>
+          </PageBackground>
         )}
 
-        {/* Contact Page */}
+        {/* Contact Page (Cosmic Monolith Background) */}
         {currentRoute === 'contact' && (
-          <ContactPage />
+          <PageBackground imageSrc="/backgrounds/bg-monolith-overlook.jpg">
+            <ContactPage />
+          </PageBackground>
         )}
 
         {/* Login Page */}

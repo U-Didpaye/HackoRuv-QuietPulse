@@ -124,14 +124,14 @@ export const HomePage: React.FC<HomePageProps> = ({
         {/* Hero Foreground Content Layer */}
         <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center pt-8 sm:pt-14">
           
-          {/* Official QuietPulse Logo & Wordmark Artwork */}
+          {/* Official QuietPulse Neon Logo Artwork per User Directive */}
           <div className="h-16 sm:h-20 w-auto mb-5 flex items-center justify-center animate-reveal">
             <img
-              src="/quietpulse-logo.png"
+              src="/quietpulse-neon-logo.png"
               alt="QuietPulse"
-              className="h-14 sm:h-18 w-auto object-contain filter drop-shadow-[0_0_30px_rgba(255,255,255,0.25)]"
+              className="h-14 sm:h-18 w-auto object-contain filter drop-shadow-[0_0_35px_rgba(34,211,238,0.35)]"
               onError={(e) => {
-                (e.currentTarget as HTMLImageElement).src = '/quietpulse-logo-centered.png';
+                (e.currentTarget as HTMLImageElement).src = '/quietpulse-logo-transparent.png';
               }}
             />
           </div>

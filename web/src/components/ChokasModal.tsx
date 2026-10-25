@@ -169,9 +169,18 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="w-full max-w-xl h-[560px] bg-v-surface border border-v-border rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-reveal">
+      <div className="relative w-full max-w-xl h-[560px] bg-v-surface border border-v-border rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-reveal">
+        {/* Subtle Futuristic Cosmic Texture Overlay */}
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-20 overflow-hidden select-none">
+          <img
+            src="/backgrounds/bg-violet-stream.png"
+            alt=""
+            className="w-full h-full object-cover transform scale-110 animate-ambient-drift"
+          />
+        </div>
+
         {/* Header */}
-        <div className="px-5 py-3.5 border-b border-v-border flex items-center justify-between bg-v-secondary">
+        <div className="relative z-10 px-5 py-3.5 border-b border-v-border flex items-center justify-between bg-v-secondary/90 backdrop-blur-sm">
           <div className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-lg bg-v-elevated border border-v-border flex items-center justify-center text-v-text">
               <Sparkles className="w-4 h-4 text-cyan-400" />
@@ -194,7 +203,7 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
         </div>
 
         {/* Message Thread */}
-        <div className="flex-1 p-4 overflow-y-auto space-y-3 font-sans text-xs">
+        <div className="relative z-10 flex-1 p-4 overflow-y-auto space-y-3 font-sans text-xs">
           {messages.map((m) => (
             <div
               key={m.id}
@@ -233,7 +242,7 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
         </div>
 
         {/* Suggested Quick Action Chips */}
-        <div className="px-4 py-2 border-t border-v-border bg-v-secondary/40 flex items-center gap-2 overflow-x-auto text-[11px] font-mono">
+        <div className="relative z-10 px-4 py-2 border-t border-v-border bg-v-secondary/80 backdrop-blur-sm flex items-center gap-2 overflow-x-auto text-[11px] font-mono">
           <span className="text-v-text-muted text-[10px] uppercase shrink-0">Try:</span>
           <button
             onClick={() => handleCommand('Start 25m focus session')}
@@ -267,7 +276,7 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
             e.preventDefault();
             handleCommand(input);
           }}
-          className="p-3 border-t border-v-border bg-v-surface flex items-center gap-2"
+          className="relative z-10 p-3 border-t border-v-border bg-v-surface/90 backdrop-blur-sm flex items-center gap-2"
         >
           <input
             type="text"

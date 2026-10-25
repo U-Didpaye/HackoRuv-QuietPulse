@@ -24,13 +24,13 @@ export const Footer: React.FC<FooterProps> = ({
           {/* Brand Info */}
           <div className="md:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="h-10 relative flex items-center justify-center">
+              <div className="h-10 relative flex items-center justify-center bg-transparent">
                 <img
-                  src="/quietpulse-logo.png"
+                  src="/quietpulse-logo-transparent.png"
                   alt="QuietPulse"
-                  className="h-9 w-auto object-contain"
+                  className="h-9 w-auto object-contain bg-transparent"
                   onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).src = '/quietpulse-logo-centered.png';
+                    (e.currentTarget as HTMLImageElement).src = '/quietpulse-logo.png';
                   }}
                 />
               </div>

@@ -40,20 +40,19 @@ export const Navbar: React.FC<NavbarProps> = ({
     <header className="sticky top-0 z-40 bg-v-bg/90 backdrop-blur-md border-b border-v-border transition-colors duration-250">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         
-        {/* Official QuietPulse Logo & Wordmark Header Asset */}
+        {/* Official QuietPulse Logo & Wordmark Header Asset (100% Transparent Alpha) */}
         <button
           onClick={() => onNavigate('home')}
-          className="flex items-center gap-2 group focus:outline-none"
+          className="flex items-center gap-2 group focus:outline-none bg-transparent border-0 p-0"
           title="QuietPulse — Less Noise. More Focus."
         >
-          <div className="h-9 relative flex items-center justify-center">
+          <div className="h-9 relative flex items-center justify-center bg-transparent">
             <img
-              src="/quietpulse-logo.png"
+              src="/quietpulse-logo-transparent.png"
               alt="QuietPulse"
-              className="h-8 sm:h-9 w-auto object-contain filter group-hover:brightness-110 transition"
+              className="h-8 sm:h-9 w-auto object-contain filter group-hover:brightness-110 transition bg-transparent"
               onError={(e) => {
-                // Fallback to centered logo if horizontal fails
-                (e.currentTarget as HTMLImageElement).src = '/quietpulse-logo-centered.png';
+                (e.currentTarget as HTMLImageElement).src = '/quietpulse-logo.png';
               }}
             />
           </div>

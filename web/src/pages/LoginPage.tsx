@@ -85,11 +85,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
         <div className="flex flex-col items-center text-center mb-8">
           <div className="h-12 w-auto mb-3 flex items-center justify-center">
             <img
-              src="/quietpulse-logo.png"
+              src="/quietpulse-neon-logo.png"
               alt="QuietPulse"
-              className="h-11 w-auto object-contain filter drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+              className="h-11 w-auto object-contain filter drop-shadow-[0_0_25px_rgba(34,211,238,0.35)]"
               onError={(e) => {
-                (e.currentTarget as HTMLImageElement).src = '/quietpulse-logo-centered.png';
+                (e.currentTarget as HTMLImageElement).src = '/quietpulse-logo-transparent.png';
               }}
             />
           </div>
