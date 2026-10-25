@@ -12,3 +12,6 @@ app/build/
 .idea/
 local.properties
 .DS_Store
+
+build_apk/
+
