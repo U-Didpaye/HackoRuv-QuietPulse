@@ -1,30 +1,37 @@
 import React, { useState } from 'react';
-import { useTheme, VyroxTheme } from '../context/ThemeContext';
-import { Menu, X, Sparkles, Shield, ChevronDown } from 'lucide-react';
+import { useTheme, QuietPulseTheme } from '../context/ThemeContext';
+import { Menu, X, Sparkles, User, ChevronDown, LogIn, ShieldCheck } from 'lucide-react';
 
 interface NavbarProps {
   currentRoute: string;
   onNavigate: (route: string) => void;
   onOpenChokas: () => void;
   queueCount: number;
+  userEmail?: string | null;
+  onLogout?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   currentRoute,
   onNavigate,
   onOpenChokas,
-  queueCount
+  queueCount,
+  userEmail,
+  onLogout,
 }) => {
   const { theme, setTheme, themes } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [themeDropdownOpen, setThemeDropdownOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
+  // Exact one-word names per Section 8 of Master Prompt:
+  // Home, NotiFy, FlowQueue, DeepFocus, PulseInsights, ChokasAI, Contact
   const navLinks = [
-    { id: 'home', label: 'Overview' },
-    { id: 'engine', label: 'Firewall Engine' },
-    { id: 'queue', label: `Airlock Queue ${queueCount > 0 ? `(${queueCount})` : ''}` },
-    { id: 'focus', label: 'Focus Gateways' },
-    { id: 'insights', label: 'Telemetry' },
+    { id: 'home', label: 'Home' },
+    { id: 'notify', label: 'NotiFy' },
+    { id: 'flowqueue', label: `FlowQueue${queueCount > 0 ? ` (${queueCount})` : ''}` },
+    { id: 'deepfocus', label: 'DeepFocus' },
+    { id: 'pulseinsights', label: 'PulseInsights' },
     { id: 'chokas', label: 'ChokasAI' },
     { id: 'contact', label: 'Contact' },
   ];
@@ -33,18 +40,20 @@ export const Navbar: React.FC<NavbarProps> = ({
     <header className="sticky top-0 z-40 bg-v-bg/90 backdrop-blur-md border-b border-v-border transition-colors duration-250">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         
-        {/* Official Brand Logo & Wordmark Asset */}
+        {/* Official QuietPulse Logo & Wordmark Header Asset */}
         <button
           onClick={() => onNavigate('home')}
           className="flex items-center gap-2 group focus:outline-none"
+          title="QuietPulse — Less Noise. More Focus."
         >
           <div className="h-9 relative flex items-center justify-center">
             <img
-              src="/vyrox-logo-transparent.png"
-              alt="VYROX"
-              className="h-8 sm:h-9 w-auto object-contain filter group-hover:brightness-125 transition"
+              src="/quietpulse-logo.png"
+              alt="QuietPulse"
+              className="h-8 sm:h-9 w-auto object-contain filter group-hover:brightness-110 transition"
               onError={(e) => {
-                (e.currentTarget as HTMLImageElement).src = '/vyrox-emblem.svg';
+                // Fallback to centered logo if horizontal fails
+                (e.currentTarget as HTMLImageElement).src = '/quietpulse-logo-centered.png';
               }}
             />
           </div>
@@ -66,7 +75,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 }}
                 className={`px-3 py-1.5 text-xs font-semibold rounded-md tracking-wider transition-colors ${
                   isActive
-                    ? 'text-v-text bg-v-surface border border-v-border'
+                    ? 'text-v-text bg-v-surface border border-v-border shadow-sm'
                     : 'text-v-text-muted hover:text-v-text hover:bg-v-secondary/50'
                 }`}
               >
@@ -76,12 +85,16 @@ export const Navbar: React.FC<NavbarProps> = ({
           })}
         </nav>
 
-        {/* Right Utility: Theme Selector & Action */}
-        <div className="flex items-center gap-3">
-          {/* Theme Selector Dropdown */}
+        {/* Right Controls: Theme Selector, ChokasAI, Profile / Login */}
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          
+          {/* 5-Theme Selector Dropdown */}
           <div className="relative">
             <button
-              onClick={() => setThemeDropdownOpen(!themeDropdownOpen)}
+              onClick={() => {
+                setThemeDropdownOpen(!themeDropdownOpen);
+                setProfileDropdownOpen(false);
+              }}
               className="flex items-center gap-2 px-2.5 py-1.5 text-xs font-medium rounded-lg bg-v-surface border border-v-border text-v-text hover:border-v-accent transition"
               title="Select Visual Theme"
             >
@@ -99,9 +112,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
 
             {themeDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-52 p-2 rounded-xl bg-v-surface border border-v-border shadow-2xl z-50 animate-reveal">
+              <div className="absolute right-0 mt-2 w-56 p-2 rounded-xl bg-v-surface border border-v-border shadow-2xl z-50 animate-reveal">
                 <span className="text-[10px] font-mono uppercase tracking-wider text-v-text-muted px-2 py-1 block">
-                  Select Theme
+                  Select Theme (5 Available)
                 </span>
                 <div className="space-y-1 mt-1">
                   {themes.map((t) => {
@@ -143,10 +156,67 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             onClick={onOpenChokas}
             className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-v-text text-v-bg hover:opacity-90 transition font-mono"
+            title="Open ChokasAI Assistant"
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>ChokasAI</span>
           </button>
+
+          {/* Profile / Login Menu */}
+          <div className="relative">
+            {userEmail ? (
+              <div>
+                <button
+                  onClick={() => {
+                    setProfileDropdownOpen(!profileDropdownOpen);
+                    setThemeDropdownOpen(false);
+                  }}
+                  className="flex items-center gap-2 p-1 sm:px-2.5 sm:py-1.5 rounded-lg bg-v-surface border border-v-border text-v-text hover:border-v-accent transition text-xs"
+                >
+                  <div className="w-6 h-6 rounded-full bg-v-accent/20 border border-v-accent flex items-center justify-center text-v-text font-mono text-[11px] font-bold">
+                    {userEmail.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="hidden md:inline font-mono text-[11px] max-w-[100px] truncate">
+                    {userEmail}
+                  </span>
+                  <ChevronDown className="w-3 h-3 text-v-text-muted hidden sm:inline" />
+                </button>
+
+                {profileDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 p-2 rounded-xl bg-v-surface border border-v-border shadow-2xl z-50 animate-reveal">
+                    <div className="px-3 py-2 border-b border-v-border text-xs">
+                      <div className="font-semibold text-v-text truncate">{userEmail}</div>
+                      <div className="text-[10px] text-v-text-muted flex items-center gap-1 mt-0.5">
+                        <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                        <span>Sovereign Identity</span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setProfileDropdownOpen(false);
+                        if (onLogout) onLogout();
+                      }}
+                      className="w-full text-left px-3 py-2 mt-1 rounded-lg text-xs text-rose-400 hover:bg-v-secondary transition"
+                    >
+                      Log Out
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button
+                onClick={() => onNavigate('login')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition ${
+                  currentRoute === 'login'
+                    ? 'bg-v-elevated border border-v-accent text-v-text'
+                    : 'bg-v-surface border border-v-border text-v-text hover:border-v-accent'
+                }`}
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span>Log In</span>
+              </button>
+            )}
+          </div>
 
           {/* Mobile Menu Button */}
           <button
@@ -177,6 +247,16 @@ export const Navbar: React.FC<NavbarProps> = ({
               {link.label}
             </button>
           ))}
+          <button
+            onClick={() => {
+              setMobileMenuOpen(false);
+              onNavigate('login');
+            }}
+            className="w-full text-left py-2 px-3 rounded-lg text-xs font-semibold text-v-accent hover:bg-v-secondary tracking-wider flex items-center gap-2"
+          >
+            <LogIn className="w-3.5 h-3.5" />
+            <span>{userEmail ? `Account (${userEmail})` : 'Log In to QuietPulse'}</span>
+          </button>
         </div>
       )}
     </header>

@@ -13,6 +13,7 @@ import { InsightsPage } from './pages/InsightsPage';
 import { RulesPage } from './pages/RulesPage';
 import { PrivacyPage } from './pages/PrivacyPage';
 import { ContactPage } from './pages/ContactPage';
+import { LoginPage } from './pages/LoginPage';
 
 import { BurstDetector } from './intelligence/burstDetector';
 import { LocalLearningEngine } from './intelligence/localLearning';
@@ -26,10 +27,10 @@ import {
   NotificationEvent
 } from './types';
 
-function VyroxApp() {
+function QuietPulseApp() {
   const [showSplash, setShowSplash] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
-      const seen = sessionStorage.getItem('vyrox_splash_seen');
+      const seen = sessionStorage.getItem('quietpulse_splash_seen');
       return seen !== 'true';
     }
     return true;
@@ -37,6 +38,12 @@ function VyroxApp() {
 
   const [currentRoute, setCurrentRoute] = useState<string>('home');
   const [isChokasOpen, setIsChokasOpen] = useState<boolean>(false);
+  const [userEmail, setUserEmail] = useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('quietpulse_user') || sessionStorage.getItem('quietpulse_user');
+    }
+    return null;
+  });
 
   // Core Intelligence Engines (Preserved)
   const burstDetectorRef = useRef(new BurstDetector());
@@ -214,13 +221,30 @@ function VyroxApp() {
   };
 
   const navigateTo = (route: string) => {
+    // Canonicalize route aliases
+    if (route === 'engine') route = 'notify';
+    else if (route === 'queue') route = 'flowqueue';
+    else if (route === 'focus') route = 'deepfocus';
+    else if (route === 'insights') route = 'pulseinsights';
+
     setCurrentRoute(route);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleLoginSuccess = (email: string) => {
+    setUserEmail(email);
+    navigateTo('home');
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('quietpulse_user');
+    sessionStorage.removeItem('quietpulse_user');
+    setUserEmail(null);
+  };
+
   return (
     <div className="min-h-screen bg-v-bg text-v-text flex flex-col selection:bg-neutral-500 selection:text-white transition-colors duration-250">
-      {/* 5-Second Cinematic Splash Screen */}
+      {/* 2.5-Second Cinematic Launch Screen */}
       {showSplash && (
         <SplashScreen
           onComplete={() => setShowSplash(false)}
@@ -233,11 +257,13 @@ function VyroxApp() {
         onNavigate={navigateTo}
         onOpenChokas={() => setIsChokasOpen(true)}
         queueCount={items.filter(i => !i.isReviewed).length}
+        userEmail={userEmail}
+        onLogout={handleLogout}
       />
 
       {/* Main View Router */}
       <main className="flex-1 w-full">
-        {/* Page 2: Homepage with Atmospheric Large VYROX Background Logo */}
+        {/* Home */}
         {currentRoute === 'home' && (
           <HomePage
             onNavigate={navigateTo}
@@ -246,8 +272,8 @@ function VyroxApp() {
           />
         )}
 
-        {/* Engine / Live Interception Feed */}
-        {currentRoute === 'engine' && (
+        {/* NotiFy: Live Interception Feed */}
+        {(currentRoute === 'notify' || currentRoute === 'engine') && (
           <div className="px-4 sm:px-6 lg:px-8">
             <DashboardPage
               isFocusActive={isFocusActive}
@@ -263,8 +289,8 @@ function VyroxApp() {
           </div>
         )}
 
-        {/* Attention Airlock Queue */}
-        {currentRoute === 'queue' && (
+        {/* FlowQueue */}
+        {(currentRoute === 'flowqueue' || currentRoute === 'queue') && (
           <div className="px-4 sm:px-6 lg:px-8">
             <QueuePage
               items={items}
@@ -277,8 +303,8 @@ function VyroxApp() {
           </div>
         )}
 
-        {/* Focus Gateways */}
-        {currentRoute === 'focus' && (
+        {/* DeepFocus */}
+        {(currentRoute === 'deepfocus' || currentRoute === 'focus') && (
           <div className="px-4 sm:px-6 lg:px-8">
             <FocusPage
               isFocusActive={isFocusActive}
@@ -290,14 +316,14 @@ function VyroxApp() {
           </div>
         )}
 
-        {/* Telemetry & Telemetry ROI */}
-        {currentRoute === 'insights' && (
+        {/* PulseInsights */}
+        {(currentRoute === 'pulseinsights' || currentRoute === 'insights') && (
           <div className="px-4 sm:px-6 lg:px-8">
             <InsightsPage metrics={metrics} />
           </div>
         )}
 
-        {/* Context Profiles & Rules */}
+        {/* Rules */}
         {currentRoute === 'rules' && (
           <div className="px-4 sm:px-6 lg:px-8">
             <RulesPage
@@ -340,6 +366,14 @@ function VyroxApp() {
         {currentRoute === 'contact' && (
           <ContactPage />
         )}
+
+        {/* Login Page */}
+        {currentRoute === 'login' && (
+          <LoginPage
+            onLoginSuccess={handleLoginSuccess}
+            onNavigateHome={() => navigateTo('home')}
+          />
+        )}
       </main>
 
       {/* ChokasAI Terminal Modal */}
@@ -364,7 +398,7 @@ function VyroxApp() {
 export default function App() {
   return (
     <ThemeProvider>
-      <VyroxApp />
+      <QuietPulseApp />
     </ThemeProvider>
   );
 }

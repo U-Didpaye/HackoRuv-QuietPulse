@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  /* Default: Theme A — Obsidian Silver */
+  /* Default: Theme 1 — Obsidian Silver */
   --v-bg: #000000;
   --v-surface: #101010;
   --v-secondary: #181818;
@@ -13,6 +13,7 @@
   --v-border: #303030;
   --v-border-subtle: #242424;
   --v-accent: #C6C6C6;
+  --v-accent-secondary: #E5E5E5;
   --v-accent-glow: rgba(198, 198, 198, 0.15);
   --v-badge-bg: #1C1C1C;
   --v-hero-glow: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
@@ -28,24 +29,58 @@
   --v-border: #303030;
   --v-border-subtle: #242424;
   --v-accent: #C6C6C6;
+  --v-accent-secondary: #E5E5E5;
   --v-accent-glow: rgba(198, 198, 198, 0.15);
   --v-badge-bg: #1C1C1C;
   --v-hero-glow: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
 }
 
-[data-theme="graphite"] {
-  --v-bg: #111214;
-  --v-surface: #191A1E;
-  --v-secondary: #222328;
-  --v-elevated: #292A30;
-  --v-primary-text: #F4F4F5;
-  --v-secondary-text: #A7A7AC;
-  --v-border: #36373D;
-  --v-border-subtle: #2B2C32;
-  --v-accent: #D0D0D0;
-  --v-accent-glow: rgba(208, 208, 208, 0.12);
-  --v-badge-bg: #22242B;
-  --v-hero-glow: radial-gradient(circle at 50% 30%, rgba(208, 208, 208, 0.07) 0%, rgba(17, 18, 20, 0) 70%);
+[data-theme="emerald"] {
+  --v-bg: #051410;
+  --v-surface: #09201A;
+  --v-secondary: #0E2C24;
+  --v-elevated: #15392F;
+  --v-primary-text: #F2FCF8;
+  --v-secondary-text: #8EC9B5;
+  --v-border: #1B4E41;
+  --v-border-subtle: #123B31;
+  --v-accent: #14B8A6;
+  --v-accent-secondary: #9FFFCB;
+  --v-accent-glow: rgba(20, 184, 166, 0.22);
+  --v-badge-bg: #10332A;
+  --v-hero-glow: radial-gradient(circle at 50% 30%, rgba(20, 184, 166, 0.16) 0%, rgba(5, 20, 16, 0) 70%);
+}
+
+[data-theme="violet"] {
+  --v-bg: #0C0817;
+  --v-surface: #140E26;
+  --v-secondary: #1D1535;
+  --v-elevated: #281D47;
+  --v-primary-text: #F8F6FD;
+  --v-secondary-text: #B4A7D6;
+  --v-border: #3E2B6B;
+  --v-border-subtle: #2B1D4B;
+  --v-accent: #8B5CF6;
+  --v-accent-secondary: #C4B5FD;
+  --v-accent-glow: rgba(139, 92, 246, 0.22);
+  --v-badge-bg: #22183E;
+  --v-hero-glow: radial-gradient(circle at 50% 30%, rgba(139, 92, 246, 0.16) 0%, rgba(12, 8, 23, 0) 70%);
+}
+
+[data-theme="crimson"] {
+  --v-bg: #140508;
+  --v-surface: #20090E;
+  --v-secondary: #2C0D14;
+  --v-elevated: #3A131C;
+  --v-primary-text: #FFF1F2;
+  --v-secondary-text: #E598A4;
+  --v-border: #561B26;
+  --v-border-subtle: #3D121B;
+  --v-accent: #FF4757;
+  --v-accent-secondary: #FFB8BC;
+  --v-accent-glow: rgba(255, 71, 87, 0.22);
+  --v-badge-bg: #320E16;
+  --v-hero-glow: radial-gradient(circle at 50% 30%, rgba(255, 71, 87, 0.15) 0%, rgba(20, 5, 8, 0) 70%);
 }
 
 [data-theme="pearl"] {
@@ -58,6 +93,7 @@
   --v-border: #DAD9D4;
   --v-border-subtle: #E5E4DE;
   --v-accent: #737373;
+  --v-accent-secondary: #404040;
   --v-accent-glow: rgba(115, 115, 115, 0.10);
   --v-badge-bg: #EAE9E4;
   --v-hero-glow: radial-gradient(circle at 50% 30%, rgba(0, 0, 0, 0.03) 0%, rgba(245, 244, 240, 0) 70%);
@@ -75,7 +111,7 @@ body {
 /* Editorial display font styling */
 .font-editorial {
   font-family: "Cinzel", "Trajan Pro", "Didot", "Bodoni MT", -apple-system, BlinkMacSystemFont, "Times New Roman", serif;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
 }
 
 /* Metallic Sweep Animation for Splash and Logo */
@@ -92,20 +128,40 @@ body {
   animation: metallic-sweep 3.5s infinite cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Subtle Breathing Motion for Large Background Emblem */
+/* Subtle Breathing Motion for Large Background Artwork */
 @keyframes subtle-float {
   0%, 100% {
     transform: translateY(0px) scale(1);
-    opacity: 0.12;
+    opacity: 0.88;
   }
   50% {
-    transform: translateY(-8px) scale(1.015);
-    opacity: 0.16;
+    transform: translateY(-6px) scale(1.02);
+    opacity: 0.96;
   }
 }
 
 .animate-subtle-float {
-  animation: subtle-float 12s ease-in-out infinite;
+  animation: subtle-float 14s ease-in-out infinite;
+}
+
+/* Light sweep / progress indicator for launch screen */
+@keyframes light-sweep {
+  0% {
+    width: 0%;
+    opacity: 0.3;
+  }
+  50% {
+    width: 70%;
+    opacity: 1;
+  }
+  100% {
+    width: 100%;
+    opacity: 0.9;
+  }
+}
+
+.animate-light-sweep {
+  animation: light-sweep 2.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 /* Scroll Reveal System */
@@ -121,29 +177,17 @@ body {
   transform: translateY(0);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .reveal-init {
-    opacity: 1 !important;
-    transform: none !important;
-    transition: none !important;
-  }
-  .animate-metallic-sweep,
-  .animate-subtle-float {
-    animation: none !important;
-  }
-}
-
-/* Custom Scrollbar matching current theme */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
 }
 ::-webkit-scrollbar-track {
   background: var(--v-bg);
 }
 ::-webkit-scrollbar-thumb {
   background: var(--v-border);
-  border-radius: 3px;
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--v-accent);

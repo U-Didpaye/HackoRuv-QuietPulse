@@ -1,4 +1,4 @@
-name: Build FocusShield AI Debug APK
+name: Build QuietPulse Debug APK
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    name: Build & Assemble Debug APK
+    name: Build & Assemble QuietPulse Debug APK
     runs-on: ubuntu-latest
 
     steps:
@@ -37,7 +37,7 @@ jobs:
       - name: Upload Debug APK as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: FocusShield-AI-debug.apk
+          name: QuietPulse-debug.apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 14
 
@@ -45,17 +45,20 @@ jobs:
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.0-build-${{ github.run_number }}
-          name: FocusShield AI v1.0.0 (Build ${{ github.run_number }})
+          tag_name: v1.0.0-release-${{ github.run_number }}
+          name: QuietPulse v1.0.0 (Build ${{ github.run_number }})
           body: |
-            ## 🛡️ FocusShield AI — CASCADE '26 Release
-            Problem 3.1: The Attention Firewall (IIIT Nagpur)
+            # 🛡️ QuietPulse — LESS NOISE. MORE FOCUS.
+            ### Official Native Android Application Release
 
-            ### Direct APK Download
-            Download and install `FocusShield-AI-debug.apk` directly on any Android 8.0+ device.
-            * Verified offline-first on-device intelligence
-            * Real NotificationListenerService integration
-            * Interactive Demo Lab for Hackathon Judges
+            **Made With Creativity By HackoRuv - Team**
+
+            #### Direct Download & Installation
+            Download the attached `QuietPulse-debug.apk` and open it on your physical Android phone to install immediately:
+            - **Package**: `QuietPulse-debug.apk`
+            - **Target**: Android 8.0+ (API 26+)
+            - **Architecture**: 100% On-Device Attention Firewall
+            - **Features**: NotiFy Engine, FlowQueue Digest, DeepFocus Timer, PulseInsights Telemetry, 5 Handcrafted Themes, and Real NotificationListenerService integration.
           files: android/app/build/outputs/apk/debug/app-debug.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

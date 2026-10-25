@@ -33,27 +33,27 @@ export const DashboardPage: React.FC<DashboardProps> = ({
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto py-4">
-      {/* 1. Firewall Shield Status Banner */}
+      {/* 1. NotiFy Status Banner per Section 8 of Master Prompt */}
       <div className="p-6 rounded-2xl bg-v-surface border border-v-border shadow-xl">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="relative">
               <div className="w-12 h-12 rounded-xl bg-v-elevated border border-v-border flex items-center justify-center text-v-text">
-                <Shield className="w-6 h-6" />
+                <Shield className="w-6 h-6 text-cyan-400" />
               </div>
-              <span className="absolute -top-1 -right-1 w-3 h-3 bg-v-accent rounded-full border-2 border-v-surface" />
+              <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full border-2 border-v-surface" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-lg font-bold text-v-text uppercase tracking-wider font-mono">
-                  VYROX Firewall Engine
+                  NotiFy Engine
                 </h2>
                 <span className="px-2 py-0.5 text-[10px] font-mono font-bold rounded-full bg-v-secondary text-v-text border border-v-border">
-                  SHIELD ACTIVE
+                  TRIAGE ACTIVE
                 </span>
               </div>
               <p className="text-xs text-v-text-muted mt-0.5 font-sans">
-                Real-time cognitive triage, 60s rolling burst protection, and local heuristic execution.
+                Prioritizes incoming alerts, halts repetitive bursts, and organizes non-urgent notifications into FlowQueue.
               </p>
             </div>
           </div>
@@ -64,7 +64,7 @@ export const DashboardPage: React.FC<DashboardProps> = ({
               className="flex items-center gap-1.5 px-4 py-2 text-xs font-mono font-bold rounded-xl bg-v-text text-v-bg hover:opacity-90 transition shadow-lg"
             >
               <Terminal className="w-3.5 h-3.5" />
-              Stress Test Lab
+              Demo Lab
             </button>
           </div>
         </div>
@@ -87,7 +87,7 @@ export const DashboardPage: React.FC<DashboardProps> = ({
               </span>
             )}
           </div>
-          <p className="text-[11px] text-v-text-muted mt-1 font-sans">60s rolling time-window</p>
+          <p className="text-[11px] text-v-text-muted mt-1 font-sans">60s rolling window</p>
         </div>
 
         <div className="p-5 rounded-2xl bg-v-surface border border-v-border">
@@ -98,7 +98,7 @@ export const DashboardPage: React.FC<DashboardProps> = ({
           <div className="text-2xl font-black font-editorial text-v-text">
             {metrics.estimatedInterruptionsDeflected}
           </div>
-          <p className="text-[11px] text-v-text-muted mt-1 font-sans">Held in Attention Airlock</p>
+          <p className="text-[11px] text-v-text-muted mt-1 font-sans">Buffered in FlowQueue</p>
         </div>
 
         <div className="p-5 rounded-2xl bg-v-surface border border-v-border">
@@ -114,7 +114,7 @@ export const DashboardPage: React.FC<DashboardProps> = ({
 
         <div className="p-5 rounded-2xl bg-v-surface border border-v-border">
           <div className="flex items-center justify-between text-v-text-muted mb-2">
-            <span className="text-[11px] font-mono uppercase tracking-wider">Airlock Total</span>
+            <span className="text-[11px] font-mono uppercase tracking-wider">FlowQueue Total</span>
             <Activity className="w-4 h-4 text-v-accent" />
           </div>
           <div className="text-2xl font-black font-editorial text-v-text">
@@ -126,18 +126,18 @@ export const DashboardPage: React.FC<DashboardProps> = ({
         </div>
       </div>
 
-      {/* 3. Focus Session Control Bar */}
+      {/* 3. DeepFocus Quick Gateway */}
       <div className="p-6 rounded-2xl bg-v-surface border border-v-border">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <span className="text-[10px] font-mono font-bold tracking-widest text-v-accent uppercase">
-              Gateway Status
+              DeepFocus Window
             </span>
             <h3 className="text-base font-bold text-v-text mt-0.5">
-              {isFocusActive ? 'Active Focus Gateway Protected' : 'Initiate a Focused Attention Window'}
+              {isFocusActive ? 'DeepFocus Window Protected' : 'Initiate a Focused Work Window'}
             </h3>
             <p className="text-xs text-v-text-muted mt-0.5 font-sans">
-              Non-urgent interruptions are routed to the Attention Airlock during active sessions.
+              Non-urgent notifications are routed into FlowQueue during active focus sessions.
             </p>
           </div>
 
@@ -179,10 +179,10 @@ export const DashboardPage: React.FC<DashboardProps> = ({
             Live Cognitive Decisions
           </h3>
           <button
-            onClick={() => onNavigate('queue')}
+            onClick={() => onNavigate('flowqueue')}
             className="text-xs font-mono text-v-accent hover:text-v-text flex items-center gap-1"
           >
-            Airlock Queue ({recentItems.length}) <ChevronRight className="w-3.5 h-3.5" />
+            FlowQueue ({recentItems.length}) <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
@@ -191,13 +191,13 @@ export const DashboardPage: React.FC<DashboardProps> = ({
             <Sparkles className="w-8 h-8 text-v-text-muted mx-auto mb-2" />
             <p className="text-sm font-medium text-v-text">No Notifications Evaluated Yet</p>
             <p className="text-xs text-v-text-muted mt-1 font-sans">
-              Run a scenario in the Stress Test Lab to observe live classification heuristics.
+              Run a scenario in the Demo Lab to observe live NotiFy classification heuristics.
             </p>
             <button
               onClick={() => onNavigate('demo')}
               className="mt-4 px-4 py-2 text-xs font-mono font-semibold rounded-lg bg-v-secondary text-v-text border border-v-border hover:bg-v-elevated transition"
             >
-              Open Stress Test Lab
+              Open Demo Lab
             </button>
           </div>
         ) : (

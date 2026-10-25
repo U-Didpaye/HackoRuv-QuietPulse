@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Sparkles, X, Send, Bot, User, ArrowRight, Check, Command, Shield } from 'lucide-react';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme, QuietPulseTheme } from '../context/ThemeContext';
 
 interface Message {
   id: string;
@@ -25,18 +25,24 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
   onStartFocus,
   onClearQueue,
 }) => {
-  const { setTheme } = useTheme();
+  const { setTheme, theme } = useTheme();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'init_1',
       sender: 'chokas',
-      text: "Greetings. I am ChokasAI, your on-device guide to the VYROX Attention Firewall. How may I assist you with your focus or notification triage today?",
+      text: "Greetings. I am ChokasAI, your on-device guide to QuietPulse. How may I assist you with your focus or notification triage today?",
       timestamp: 'Just now',
     },
   ]);
   const [input, setInput] = useState('');
 
   if (!isOpen) return null;
+
+  // Typo & Fuzzy Match Helper
+  const fuzzyMatch = (inputStr: string, patterns: string[]): boolean => {
+    const clean = inputStr.toLowerCase().replace(/[^a-z0-9 ]/g, ' ');
+    return patterns.some(p => clean.includes(p));
+  };
 
   const handleCommand = (rawText: string) => {
     const text = rawText.trim();
@@ -52,66 +58,100 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
     setMessages((prev) => [...prev, userMsg]);
     setInput('');
 
-    // Process through the offline natural-language router
+    // Process through the offline natural-language router with typo & synonym handling
     setTimeout(() => {
-      const lower = text.toLowerCase();
+      const lower = text.toLowerCase().trim();
       let reply = '';
       let action: string | undefined;
 
-      // 1. Action: Focus
-      if (lower.includes('start focus') || lower.includes('pomodoro') || lower.includes('deep work')) {
-        const mins = lower.includes('50') ? 50 : 25;
+      // 1. Focus Session Commands (Handles typos: "swtich focus", "strt focus", "25m", "deep work")
+      if (
+        fuzzyMatch(lower, ['start focus', 'strt focus', 'begin focus', 'deepfocus', 'deep work', 'pomodoro', 'focus session']) ||
+        (lower.includes('focus') && (lower.includes('25') || lower.includes('50') || lower.includes('minute') || lower.includes('min')))
+      ) {
+        let mins = 25;
+        if (lower.includes('50') || lower.includes('hour')) mins = 50;
+        else if (lower.includes('15')) mins = 15;
+        else if (lower.includes('30')) mins = 30;
+        else if (lower.includes('45')) mins = 45;
+
         onStartFocus(`${mins}m Session (via ChokasAI)`, mins);
-        reply = `Started an active ${mins}-minute focus session. Non-urgent alerts are now being buffered into your Attention Airlock.`;
-        action = `Initiated ${mins}m Focus Session`;
+        reply = `Started an active ${mins}-minute DeepFocus session. Non-urgent alerts are now buffered into FlowQueue.`;
+        action = `Initiated ${mins}m DeepFocus Session`;
       }
-      // 2. Action: Clear Queue
-      else if (lower.includes('clear queue') || lower.includes('wipe queue')) {
+      // 2. Clear Queue Commands (Handles: "clear queue", "wip queue", "empty queue", "cliar")
+      else if (fuzzyMatch(lower, ['clear queue', 'wip queue', 'wipe queue', 'empty queue', 'clear flowqueue', 'reset queue', 'purge queue'])) {
         onClearQueue();
-        reply = "Attention Airlock queue has been cleared. All non-urgent buffer logs are wiped.";
-        action = "Cleared Notification Queue";
+        reply = "FlowQueue has been cleared. All buffered notification records have been safely wiped.";
+        action = "Cleared FlowQueue";
       }
-      // 3. Action: Theme Switching
-      else if (lower.includes('pearl theme') || lower.includes('light theme')) {
+      // 3. Theme Switching (5 Official Themes: obsidian, emerald, violet, crimson, pearl)
+      else if (fuzzyMatch(lower, ['emerald', 'emrald', 'green', 'mint'])) {
+        setTheme('emerald');
+        reply = "Switched to Emerald theme (Deep forest with mint accents).";
+        action = "Theme changed to Emerald";
+      } else if (fuzzyMatch(lower, ['violet', 'purple', 'voilet', 'lavender'])) {
+        setTheme('violet');
+        reply = "Switched to Violet theme (Dark celestial with lavender accents).";
+        action = "Theme changed to Violet";
+      } else if (fuzzyMatch(lower, ['crimson', 'crmison', 'red', 'rose'])) {
+        setTheme('crimson');
+        reply = "Switched to Crimson theme (Dark red with soft rose accents).";
+        action = "Theme changed to Crimson";
+      } else if (fuzzyMatch(lower, ['pearl', 'light theme', 'white theme', 'peral'])) {
         setTheme('pearl');
         reply = "Switched to Pearl theme (Clean architectural light).";
         action = "Theme changed to Pearl";
-      } else if (lower.includes('obsidian theme') || lower.includes('dark theme')) {
+      } else if (fuzzyMatch(lower, ['obsidian', 'silver', 'black theme', 'dark theme', 'obsidien'])) {
         setTheme('obsidian');
-        reply = "Switched to Obsidian Silver theme (Cinematic metallic black).";
+        reply = "Switched to Obsidian Silver theme (Cinematic black & metallic silver).";
         action = "Theme changed to Obsidian Silver";
-      } else if (lower.includes('graphite theme')) {
-        setTheme('graphite');
-        reply = "Switched to Graphite theme (Sophisticated charcoal).";
-        action = "Theme changed to Graphite";
+      } else if (fuzzyMatch(lower, ['help themes', 'themes', 'show themes', 'list themes'])) {
+        reply = "QuietPulse supports 5 handcrafted themes:\n1. Obsidian Silver (Default black/silver)\n2. Emerald (#14B8A6 mint)\n3. Violet (#8B5CF6 lavender)\n4. Crimson (#FF4757 rose)\n5. Pearl (Architectural light).\nType 'switch to emerald' or 'switch to violet' to apply any theme.";
       }
-      // 4. Navigation commands
-      else if (lower.includes('open queue') || lower.includes('show queue') || lower.includes('airlock')) {
-        onNavigate('queue');
+      // 4. Navigation Commands (Strict One-Word Features: Home, NotiFy, FlowQueue, DeepFocus, PulseInsights, Contact)
+      else if (fuzzyMatch(lower, ['open queue', 'show queue', 'go queue', 'flowqueue', 'flow queue'])) {
+        onNavigate('flowqueue');
         onClose();
         return;
-      } else if (lower.includes('privacy') || lower.includes('permissions') || lower.includes('security')) {
+      } else if (fuzzyMatch(lower, ['open notify', 'notify', 'engine', 'firewall', 'go notify'])) {
+        onNavigate('notify');
+        onClose();
+        return;
+      } else if (fuzzyMatch(lower, ['deepfocus', 'open focus', 'go focus', 'focus timer'])) {
+        onNavigate('deepfocus');
+        onClose();
+        return;
+      } else if (fuzzyMatch(lower, ['pulseinsights', 'insights', 'telemetry', 'analytics', 'stats'])) {
+        onNavigate('pulseinsights');
+        onClose();
+        return;
+      } else if (fuzzyMatch(lower, ['privacy', 'permissions', 'audit', 'security'])) {
         onNavigate('privacy');
         onClose();
         return;
-      } else if (lower.includes('telemetry') || lower.includes('insights') || lower.includes('analytics')) {
-        onNavigate('insights');
+      } else if (fuzzyMatch(lower, ['rules', 'context rules', 'app rules', 'settings'])) {
+        onNavigate('rules');
         onClose();
         return;
-      } else if (lower.includes('contact') || lower.includes('reach out')) {
+      } else if (fuzzyMatch(lower, ['contact', 'reach out', 'feedback', 'team'])) {
         onNavigate('contact');
         onClose();
         return;
+      } else if (fuzzyMatch(lower, ['home', 'overview', 'main page'])) {
+        onNavigate('home');
+        onClose();
+        return;
       }
-      // 5. Explanations
-      else if (lower.includes('burst') || lower.includes('storm')) {
-        reply = "The Burst Detector monitors a rolling 60-second window. If more than 5 notifications arrive rapidly across apps, or a single app floods repetitive alerts, VYROX flags an Interruption Storm and activates the Attention Airlock to prevent distraction.";
-      } else if (lower.includes('urgency') || lower.includes('relevance')) {
-        reply = "VYROX evaluates two separate scoring axes: Urgency (time-critical cues like OTPs or emergency calls) and Relevance (direct messages vs broadcast channels). This prevents important but non-urgent messages from interrupting your active flow.";
-      } else if (lower.includes('who are you') || lower.includes('what is chokas')) {
-        reply = "I am ChokasAI, an embedded, 100% offline intelligence guide for VYROX. I run locally without transmitting your queries to third-party language models.";
+      // 5. Explanations & Knowledge Base
+      else if (fuzzyMatch(lower, ['burst', 'storm', 'bursts'])) {
+        reply = "A Notification Burst is when multiple notifications arrive rapidly across apps (5+ in 60 seconds) or when a single app repeatedly pings. QuietPulse detects these bursts and buffers them in FlowQueue to prevent distraction spiral.";
+      } else if (fuzzyMatch(lower, ['urgency', 'relevance', 'classify', 'how it works'])) {
+        reply = "NotiFy calculates two independent scores:\n• Urgency: Time-critical need (OTPs, urgent calls)\n• Relevance: Contextual importance to you.\nHigh urgency + high relevance passes instantly. High relevance with low urgency goes into FlowQueue for later review.";
+      } else if (fuzzyMatch(lower, ['who are you', 'what are you', 'chokas'])) {
+        reply = "I am ChokasAI, an embedded 100% on-device assistant for QuietPulse. I execute commands, manage themes, explain triage decisions, and never transmit your private data over the network.";
       } else {
-        reply = "I understand. I can help you explain features, navigate directly to any page, or execute commands like 'start a 25m focus session', 'switch to graphite theme', or 'clear queue'. What would you like to do?";
+        reply = "I understand. You can ask me to explain triage rules, switch themes (Obsidian, Emerald, Violet, Crimson, Pearl), start a DeepFocus timer, or navigate directly to NotiFy, FlowQueue, or PulseInsights.";
       }
 
       setMessages((prev) => [
@@ -124,28 +164,28 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         },
       ]);
-    }, 400);
+    }, 350);
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
       <div className="w-full max-w-xl h-[560px] bg-v-surface border border-v-border rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-reveal">
         {/* Header */}
         <div className="px-5 py-3.5 border-b border-v-border flex items-center justify-between bg-v-secondary">
           <div className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-lg bg-v-elevated border border-v-border flex items-center justify-center text-v-text">
-              <Sparkles className="w-4 h-4" />
+              <Sparkles className="w-4 h-4 text-cyan-400" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold text-v-text uppercase font-mono tracking-wider">
-                  ChokasAI Terminal
+                  ChokasAI Assistant
                 </span>
                 <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-v-surface text-v-accent border border-v-border">
-                  OFFLINE KNOWLEDGE BASE
+                  100% ON-DEVICE
                 </span>
               </div>
-              <p className="text-[10px] text-v-text-muted">In-app guide and command router</p>
+              <p className="text-[10px] text-v-text-muted">Natural-language command router &amp; guide</p>
             </div>
           </div>
           <button onClick={onClose} className="p-1 rounded-lg text-v-text-muted hover:text-v-text hover:bg-v-elevated">
@@ -172,11 +212,11 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
                     : 'bg-v-elevated text-v-text border-v-border'
                 }`}
               >
-                <p>{m.text}</p>
+                <p className="whitespace-pre-line">{m.text}</p>
                 {m.actionTaken && (
-                  <div className="mt-2 pt-1.5 border-t border-v-border/70 flex items-center gap-1 text-[10px] font-mono text-v-accent">
+                  <div className="mt-2 pt-1.5 border-t border-v-border/70 flex items-center gap-1 text-[10px] font-mono text-emerald-400 font-bold">
                     <Check className="w-3 h-3" />
-                    <span>Action: {m.actionTaken}</span>
+                    <span>Action Executed: {m.actionTaken}</span>
                   </div>
                 )}
                 <span className="text-[9px] opacity-60 mt-1 block text-right font-mono">
@@ -192,26 +232,32 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
           ))}
         </div>
 
-        {/* Suggested Command Chips */}
+        {/* Suggested Quick Action Chips */}
         <div className="px-4 py-2 border-t border-v-border bg-v-secondary/40 flex items-center gap-2 overflow-x-auto text-[11px] font-mono">
           <span className="text-v-text-muted text-[10px] uppercase shrink-0">Try:</span>
           <button
-            onClick={() => handleCommand('Start a 25m focus session')}
+            onClick={() => handleCommand('Start 25m focus session')}
             className="px-2.5 py-1 rounded bg-v-surface border border-v-border text-v-text hover:border-v-accent transition shrink-0"
           >
             Start 25m Focus
+          </button>
+          <button
+            onClick={() => handleCommand('Switch to Emerald theme')}
+            className="px-2.5 py-1 rounded bg-v-surface border border-v-border text-v-text hover:border-v-accent transition shrink-0 text-emerald-300"
+          >
+            Emerald Theme
+          </button>
+          <button
+            onClick={() => handleCommand('Switch to Violet theme')}
+            className="px-2.5 py-1 rounded bg-v-surface border border-v-border text-v-text hover:border-v-accent transition shrink-0 text-purple-300"
+          >
+            Violet Theme
           </button>
           <button
             onClick={() => handleCommand('What is a notification burst?')}
             className="px-2.5 py-1 rounded bg-v-surface border border-v-border text-v-text hover:border-v-accent transition shrink-0"
           >
             Explain Bursts
-          </button>
-          <button
-            onClick={() => handleCommand('Switch to Graphite theme')}
-            className="px-2.5 py-1 rounded bg-v-surface border border-v-border text-v-text hover:border-v-accent transition shrink-0"
-          >
-            Graphite Theme
           </button>
         </div>
 
@@ -227,7 +273,7 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask a question or enter a command..."
+            placeholder="Type a command or ask a question (e.g. 'swtich emerald', 'open flowqueue')..."
             className="flex-1 px-3.5 py-2 text-xs bg-v-secondary border border-v-border rounded-xl text-v-text placeholder-v-text-muted focus:outline-none focus:border-v-accent transition font-sans"
           />
           <button

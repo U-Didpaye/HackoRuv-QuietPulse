@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, CheckCircle2, Trash2, Check, X, FileText, Filter } from 'lucide-react';
+import { Search, CheckCircle2, Trash2, Check, X, FileText, Filter, Inbox, ShieldCheck } from 'lucide-react';
 import { UiNotificationItem, UserFeedbackType } from '../types';
 
 interface QueuePageProps {
@@ -40,14 +40,19 @@ export const QueuePage: React.FC<QueuePageProps> = ({
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto py-4">
-      {/* Top Header & Actions */}
+      {/* Top Header & Actions per Section 8 */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-v-text tracking-wide uppercase font-mono">
-            Attention Airlock &amp; Queue
-          </h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-xl font-bold text-v-text tracking-wide uppercase font-mono">
+              FlowQueue
+            </h2>
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-v-secondary border border-v-border text-v-accent">
+              {items.length} QUEUED
+            </span>
+          </div>
           <p className="text-xs text-v-text-muted mt-0.5 font-sans">
-            Triaged notifications held safely without cognitive interruption.
+            Triaged notifications organized safely into batch digests without interrupting your cognitive focus.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -98,7 +103,7 @@ export const QueuePage: React.FC<QueuePageProps> = ({
                   : 'bg-v-surface text-v-text-muted hover:text-v-text border border-v-border'
               }`}
             >
-              {cat.replace('_', ' ')}
+              {cat === 'ALL' ? 'ALL QUEUE' : cat.replace('_', ' ')}
             </button>
           ))}
         </div>
@@ -107,10 +112,10 @@ export const QueuePage: React.FC<QueuePageProps> = ({
       {/* Queue Items List */}
       {filtered.length === 0 ? (
         <div className="p-12 rounded-2xl bg-v-surface border border-dashed border-v-border text-center">
-          <CheckCircle2 className="w-10 h-10 text-v-accent mx-auto mb-2" />
-          <p className="text-base font-bold text-v-text font-mono uppercase">Queue is Clear</p>
-          <p className="text-xs text-v-text-muted mt-1 font-sans">
-            No notifications match your current filter. Your attention is fully protected.
+          <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto mb-2" />
+          <p className="text-base font-bold text-v-text font-mono uppercase">FlowQueue is Clear</p>
+          <p className="text-xs text-v-text-muted mt-1 font-sans max-w-md mx-auto">
+            No notifications match your current filter. Non-urgent alerts will buffer here safely without triggering lock-screen distractions.
           </p>
         </div>
       ) : (
@@ -216,7 +221,7 @@ export const QueuePage: React.FC<QueuePageProps> = ({
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <FileText className="w-5 h-5 text-v-accent" />
-                <h3 className="text-base font-bold text-v-text font-mono uppercase">Attention Digest</h3>
+                <h3 className="text-base font-bold text-v-text font-mono uppercase">FlowQueue Digest</h3>
               </div>
               <button onClick={() => setShowDigest(false)} className="text-v-text-muted hover:text-v-text">
                 <X className="w-5 h-5" />

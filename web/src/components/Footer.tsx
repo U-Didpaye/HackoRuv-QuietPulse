@@ -26,17 +26,17 @@ export const Footer: React.FC<FooterProps> = ({
             <div className="flex items-center gap-3">
               <div className="h-10 relative flex items-center justify-center">
                 <img
-                  src="/vyrox-logo-transparent.png"
-                  alt="VYROX"
-                  className="h-10 w-auto object-contain"
+                  src="/quietpulse-logo.png"
+                  alt="QuietPulse"
+                  className="h-9 w-auto object-contain"
                   onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).src = '/vyrox-emblem.svg';
+                    (e.currentTarget as HTMLImageElement).src = '/quietpulse-logo-centered.png';
                   }}
                 />
               </div>
             </div>
             <p className="text-xs text-v-text-muted max-w-sm leading-relaxed font-sans">
-              An independent, privacy-first attention firewall designed to protect human cognitive capacity from manipulative digital interruptions.
+              QuietPulse is an intelligent, privacy-first attention firewall designed to protect human cognitive capacity from notification bursts and digital noise.
             </p>
             <div className="flex items-center gap-3 pt-2">
               <button
@@ -44,12 +44,12 @@ export const Footer: React.FC<FooterProps> = ({
                 className="text-[11px] font-mono text-v-text-muted hover:text-v-text flex items-center gap-1.5 py-1 px-2.5 rounded-md bg-v-secondary border border-v-border transition"
               >
                 <Play className="w-3 h-3 fill-current" />
-                <span>Replay Cinematic Intro</span>
+                <span>Replay Cinematic Launch</span>
               </button>
             </div>
           </div>
 
-          {/* Navigation Links */}
+          {/* Navigation Links (Exact Feature Names) */}
           <div>
             <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-v-text mb-4">
               Architecture
@@ -57,27 +57,27 @@ export const Footer: React.FC<FooterProps> = ({
             <ul className="space-y-2.5 text-xs text-v-text-muted font-sans">
               <li>
                 <button onClick={() => onNavigate('home')} className="hover:text-v-text transition">
-                  Overview (Homepage)
+                  Home
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('engine')} className="hover:text-v-text transition">
-                  Firewall Engine
+                <button onClick={() => onNavigate('notify')} className="hover:text-v-text transition">
+                  NotiFy
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('queue')} className="hover:text-v-text transition">
-                  Attention Airlock
+                <button onClick={() => onNavigate('flowqueue')} className="hover:text-v-text transition">
+                  FlowQueue
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('focus')} className="hover:text-v-text transition">
-                  Focus Gateways
+                <button onClick={() => onNavigate('deepfocus')} className="hover:text-v-text transition">
+                  DeepFocus
                 </button>
               </li>
               <li>
                 <button onClick={() => onNavigate('demo')} className="hover:text-v-text transition">
-                  Stress Test Lab
+                  Demo Lab
                 </button>
               </li>
             </ul>
@@ -92,27 +92,27 @@ export const Footer: React.FC<FooterProps> = ({
               <li>
                 <button onClick={onOpenChokas} className="hover:text-v-text transition flex items-center gap-1.5">
                   <Sparkles className="w-3 h-3 text-v-accent" />
-                  <span>ChokasAI Terminal</span>
+                  <span>ChokasAI Assistant</span>
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('insights')} className="hover:text-v-text transition">
-                  Telemetry &amp; ROI
+                <button onClick={() => onNavigate('pulseinsights')} className="hover:text-v-text transition">
+                  PulseInsights
                 </button>
               </li>
               <li>
                 <button onClick={() => onNavigate('rules')} className="hover:text-v-text transition">
-                  Context Profiles
+                  Context Rules
                 </button>
               </li>
               <li>
                 <button onClick={() => onNavigate('privacy')} className="hover:text-v-text transition">
-                  Privacy Governance
+                  Privacy &amp; Governance
                 </button>
               </li>
               <li>
                 <button onClick={() => onNavigate('contact')} className="hover:text-v-text transition">
-                  Contact Team
+                  Contact
                 </button>
               </li>
             </ul>
@@ -120,13 +120,13 @@ export const Footer: React.FC<FooterProps> = ({
 
         </div>
 
-        {/* Bottom Bar */}
+        {/* Bottom Bar — Exact requested footer credit per Section 3 */}
         <div className="mt-12 pt-8 border-t border-v-border flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-v-text-muted">
-          <div>
-            © {new Date().getFullYear()} VYROX Technologies. All rights reserved.
+          <div className="font-medium text-v-text">
+            Made With Creativity By HackoRuv - Team
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-[11px]">100% On-Device • Zero Telemetry</span>
+            <span className="text-[11px] text-v-text-muted">QuietPulse • LESS NOISE. MORE FOCUS.</span>
             <button
               onClick={scrollToTop}
               className="p-2 rounded-lg bg-v-secondary hover:bg-v-elevated text-v-text border border-v-border transition"

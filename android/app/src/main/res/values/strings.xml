@@ -1,11 +1,16 @@
 <resources>
-    <string name="app_name">FocusShield AI</string>
-    <string name="notification_service_label">FocusShield Attention Firewall</string>
-    <string name="dashboard_title">Focus Dashboard</string>
-    <string name="queue_title">Attention Queue</string>
-    <string name="sessions_title">Focus Sessions</string>
-    <string name="insights_title">Insights &amp; Analytics</string>
-    <string name="rules_title">Personalization Rules</string>
-    <string name="privacy_title">Privacy &amp; Permissions</string>
-    <string name="demo_title">Demo Lab</string>
+    <string name="app_name">QuietPulse</string>
+    <string name="tagline">LESS NOISE. MORE FOCUS.</string>
+    <string name="notification_service_label">QuietPulse NotiFy Service</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_notify">NotiFy</string>
+    <string name="nav_flowqueue">FlowQueue</string>
+    <string name="nav_deepfocus">DeepFocus</string>
+    <string name="nav_pulseinsights">PulseInsights</string>
+    <string name="nav_chokas">ChokasAI</string>
+    <string name="nav_rules">Context Rules</string>
+    <string name="nav_privacy">Privacy</string>
+    <string name="nav_demo">Demo Lab</string>
+    <string name="nav_contact">Contact</string>
+    <string name="footer_credit">Made With Creativity By HackoRuv - Team</string>
 </resources>

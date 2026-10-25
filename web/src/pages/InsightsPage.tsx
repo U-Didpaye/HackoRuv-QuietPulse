@@ -15,10 +15,10 @@ export const InsightsPage: React.FC<InsightsPageProps> = ({ metrics }) => {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto py-4">
-      {/* Top Banner */}
+      {/* Top Banner per Section 8: PulseInsights */}
       <div className="p-7 rounded-2xl bg-v-surface border border-v-border shadow-xl">
         <span className="text-[10px] font-mono tracking-widest text-v-accent uppercase">
-          ATTENTION RETURN ON INVESTMENT
+          PULSEINSIGHTS // ATTENTION TELEMETRY
         </span>
         <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 mt-2">
           <h2 className="text-3xl sm:text-4xl font-black font-editorial text-v-text">
@@ -29,7 +29,7 @@ export const InsightsPage: React.FC<InsightsPageProps> = ({ metrics }) => {
           </span>
         </div>
         <p className="text-xs text-v-text-muted mt-2 font-sans max-w-2xl leading-relaxed">
-          Calculated by measuring non-urgent notifications triaged to Attention Airlock and background batch digests instead of triggering active device vibrations.
+          Calculated by measuring non-urgent notifications triaged to FlowQueue and silent batch digests instead of triggering active device vibrations.
         </p>
       </div>
 
@@ -80,7 +80,7 @@ export const InsightsPage: React.FC<InsightsPageProps> = ({ metrics }) => {
       {/* Telemetry Summary Table */}
       <div className="p-6 rounded-2xl bg-v-surface border border-v-border">
         <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-v-text mb-4">
-          Deep Telemetry Register
+          PulseInsights Telemetry Register
         </h4>
         <div className="divide-y divide-v-border text-xs font-sans">
           <div className="py-2.5 flex justify-between">

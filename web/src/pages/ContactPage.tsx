@@ -23,7 +23,7 @@ export const ContactPage: React.FC = () => {
     setTimeout(() => {
       // Record locally in localStorage for persistent client audit
       try {
-        const existing = JSON.parse(localStorage.getItem('vyrox_contact_submissions') || '[]');
+        const existing = JSON.parse(localStorage.getItem('quietpulse_contact_submissions') || '[]');
         existing.push({
           id: 'sub_' + Date.now(),
           name,
@@ -32,7 +32,7 @@ export const ContactPage: React.FC = () => {
           message,
           timestamp: new Date().toISOString(),
         });
-        localStorage.setItem('vyrox_contact_submissions', JSON.stringify(existing));
+        localStorage.setItem('quietpulse_contact_submissions', JSON.stringify(existing));
       } catch (err) {
         // Safe fallback
       }
@@ -49,10 +49,10 @@ export const ContactPage: React.FC = () => {
       <ScrollReveal>
         <div className="text-center max-w-2xl mx-auto mb-12">
           <span className="text-xs font-mono tracking-[0.25em] uppercase text-v-accent">
-            COMMUNICATION & INQUIRIES
+            COMMUNICATION &amp; INQUIRIES
           </span>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-v-text uppercase font-editorial mt-3">
-            Contact VYROX
+            Contact QuietPulse
           </h1>
           <p className="text-sm text-v-text-muted mt-3 leading-relaxed font-sans">
             Connect with our team regarding system architecture, enterprise deployment, or feedback on our privacy-first attention engine.
@@ -64,14 +64,14 @@ export const ContactPage: React.FC = () => {
         <div className="p-8 sm:p-10 rounded-3xl bg-v-surface border border-v-border shadow-2xl">
           {status === 'success' ? (
             <div className="text-center py-12 space-y-4">
-              <div className="w-12 h-12 rounded-full bg-v-elevated border border-v-border flex items-center justify-center mx-auto text-v-accent">
+              <div className="w-12 h-12 rounded-full bg-v-elevated border border-v-border flex items-center justify-center mx-auto text-emerald-400">
                 <CheckCircle2 className="w-6 h-6" />
               </div>
               <h3 className="text-xl font-bold text-v-text font-editorial uppercase">
                 Transmission Recorded
               </h3>
               <p className="text-xs text-v-text-muted max-w-md mx-auto leading-relaxed font-sans">
-                Your message has been captured in the local communication register. In production environments, this endpoint integrates with an authorized secure webhook or self-hosted API.
+                Your message has been captured in the local communication register. In production environments, this endpoint integrates with an authorized secure webhook or Supabase backend.
               </p>
               <button
                 onClick={() => setStatus('idle')}
@@ -185,7 +185,7 @@ export const ContactPage: React.FC = () => {
         <div className="space-y-1">
           <strong className="text-v-text font-mono text-xs">Production Pipeline Note:</strong>
           <p className="leading-relaxed font-sans">
-            This contact interface is fully structured with field validation and client-side persistence. To enable automated email routing in your self-hosted instance, bind a verified endpoint (e.g., Supabase Edge Functions or Resend API) in the configuration.
+            This contact interface is structured with field validation and client-side persistence. To enable automated email routing in your self-hosted instance, bind a verified endpoint (e.g., Supabase Edge Functions or Resend API) in the configuration.
           </p>
         </div>
       </div>
