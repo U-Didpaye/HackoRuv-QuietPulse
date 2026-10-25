@@ -51,38 +51,6 @@
   --v-hero-glow: radial-gradient(circle at 50% 30%, rgba(20, 184, 166, 0.16) 0%, rgba(5, 20, 16, 0) 70%);
 }
 
-[data-theme="violet"] {
-  --v-bg: #0C0817;
-  --v-surface: #140E26;
-  --v-secondary: #1D1535;
-  --v-elevated: #281D47;
-  --v-primary-text: #F8F6FD;
-  --v-secondary-text: #B4A7D6;
-  --v-border: #3E2B6B;
-  --v-border-subtle: #2B1D4B;
-  --v-accent: #8B5CF6;
-  --v-accent-secondary: #C4B5FD;
-  --v-accent-glow: rgba(139, 92, 246, 0.22);
-  --v-badge-bg: #22183E;
-  --v-hero-glow: radial-gradient(circle at 50% 30%, rgba(139, 92, 246, 0.16) 0%, rgba(12, 8, 23, 0) 70%);
-}
-
-[data-theme="crimson"] {
-  --v-bg: #140508;
-  --v-surface: #20090E;
-  --v-secondary: #2C0D14;
-  --v-elevated: #3A131C;
-  --v-primary-text: #FFF1F2;
-  --v-secondary-text: #E598A4;
-  --v-border: #561B26;
-  --v-border-subtle: #3D121B;
-  --v-accent: #FF4757;
-  --v-accent-secondary: #FFB8BC;
-  --v-accent-glow: rgba(255, 71, 87, 0.22);
-  --v-badge-bg: #320E16;
-  --v-hero-glow: radial-gradient(circle at 50% 30%, rgba(255, 71, 87, 0.15) 0%, rgba(20, 5, 8, 0) 70%);
-}
-
 [data-theme="pearl"] {
   --v-bg: #F5F4F0;
   --v-surface: #FFFFFF;

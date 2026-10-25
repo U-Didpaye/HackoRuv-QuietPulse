@@ -1,6 +1,22 @@
-export type ClassificationCategory = 'URGENT' | 'IMPORTANT' | 'BATCH' | 'LOW_PRIORITY';
+export type ClassificationCategory = 'URGENT' | 'IMPORTANT' | 'BATCH' | 'LOW_PRIORITY' | 'SPAM';
 export type ConfidenceLevel = 'HIGH' | 'MEDIUM' | 'LOW';
 export type SourceType = 'REAL' | 'SIMULATED';
+export type ContextMode = 'OFFICE' | 'HOME' | 'PERSONALIZED';
+
+export interface PersonalizedSettings {
+  urgentKeywords: string[];
+  batchKeywords: string[];
+  spamKeywords: string[];
+  vipApps: string[];
+  workApps: string[];
+  personalApps: string[];
+  vipContacts: string[];
+  urgencyThreshold: number; // e.g. 0.70
+  relevanceThreshold: number; // e.g. 0.60
+  autoBatchNonUrgent: boolean;
+  quietHoursStart: string; // e.g. "22:00"
+  quietHoursEnd: string; // e.g. "07:00"
+}
 
 export interface NotificationEvent {
   id: string;
@@ -25,12 +41,14 @@ export interface ClassificationResult {
   appliedRules: string[];
   recommendedAction: string;
   isUserOverrideApplied: boolean;
+  appliedContextMode?: ContextMode;
 }
 
 export interface UiNotificationItem {
   event: NotificationEvent;
   result: ClassificationResult;
   isReviewed: boolean;
+  userFeedback?: 'WAS_URGENT' | 'BATCHED' | 'SPAM';
 }
 
 export interface BurstEvent {
@@ -54,13 +72,19 @@ export interface UserRule {
   id: string;
   packageName: string;
   appName: string;
-  priorityLevel: 'ALWAYS_URGENT' | 'NORMAL' | 'LOW_PRIORITY' | 'NEVER_INTERRUPT';
+  priorityLevel: 'ALWAYS_URGENT' | 'NORMAL' | 'LOW_PRIORITY' | 'NEVER_INTERRUPT' | 'SPAM';
   urgentKeywords?: string[];
   lowPriorityKeywords?: string[];
   allowDuringFocus: boolean;
 }
 
-export type UserFeedbackType = 'CORRECT' | 'SHOULD_BE_URGENT' | 'MORE_IMPORTANT_THAN_EXPECTED' | 'SAFE_TO_BATCH' | 'NOT_RELEVANT';
+export type UserFeedbackType =
+  | 'CORRECT'
+  | 'SHOULD_BE_URGENT'
+  | 'MORE_IMPORTANT_THAN_EXPECTED'
+  | 'SAFE_TO_BATCH'
+  | 'NOT_RELEVANT'
+  | 'SPAM';
 
 export interface FeedbackRecord {
   eventId: string;
@@ -78,6 +102,7 @@ export interface AnalyticsMetrics {
   importantCount: number;
   batchedCount: number;
   lowPriorityCount: number;
+  spamCount: number;
   totalFocusMinutes: number;
   completedSessionsCount: number;
   userCorrectionCount: number;

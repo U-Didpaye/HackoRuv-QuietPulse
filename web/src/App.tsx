@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ThemeProvider } from './context/ThemeContext';
 import { SplashScreen } from './components/SplashScreen';
 import { Navbar } from './components/Navbar';
@@ -26,8 +26,26 @@ import {
   UserRule,
   AnalyticsMetrics,
   UserFeedbackType,
-  NotificationEvent
+  NotificationEvent,
+  ContextMode,
+  PersonalizedSettings,
+  ClassificationCategory
 } from './types';
+
+const defaultPersonalizedSettings: PersonalizedSettings = {
+  urgentKeywords: ['otp', 'emergency', 'critical', 'hospital', 'urgent', 'verification', 'code', 'sos'],
+  batchKeywords: ['newsletter', 'digest', 'social', 'updates', 'trending'],
+  spamKeywords: ['sale', 'discount', '50% off', 'cashback', 'jackpot', 'coins', 'promo', 'deal'],
+  vipApps: ['slack', 'whatsapp', 'phone', 'dialer', 'teams'],
+  workApps: ['slack', 'teams', 'outlook', 'gmail', 'zoom', 'jira', 'github'],
+  personalApps: ['whatsapp', 'phone', 'messages', 'telegram', 'signal'],
+  vipContacts: ['Mom', 'Family', 'Team Lead', 'Boss', 'Dr.'],
+  urgencyThreshold: 0.72,
+  relevanceThreshold: 0.62,
+  autoBatchNonUrgent: true,
+  quietHoursStart: '22:00',
+  quietHoursEnd: '07:00'
+};
 
 function QuietPulseApp() {
   const [showSplash, setShowSplash] = useState<boolean>(() => {
@@ -49,7 +67,30 @@ function QuietPulseApp() {
     return null;
   });
 
-  // Core Intelligence Engines (Preserved)
+  // Context Modes State (Office, Home, Personalized Mode)
+  const [activeContextMode, setActiveContextMode] = useState<ContextMode>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('quietpulse_context_mode') as ContextMode;
+      if (saved === 'OFFICE' || saved === 'HOME' || saved === 'PERSONALIZED') return saved;
+    }
+    return 'OFFICE';
+  });
+
+  const [personalizedSettings, setPersonalizedSettings] = useState<PersonalizedSettings>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('quietpulse_personalized_settings');
+        if (saved) return { ...defaultPersonalizedSettings, ...JSON.parse(saved) };
+      } catch (ignored) {}
+    }
+    return defaultPersonalizedSettings;
+  });
+
+  // Android Native Notification Access State
+  const [isNativeAndroid, setIsNativeAndroid] = useState<boolean>(false);
+  const [isNotificationAccessGranted, setIsNotificationAccessGranted] = useState<boolean>(false);
+
+  // Core Intelligence Engines
   const burstDetectorRef = useRef(new BurstDetector());
   const learningEngineRef = useRef(new LocalLearningEngine());
   const classifierRef = useRef(new ClassificationEngine(learningEngineRef.current));
@@ -61,22 +102,41 @@ function QuietPulseApp() {
   // Interruption Stream & Telemetry State
   const [burstRate, setBurstRate] = useState(0);
   const [isBurstActive, setIsBurstActive] = useState(false);
-  const [items, setItems] = useState<UiNotificationItem[]>([]);
-  const [rules, setRules] = useState<Record<string, UserRule>>({
-    'com.google.android.dialer': {
-      id: 'rule_phone',
-      appName: 'Phone',
-      packageName: 'com.google.android.dialer',
-      priorityLevel: 'ALWAYS_URGENT',
-      allowDuringFocus: true
-    },
-    'com.shopping.deals': {
-      id: 'rule_shopping',
-      appName: 'SuperDeals',
-      packageName: 'com.shopping.deals',
-      priorityLevel: 'NEVER_INTERRUPT',
-      allowDuringFocus: false
+
+  // FlowQueue Items with Local Persistence
+  const [items, setItems] = useState<UiNotificationItem[]>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('quietpulse_queued_items');
+        if (saved) return JSON.parse(saved);
+      } catch (ignored) {}
     }
+    return [];
+  });
+
+  const [rules, setRules] = useState<Record<string, UserRule>>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('quietpulse_rules');
+        if (saved) return JSON.parse(saved);
+      } catch (ignored) {}
+    }
+    return {
+      'com.google.android.dialer': {
+        id: 'rule_phone',
+        appName: 'Phone',
+        packageName: 'com.google.android.dialer',
+        priorityLevel: 'ALWAYS_URGENT',
+        allowDuringFocus: true
+      },
+      'com.shopping.deals': {
+        id: 'rule_shopping',
+        appName: 'SuperDeals',
+        packageName: 'com.shopping.deals',
+        priorityLevel: 'SPAM',
+        allowDuringFocus: false
+      }
+    };
   });
 
   const [metrics, setMetrics] = useState<AnalyticsMetrics>({
@@ -87,13 +147,48 @@ function QuietPulseApp() {
     importantCount: 0,
     batchedCount: 0,
     lowPriorityCount: 0,
+    spamCount: 0,
     totalFocusMinutes: 0,
     completedSessionsCount: 0,
     userCorrectionCount: 0,
     estimatedInterruptionsDeflected: 0
   });
 
-  // Synchronize Supabase authentication session
+  // Recompute and synchronize metrics whenever items change
+  const recalculateMetrics = useCallback((currentItems: UiNotificationItem[], burstCountDelta: number = 0) => {
+    const total = currentItems.length;
+    const urgent = currentItems.filter(i => i.result.category === 'URGENT').length;
+    const important = currentItems.filter(i => i.result.category === 'IMPORTANT').length;
+    const batched = currentItems.filter(i => i.result.category === 'BATCH').length;
+    const low = currentItems.filter(i => i.result.category === 'LOW_PRIORITY').length;
+    const spam = currentItems.filter(i => i.result.category === 'SPAM').length;
+    const deflected = batched + low + spam;
+
+    setMetrics(m => ({
+      ...m,
+      totalNotificationsObserved: total,
+      burstsDetected: m.burstsDetected + burstCountDelta,
+      urgentCount: urgent,
+      importantCount: important,
+      batchedCount: batched,
+      lowPriorityCount: low,
+      spamCount: spam,
+      estimatedInterruptionsDeflected: deflected
+    }));
+
+    try {
+      localStorage.setItem('quietpulse_queued_items', JSON.stringify(currentItems));
+    } catch (ignored) {}
+  }, []);
+
+  // Initialize metrics from stored items on mount
+  useEffect(() => {
+    if (items.length > 0) {
+      recalculateMetrics(items, 0);
+    }
+  }, [items, recalculateMetrics]);
+
+  // Synchronize Supabase session
   useEffect(() => {
     if (!isSupabaseConfigured || !supabase) return;
 
@@ -120,6 +215,127 @@ function QuietPulseApp() {
     };
   }, []);
 
+  // Detect Android Native Bridge & Poll Captured Notifications
+  const checkAndroidAccess = useCallback(() => {
+    const bridge = (window as any).QuietPulseAndroid;
+    if (bridge && typeof bridge.isAndroidApp === 'function') {
+      setIsNativeAndroid(true);
+      if (typeof bridge.isNotificationAccessGranted === 'function') {
+        const granted = Boolean(bridge.isNotificationAccessGranted());
+        setIsNotificationAccessGranted(granted);
+      }
+    } else {
+      setIsNativeAndroid(false);
+      setIsNotificationAccessGranted(false);
+    }
+  }, []);
+
+  // Check on mount and bind Android resume hook
+  useEffect(() => {
+    checkAndroidAccess();
+    (window as any).onAndroidResume = () => {
+      checkAndroidAccess();
+    };
+  }, [checkAndroidAccess]);
+
+  // Process a notification through the complete classification pipeline
+  const processNotification = useCallback((event: NotificationEvent) => {
+    const burst = burstDetectorRef.current.recordEvent(event);
+    const now = event.timestamp;
+    const isBurst = burstDetectorRef.current.isBurstActive(now);
+    const rate = burstDetectorRef.current.getRecentRate(now);
+
+    const classification = classifierRef.current.classify(
+      event,
+      rules,
+      isFocusActive,
+      burstDetectorRef.current,
+      activeContextMode,
+      personalizedSettings
+    );
+
+    const newItem: UiNotificationItem = {
+      event,
+      result: classification,
+      isReviewed: false
+    };
+
+    setBurstRate(rate);
+    setIsBurstActive(isBurst);
+
+    setItems(prev => {
+      // Prevent duplicate event IDs
+      if (prev.some(i => i.event.id === event.id)) return prev;
+      const updated = [newItem, ...prev];
+      recalculateMetrics(updated, burst ? 1 : 0);
+      return updated;
+    });
+  }, [rules, isFocusActive, activeContextMode, personalizedSettings, recalculateMetrics]);
+
+  // Android notification polling loop
+  useEffect(() => {
+    if (!isNativeAndroid) return;
+
+    const interval = setInterval(() => {
+      const bridge = (window as any).QuietPulseAndroid;
+      if (bridge && typeof bridge.getCapturedNotifications === 'function') {
+        try {
+          const jsonStr = bridge.getCapturedNotifications();
+          if (jsonStr && jsonStr.length > 2) {
+            const rawEvents = JSON.parse(jsonStr) as NotificationEvent[];
+            if (Array.isArray(rawEvents) && rawEvents.length > 0) {
+              rawEvents.forEach(ev => {
+                processNotification(ev);
+              });
+              // Clear processed notifications from Android memory queue
+              if (typeof bridge.clearCapturedNotifications === 'function') {
+                bridge.clearCapturedNotifications();
+              }
+            }
+          }
+        } catch (e) {
+          console.warn('Error reading Android notifications:', e);
+        }
+      }
+    }, 2500);
+
+    return () => clearInterval(interval);
+  }, [isNativeAndroid, processNotification]);
+
+  // Request Android Notification Access
+  const handleRequestNotificationAccess = () => {
+    const bridge = (window as any).QuietPulseAndroid;
+    if (bridge && typeof bridge.openNotificationSettings === 'function') {
+      bridge.openNotificationSettings();
+    } else {
+      alert("Notification access can only be enabled inside the installed QuietPulse Android app.");
+    }
+  };
+
+  // Switch Context Mode
+  const handleChangeContextMode = (mode: ContextMode) => {
+    setActiveContextMode(mode);
+    try {
+      localStorage.setItem('quietpulse_context_mode', mode);
+    } catch (ignored) {}
+  };
+
+  // Update Personalized Settings
+  const handleUpdatePersonalizedSettings = (settings: PersonalizedSettings) => {
+    setPersonalizedSettings(settings);
+    try {
+      localStorage.setItem('quietpulse_personalized_settings', JSON.stringify(settings));
+    } catch (ignored) {}
+  };
+
+  // Reset Personalized Settings
+  const handleResetPersonalizedSettings = () => {
+    setPersonalizedSettings(defaultPersonalizedSettings);
+    try {
+      localStorage.setItem('quietpulse_personalized_settings', JSON.stringify(defaultPersonalizedSettings));
+    } catch (ignored) {}
+  };
+
   // Focus Timer Tick
   useEffect(() => {
     let timer: any;
@@ -143,56 +359,6 @@ function QuietPulseApp() {
     return () => clearInterval(timer);
   }, [isFocusActive, remainingFocusSeconds]);
 
-  // Process Notification through Heuristics
-  const processNotification = (event: NotificationEvent) => {
-    const burst = burstDetectorRef.current.recordEvent(event);
-    const now = event.timestamp;
-    const isBurst = burstDetectorRef.current.isBurstActive(now);
-    const rate = burstDetectorRef.current.getRecentRate(now);
-
-    const classification = classifierRef.current.classify(
-      event,
-      rules,
-      isFocusActive,
-      burstDetectorRef.current
-    );
-
-    const newItem: UiNotificationItem = {
-      event,
-      result: classification,
-      isReviewed: false
-    };
-
-    setBurstRate(rate);
-    setIsBurstActive(isBurst);
-
-    setItems(prev => {
-      const updated = [newItem, ...prev];
-      updateMetrics(updated, Boolean(burst));
-      return updated;
-    });
-  };
-
-  const updateMetrics = (currentItems: UiNotificationItem[], hadBurst: boolean) => {
-    const total = currentItems.length;
-    const urgent = currentItems.filter(i => i.result.category === 'URGENT').length;
-    const important = currentItems.filter(i => i.result.category === 'IMPORTANT').length;
-    const batched = currentItems.filter(i => i.result.category === 'BATCH').length;
-    const low = currentItems.filter(i => i.result.category === 'LOW_PRIORITY').length;
-    const deflected = batched + low;
-
-    setMetrics(m => ({
-      ...m,
-      totalNotificationsObserved: total,
-      burstsDetected: m.burstsDetected + (hadBurst ? 1 : 0),
-      urgentCount: urgent,
-      importantCount: important,
-      batchedCount: batched,
-      lowPriorityCount: low,
-      estimatedInterruptionsDeflected: deflected
-    }));
-  };
-
   // Actions
   const handleStartFocus = (name: string, durationMins: number) => {
     setIsFocusActive(true);
@@ -205,19 +371,58 @@ function QuietPulseApp() {
   };
 
   const handleMarkReviewed = (id: string) => {
-    setItems(prev => prev.map(i => (i.event.id === id ? { ...i, isReviewed: true } : i)));
+    setItems(prev => {
+      const updated = prev.map(i => (i.event.id === id ? { ...i, isReviewed: true } : i));
+      recalculateMetrics(updated, 0);
+      return updated;
+    });
   };
 
   const handleDismiss = (id: string) => {
-    setItems(prev => prev.filter(i => i.event.id !== id));
+    setItems(prev => {
+      const updated = prev.filter(i => i.event.id !== id);
+      recalculateMetrics(updated, 0);
+      return updated;
+    });
   };
 
   const handleReviewAll = () => {
-    setItems(prev => prev.map(i => ({ ...i, isReviewed: true })));
+    setItems(prev => {
+      const updated = prev.map(i => ({ ...i, isReviewed: true }));
+      recalculateMetrics(updated, 0);
+      return updated;
+    });
   };
 
   const handleClearQueue = () => {
     setItems([]);
+    recalculateMetrics([], 0);
+  };
+
+  // FlowQueue Action Handler (Was Urgent, Batch It, Spam)
+  const handleUpdateCategory = (
+    id: string,
+    newCategory: ClassificationCategory,
+    feedbackType: 'WAS_URGENT' | 'BATCHED' | 'SPAM'
+  ) => {
+    setItems(prev => {
+      const updated = prev.map(i => {
+        if (i.event.id === id) {
+          return {
+            ...i,
+            userFeedback: feedbackType,
+            result: {
+              ...i.result,
+              category: newCategory,
+              explanation: `User calibrated this notification as ${newCategory.replace('_', ' ')}.`
+            }
+          };
+        }
+        return i;
+      });
+      recalculateMetrics(updated, 0);
+      return updated;
+    });
   };
 
   const handleFeedback = (id: string, type: UserFeedbackType) => {
@@ -240,19 +445,22 @@ function QuietPulseApp() {
     events.forEach((ev, idx) => {
       setTimeout(() => {
         processNotification(ev);
-      }, idx * 300);
+      }, idx * 280);
     });
   };
 
   const handleResetDemo = () => {
     burstDetectorRef.current.clear();
-    setItems(prev => prev.filter(i => i.event.sourceType === 'REAL'));
+    setItems(prev => {
+      const updated = prev.filter(i => i.event.sourceType === 'REAL');
+      recalculateMetrics(updated, 0);
+      return updated;
+    });
     setBurstRate(0);
     setIsBurstActive(false);
   };
 
   const navigateTo = (route: string) => {
-    // Canonicalize route aliases
     if (route === 'engine') route = 'notify';
     else if (route === 'queue') route = 'flowqueue';
     else if (route === 'focus') route = 'deepfocus';
@@ -309,7 +517,7 @@ function QuietPulseApp() {
       />
 
       {/* Main View Router */}
-      <main className="flex-1 w-full">
+      <main className="flex-1 w-full pb-safe">
         {/* Home */}
         {currentRoute === 'home' && (
           <HomePage
@@ -320,10 +528,10 @@ function QuietPulseApp() {
           />
         )}
 
-        {/* NotiFy: Live Interception Feed (Cosmic Monolith Overlook Background) */}
+        {/* NotiFy: Live Interception Feed */}
         {(currentRoute === 'notify' || currentRoute === 'engine') && (
           <PageBackground imageSrc="./backgrounds/bg-monolith-overlook.jpg">
-            <div className="px-4 sm:px-6 lg:px-8">
+            <div className="px-3 sm:px-6 lg:px-8">
               <DashboardPage
                 isFocusActive={isFocusActive}
                 remainingFocusSeconds={remainingFocusSeconds}
@@ -334,15 +542,20 @@ function QuietPulseApp() {
                 onStartFocus={handleStartFocus}
                 onEndFocus={handleEndFocus}
                 onNavigate={navigateTo}
+                activeContextMode={activeContextMode}
+                onChangeContextMode={handleChangeContextMode}
+                isNotificationAccessGranted={isNotificationAccessGranted}
+                onRequestNotificationAccess={handleRequestNotificationAccess}
+                isNativeAndroid={isNativeAndroid}
               />
             </div>
           </PageBackground>
         )}
 
-        {/* FlowQueue (Bioluminescent Flowing River Background) */}
+        {/* FlowQueue */}
         {(currentRoute === 'flowqueue' || currentRoute === 'queue') && (
           <PageBackground imageSrc="./backgrounds/bg-bioluminescent-river.png">
-            <div className="px-4 sm:px-6 lg:px-8">
+            <div className="px-3 sm:px-6 lg:px-8">
               <QueuePage
                 items={items}
                 onMarkReviewed={handleMarkReviewed}
@@ -350,15 +563,16 @@ function QuietPulseApp() {
                 onReviewAll={handleReviewAll}
                 onClearQueue={handleClearQueue}
                 onFeedback={handleFeedback}
+                onUpdateCategory={handleUpdateCategory}
               />
             </div>
           </PageBackground>
         )}
 
-        {/* DeepFocus (Golden Summit Sanctuary Background) */}
+        {/* DeepFocus */}
         {(currentRoute === 'deepfocus' || currentRoute === 'focus') && (
           <PageBackground imageSrc="./backgrounds/bg-golden-summit.png" overlayStyle="focused">
-            <div className="px-4 sm:px-6 lg:px-8">
+            <div className="px-3 sm:px-6 lg:px-8">
               <FocusPage
                 isFocusActive={isFocusActive}
                 remainingSeconds={remainingFocusSeconds}
@@ -370,77 +584,106 @@ function QuietPulseApp() {
           </PageBackground>
         )}
 
-        {/* PulseInsights (Violet Cosmic Energy Stream Background) */}
+        {/* PulseInsights */}
         {(currentRoute === 'pulseinsights' || currentRoute === 'insights') && (
           <PageBackground imageSrc="./backgrounds/bg-violet-stream.png">
-            <div className="px-4 sm:px-6 lg:px-8">
+            <div className="px-3 sm:px-6 lg:px-8">
               <InsightsPage metrics={metrics} />
             </div>
           </PageBackground>
         )}
 
-        {/* Rules (Sovereign Metallic Crest Background) */}
+        {/* Rules & Context Modes */}
         {currentRoute === 'rules' && (
           <PageBackground imageSrc="./backgrounds/bg-metallic-portrait-emblem.png" overlayStyle="focused">
-            <div className="px-4 sm:px-6 lg:px-8">
+            <div className="px-3 sm:px-6 lg:px-8">
               <RulesPage
                 rules={rules}
-                onAddRule={rule => setRules(prev => ({ ...prev, [rule.packageName]: rule }))}
+                onAddRule={rule => {
+                  setRules(prev => {
+                    const updated = { ...prev, [rule.packageName]: rule };
+                    try {
+                      localStorage.setItem('quietpulse_rules', JSON.stringify(updated));
+                    } catch (ignored) {}
+                    return updated;
+                  });
+                }}
                 onRemoveRule={pkg => {
                   setRules(prev => {
                     const copy = { ...prev };
                     delete copy[pkg];
+                    try {
+                      localStorage.setItem('quietpulse_rules', JSON.stringify(copy));
+                    } catch (ignored) {}
                     return copy;
                   });
                 }}
+                activeContextMode={activeContextMode}
+                onChangeContextMode={handleChangeContextMode}
+                personalizedSettings={personalizedSettings}
+                onUpdatePersonalizedSettings={handleUpdatePersonalizedSettings}
+                onResetPersonalizedSettings={handleResetPersonalizedSettings}
               />
             </div>
           </PageBackground>
         )}
 
-        {/* Privacy & Permissions (Sovereign Metallic Crest Background) */}
-        {currentRoute === 'privacy' && (
-          <PageBackground imageSrc="./backgrounds/bg-metallic-portrait-emblem.png" overlayStyle="focused">
-            <div className="px-4 sm:px-6 lg:px-8">
-              <PrivacyPage
-                onResetLearning={() => learningEngineRef.current.reset()}
-                onClearHistory={handleClearQueue}
-                feedbackRecordsCount={learningEngineRef.current.getHistory().length}
-              />
-            </div>
-          </PageBackground>
-        )}
-
-        {/* Stress Testing Lab (Ringed Horizon Sunrise Background) */}
+        {/* Demo Lab */}
         {currentRoute === 'demo' && (
-          <PageBackground imageSrc="./backgrounds/bg-ringed-sunrise-landscape.jpg">
-            <div className="px-4 sm:px-6 lg:px-8">
-              <DemoLabPage
-                onRunScenario={handleRunScenario}
-                onResetDemo={handleResetDemo}
-                simulatedCount={items.filter(i => i.event.sourceType === 'SIMULATED').length}
+          <DemoLabPage
+            onRunScenario={handleRunScenario}
+            onResetDemo={handleResetDemo}
+            metrics={metrics}
+            onNavigate={navigateTo}
+          />
+        )}
+
+        {/* Privacy */}
+        {currentRoute === 'privacy' && (
+          <PageBackground imageSrc="./backgrounds/bg-monolith-overlook.jpg">
+            <div className="px-3 sm:px-6 lg:px-8">
+              <PrivacyPage
+                onResetLearning={() => {
+                  learningEngineRef.current.reset();
+                  setMetrics(m => ({ ...m, userCorrectionCount: 0 }));
+                }}
+                onClearHistory={handleClearQueue}
+                feedbackRecordsCount={metrics.userCorrectionCount}
               />
             </div>
           </PageBackground>
         )}
 
-        {/* Contact Page (Cosmic Monolith Background) */}
+        {/* Contact */}
         {currentRoute === 'contact' && (
-          <PageBackground imageSrc="./backgrounds/bg-monolith-overlook.jpg">
-            <ContactPage />
+          <PageBackground imageSrc="./backgrounds/bg-golden-summit.png">
+            <div className="px-3 sm:px-6 lg:px-8">
+              <ContactPage />
+            </div>
           </PageBackground>
         )}
 
-        {/* Login Page */}
+        {/* Login / Supabase Auth */}
         {currentRoute === 'login' && (
-          <LoginPage
-            onLoginSuccess={handleLoginSuccess}
-            onNavigateHome={() => navigateTo('home')}
-          />
+          <PageBackground imageSrc="./backgrounds/bg-monolith-overlook.jpg">
+            <div className="px-3 sm:px-6 lg:px-8">
+              <LoginPage
+                onLoginSuccess={handleLoginSuccess}
+                onNavigateHome={() => navigateTo('home')}
+              />
+            </div>
+          </PageBackground>
         )}
       </main>
 
-      {/* ChokasAI Terminal Modal */}
+      {/* Footer */}
+      <Footer
+        onNavigate={navigateTo}
+        onReplaySplash={handleTriggerReplaySplash}
+        onOpenChokas={() => setIsChokasOpen(true)}
+      />
+
+      {/* ChokasAI On-Device Assistant Modal */}
       <ChokasModal
         isOpen={isChokasOpen}
         onClose={() => setIsChokasOpen(false)}
@@ -448,21 +691,16 @@ function QuietPulseApp() {
         onStartFocus={handleStartFocus}
         onClearQueue={handleClearQueue}
       />
-
-      {/* Professional Footer */}
-      <Footer
-        onNavigate={navigateTo}
-        onReplaySplash={handleTriggerReplaySplash}
-        onOpenChokas={() => setIsChokasOpen(true)}
-      />
     </div>
   );
 }
 
-export default function App() {
+export function App() {
   return (
     <ThemeProvider>
       <QuietPulseApp />
     </ThemeProvider>
   );
 }
+
+export default App;

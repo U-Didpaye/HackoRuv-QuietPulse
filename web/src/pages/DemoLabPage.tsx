@@ -2,16 +2,22 @@ import React, { useState } from 'react';
 import { Play, RotateCcw, FlaskConical, CheckCircle2, AlertCircle, Sparkles, Zap, Flame, ShieldAlert, Terminal } from 'lucide-react';
 import { DEMO_SCENARIOS, DemoScenario } from '../intelligence/demoScenarios';
 
+import { AnalyticsMetrics } from '../types';
+
 interface DemoLabPageProps {
   onRunScenario: (scenario: DemoScenario) => void;
   onResetDemo: () => void;
-  simulatedCount: number;
+  metrics?: AnalyticsMetrics;
+  onNavigate?: (route: string) => void;
+  simulatedCount?: number;
 }
 
 export const DemoLabPage: React.FC<DemoLabPageProps> = ({
   onRunScenario,
   onResetDemo,
-  simulatedCount
+  metrics,
+  onNavigate,
+  simulatedCount = 0
 }) => {
   const [runningId, setRunningId] = useState<string | null>(null);
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Sparkles, X, Send, Bot, User, ArrowRight, Check, Command, Shield } from 'lucide-react';
-import { useTheme, QuietPulseTheme } from '../context/ThemeContext';
+import { Sparkles, X, Send, Bot, User, Check, Shield } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 interface Message {
   id: string;
@@ -25,7 +25,7 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
   onStartFocus,
   onClearQueue,
 }) => {
-  const { setTheme, theme } = useTheme();
+  const { setTheme } = useTheme();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'init_1',
@@ -64,7 +64,7 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
       let reply = '';
       let action: string | undefined;
 
-      // 1. Focus Session Commands (Handles typos: "swtich focus", "strt focus", "25m", "deep work")
+      // 1. Focus Session Commands
       if (
         fuzzyMatch(lower, ['start focus', 'strt focus', 'begin focus', 'deepfocus', 'deep work', 'pomodoro', 'focus session']) ||
         (lower.includes('focus') && (lower.includes('25') || lower.includes('50') || lower.includes('minute') || lower.includes('min')))
@@ -79,29 +79,29 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
         reply = `Started an active ${mins}-minute DeepFocus session. Non-urgent alerts are now buffered into FlowQueue.`;
         action = `Initiated ${mins}m DeepFocus Session`;
       }
-      // 2. Clear Queue Commands (Handles: "clear queue", "wip queue", "empty queue", "cliar")
+      // 2. Clear Queue Commands
       else if (fuzzyMatch(lower, ['clear queue', 'wip queue', 'wipe queue', 'empty queue', 'clear flowqueue', 'reset queue', 'purge queue'])) {
         onClearQueue();
         reply = "FlowQueue has been cleared. All buffered notification records have been safely wiped.";
         action = "Cleared FlowQueue";
       }
-      // 3. Theme Switching (3 Official Retained Themes: obsidian, emerald, pearl)
+      // 3. Theme Switching (3 Approved Themes: Obsidian Silver, Emerald, Pearl)
       else if (fuzzyMatch(lower, ['emerald', 'emrald', 'green', 'mint'])) {
         setTheme('emerald');
         reply = "Switched to Emerald theme (Deep forest with mint accents).";
         action = "Theme changed to Emerald";
       } else if (fuzzyMatch(lower, ['pearl', 'light theme', 'white theme', 'peral'])) {
         setTheme('pearl');
-        reply = "Switched to Pearl theme (Clean architectural light).";
+        reply = "Switched to Pearl theme (Clean architectural light with high-contrast pure black header).";
         action = "Theme changed to Pearl";
       } else if (fuzzyMatch(lower, ['obsidian', 'silver', 'black theme', 'dark theme', 'obsidien'])) {
         setTheme('obsidian');
         reply = "Switched to Obsidian Silver theme (Cinematic black & metallic silver).";
         action = "Theme changed to Obsidian Silver";
       } else if (fuzzyMatch(lower, ['help themes', 'themes', 'show themes', 'list themes'])) {
-        reply = "QuietPulse supports 3 handcrafted themes:\n1. Obsidian Silver (Default black & metallic silver)\n2. Emerald (#14B8A6 mint)\n3. Pearl (Clean architectural light).\nType 'switch to emerald' or 'switch to pearl' to apply any theme.";
+        reply = "QuietPulse supports 3 handcrafted themes:\n1. Obsidian Silver (Default metallic black)\n2. Emerald (Forest & mint)\n3. Pearl (Clean architectural light).\nType 'switch to emerald' or 'switch to pearl' to apply.";
       }
-      // 4. Navigation Commands (Strict One-Word Features: Home, NotiFy, FlowQueue, DeepFocus, PulseInsights, Contact)
+      // 4. Navigation Commands
       else if (fuzzyMatch(lower, ['open queue', 'show queue', 'go queue', 'flowqueue', 'flow queue'])) {
         onNavigate('flowqueue');
         onClose();
@@ -114,7 +114,7 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
         onNavigate('deepfocus');
         onClose();
         return;
-      } else if (fuzzyMatch(lower, ['pulseinsights', 'insights', 'telemetry', 'analytics', 'stats'])) {
+      } else if (fuzzyMatch(lower, ['pulseinsights', 'insights', 'analytics', 'stats'])) {
         onNavigate('pulseinsights');
         onClose();
         return;
@@ -122,7 +122,7 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
         onNavigate('privacy');
         onClose();
         return;
-      } else if (fuzzyMatch(lower, ['rules', 'context rules', 'app rules', 'settings'])) {
+      } else if (fuzzyMatch(lower, ['rules', 'context rules', 'app rules', 'settings', 'modes'])) {
         onNavigate('rules');
         onClose();
         return;
@@ -135,15 +135,15 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
         onClose();
         return;
       }
-      // 5. Explanations & Knowledge Base
+      // 5. Explanations
       else if (fuzzyMatch(lower, ['burst', 'storm', 'bursts'])) {
-        reply = "A Notification Burst is when multiple notifications arrive rapidly across apps (5+ in 60 seconds) or when a single app repeatedly pings. QuietPulse detects these bursts and buffers them in FlowQueue to prevent distraction spiral.";
+        reply = "A Notification Burst is when multiple notifications arrive rapidly across apps (5+ in 60s) or when an app floods alerts. QuietPulse quarantines bursts in FlowQueue to prevent distraction spiral.";
       } else if (fuzzyMatch(lower, ['urgency', 'relevance', 'classify', 'how it works'])) {
-        reply = "NotiFy calculates two independent scores:\n• Urgency: Time-critical need (OTPs, urgent calls)\n• Relevance: Contextual importance to you.\nHigh urgency + high relevance passes instantly. High relevance with low urgency goes into FlowQueue for later review.";
+        reply = "NotiFy calculates two independent scores:\n• Urgency: Time-critical need (OTPs, emergency calls)\n• Relevance: Contextual value under your active Context Mode (Office, Home, or Personalized).\nHigh urgency alerts pass through immediately.";
       } else if (fuzzyMatch(lower, ['who are you', 'what are you', 'chokas'])) {
-        reply = "I am ChokasAI, an embedded 100% on-device assistant for QuietPulse. I execute commands, manage themes, explain triage decisions, and never transmit your private data over the network.";
+        reply = "I am ChokasAI, an embedded on-device assistant for QuietPulse. I execute commands, manage themes, explain triage decisions, and never transmit private notification data to external servers.";
       } else {
-        reply = "I understand. You can ask me to explain triage rules, switch themes (Obsidian Silver, Emerald, Pearl), start a DeepFocus timer, or navigate directly to NotiFy, FlowQueue, or PulseInsights.";
+        reply = "I can help you navigate QuietPulse, explain triage decisions, switch themes (Obsidian Silver, Emerald, Pearl), start DeepFocus timers, or manage your FlowQueue.";
       }
 
       setMessages((prev) => [
@@ -156,25 +156,20 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         },
       ]);
-    }, 350);
+    }, 300);
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="relative w-full max-w-xl h-[560px] bg-v-surface border border-v-border rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-reveal">
-        {/* Subtle Futuristic Cosmic Texture Overlay */}
-        <div className="absolute inset-0 z-0 pointer-events-none opacity-20 overflow-hidden select-none">
-          <img
-            src="./backgrounds/bg-violet-stream.png"
-            alt=""
-            className="w-full h-full object-cover transform scale-110 animate-ambient-drift"
-          />
-        </div>
+    <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
+      <div className="relative w-full max-w-xl max-h-[90vh] h-[560px] bg-v-surface border border-v-border rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-reveal">
+        
+        {/* Subtle Ambient Obsidian Gradient (No Purple Landscape) */}
+        <div className="absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-v-secondary/40 via-transparent to-v-bg/60" />
 
-        {/* Header */}
-        <div className="relative z-10 px-5 py-3.5 border-b border-v-border flex items-center justify-between bg-v-secondary/90 backdrop-blur-sm">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-v-elevated border border-v-border flex items-center justify-center text-v-text">
+        {/* Header - Fixed Height & High Contrast */}
+        <div className="relative z-10 px-5 py-3.5 border-b border-v-border flex items-center justify-between bg-v-surface/95 backdrop-blur-sm flex-shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-v-secondary border border-v-border flex items-center justify-center text-v-text shadow-sm">
               <Sparkles className="w-4 h-4 text-cyan-400" />
             </div>
             <div>
@@ -182,45 +177,49 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
                 <span className="text-xs font-bold text-v-text uppercase font-mono tracking-wider">
                   ChokasAI Assistant
                 </span>
-                <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-v-surface text-v-accent border border-v-border">
-                  100% ON-DEVICE
+                <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                  ON-DEVICE
                 </span>
               </div>
               <p className="text-[10px] text-v-text-muted">Natural-language command router &amp; guide</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1 rounded-lg text-v-text-muted hover:text-v-text hover:bg-v-elevated">
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-lg text-v-text-muted hover:text-v-text hover:bg-v-secondary transition"
+            aria-label="Close"
+          >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* Message Thread */}
-        <div className="relative z-10 flex-1 p-4 overflow-y-auto space-y-3 font-sans text-xs">
+        {/* Message Thread - Flexible & Scrollable */}
+        <div className="relative z-10 flex-1 min-h-0 p-4 overflow-y-auto space-y-3 font-sans text-xs">
           {messages.map((m) => (
             <div
               key={m.id}
               className={`flex gap-2.5 ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {m.sender === 'chokas' && (
-                <div className="w-6 h-6 rounded-md bg-v-secondary border border-v-border flex items-center justify-center text-v-accent shrink-0 mt-0.5">
+                <div className="w-6 h-6 rounded-md bg-v-secondary border border-v-border flex items-center justify-center text-cyan-400 shrink-0 mt-0.5 shadow-sm">
                   <Bot className="w-3.5 h-3.5" />
                 </div>
               )}
               <div
-                className={`max-w-[80%] p-3 rounded-xl border leading-relaxed ${
+                className={`max-w-[85%] sm:max-w-[80%] p-3.5 rounded-xl border leading-relaxed shadow-sm ${
                   m.sender === 'user'
                     ? 'bg-v-text text-v-bg border-v-text font-medium'
-                    : 'bg-v-elevated text-v-text border-v-border'
+                    : 'bg-v-secondary/80 text-v-text border-v-border'
                 }`}
               >
-                <p className="whitespace-pre-line">{m.text}</p>
+                <p className="whitespace-pre-line text-xs font-normal">{m.text}</p>
                 {m.actionTaken && (
-                  <div className="mt-2 pt-1.5 border-t border-v-border/70 flex items-center gap-1 text-[10px] font-mono text-emerald-400 font-bold">
+                  <div className="mt-2 pt-2 border-t border-v-border/60 flex items-center gap-1.5 text-[10px] font-mono text-emerald-400 font-bold">
                     <Check className="w-3 h-3" />
-                    <span>Action Executed: {m.actionTaken}</span>
+                    <span>Action: {m.actionTaken}</span>
                   </div>
                 )}
-                <span className="text-[9px] opacity-60 mt-1 block text-right font-mono">
+                <span className="text-[9px] opacity-50 mt-1.5 block text-right font-mono">
                   {m.timestamp}
                 </span>
               </div>
@@ -233,53 +232,54 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
           ))}
         </div>
 
-        {/* Suggested Quick Action Chips */}
-        <div className="relative z-10 px-4 py-2 border-t border-v-border bg-v-secondary/80 backdrop-blur-sm flex items-center gap-2 overflow-x-auto text-[11px] font-mono">
-          <span className="text-v-text-muted text-[10px] uppercase shrink-0">Try:</span>
+        {/* Suggested Quick Action Chips - Flex-shrink-0 for mobile */}
+        <div className="relative z-10 px-4 py-2 border-t border-v-border bg-v-secondary/90 backdrop-blur-sm flex items-center gap-2 overflow-x-auto text-[11px] font-mono flex-shrink-0">
+          <span className="text-v-text-muted text-[10px] uppercase shrink-0 font-bold">Try:</span>
           <button
             onClick={() => handleCommand('Start 25m focus session')}
-            className="px-2.5 py-1 rounded bg-v-surface border border-v-border text-v-text hover:border-v-accent transition shrink-0"
+            className="px-2.5 py-1 rounded-lg bg-v-surface border border-v-border text-v-text hover:border-cyan-400/50 transition shrink-0"
           >
             Start 25m Focus
           </button>
           <button
             onClick={() => handleCommand('Switch to Emerald theme')}
-            className="px-2.5 py-1 rounded bg-v-surface border border-v-border text-v-text hover:border-v-accent transition shrink-0 text-emerald-300"
+            className="px-2.5 py-1 rounded-lg bg-v-surface border border-v-border text-emerald-400 hover:border-emerald-400 transition shrink-0"
           >
             Emerald Theme
           </button>
           <button
             onClick={() => handleCommand('Switch to Pearl theme')}
-            className="px-2.5 py-1 rounded bg-v-surface border border-v-border text-v-text hover:border-v-accent transition shrink-0 text-neutral-300"
+            className="px-2.5 py-1 rounded-lg bg-v-surface border border-v-border text-v-text hover:border-white transition shrink-0"
           >
             Pearl Theme
           </button>
           <button
             onClick={() => handleCommand('What is a notification burst?')}
-            className="px-2.5 py-1 rounded bg-v-surface border border-v-border text-v-text hover:border-v-accent transition shrink-0"
+            className="px-2.5 py-1 rounded-lg bg-v-surface border border-v-border text-v-text hover:border-cyan-400/50 transition shrink-0"
           >
             Explain Bursts
           </button>
         </div>
 
-        {/* Input Bar */}
+        {/* Input Bar - Flex-shrink-0 so mobile keyboard never covers it */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
             handleCommand(input);
           }}
-          className="relative z-10 p-3 border-t border-v-border bg-v-surface/90 backdrop-blur-sm flex items-center gap-2"
+          className="relative z-10 p-3 border-t border-v-border bg-v-surface backdrop-blur-sm flex items-center gap-2 flex-shrink-0"
         >
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Type a command or ask a question (e.g. 'swtich emerald', 'open flowqueue')..."
-            className="flex-1 px-3.5 py-2 text-xs bg-v-secondary border border-v-border rounded-xl text-v-text placeholder-v-text-muted focus:outline-none focus:border-v-accent transition font-sans"
+            placeholder="Ask ChokasAI or enter a command (e.g. 'start 25m focus', 'switch pearl')..."
+            className="flex-1 px-3.5 py-2.5 text-xs bg-v-secondary border border-v-border rounded-xl text-v-text placeholder-v-text-muted focus:outline-none focus:border-cyan-400 transition font-sans"
           />
           <button
             type="submit"
-            className="p-2.5 rounded-xl bg-v-text text-v-bg hover:opacity-90 transition shrink-0"
+            className="p-2.5 rounded-xl bg-v-text text-v-bg hover:opacity-90 transition shrink-0 shadow-md"
+            title="Send Message"
           >
             <Send className="w-3.5 h-3.5" />
           </button>

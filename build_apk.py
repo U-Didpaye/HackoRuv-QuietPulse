@@ -58,22 +58,83 @@ os.makedirs(RES_VALUES, exist_ok=True)
 MAIN_ACTIVITY = """package com.focusshield.ai;
 
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.text.TextUtils;
 import android.view.Window;
 import android.view.WindowManager;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
-import android.net.Uri;
-import android.graphics.Color;
-import java.io.InputStream;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import com.focusshield.ai.service.FocusShieldNotificationListenerService;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class MainActivity extends Activity {
     private WebView mWebView;
+
+    public class QuietPulseBridge {
+        private final Context mContext;
+
+        public QuietPulseBridge(Context context) {
+            this.mContext = context;
+        }
+
+        @JavascriptInterface
+        public boolean isAndroidApp() {
+            return true;
+        }
+
+        @JavascriptInterface
+        public boolean isNotificationAccessGranted() {
+            String pkgName = mContext.getPackageName();
+            String flat = Settings.Secure.getString(mContext.getContentResolver(), "enabled_notification_listeners");
+            if (!TextUtils.isEmpty(flat)) {
+                String[] names = flat.split(":");
+                for (String name : names) {
+                    ComponentName cn = ComponentName.unflattenFromString(name);
+                    if (cn != null && pkgName.equals(cn.getPackageName())) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        @JavascriptInterface
+        public void openNotificationSettings() {
+            try {
+                Intent intent = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mContext.startActivity(intent);
+            } catch (Exception e) {
+                try {
+                    Intent intent = new Intent(Settings.ACTION_SETTINGS);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    mContext.startActivity(intent);
+                } catch (Exception ignored) {}
+            }
+        }
+
+        @JavascriptInterface
+        public String getCapturedNotifications() {
+            return FocusShieldNotificationListenerService.getRecentNotificationsJson(mContext);
+        }
+
+        @JavascriptInterface
+        public void clearCapturedNotifications() {
+            FocusShieldNotificationListenerService.clearNotifications(mContext);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +163,9 @@ public class MainActivity extends Activity {
         settings.setSupportZoom(false);
         settings.setDisplayZoomControls(false);
 
+        // Bind Native Android Bridge to JavaScript
+        mWebView.addJavascriptInterface(new QuietPulseBridge(this), "QuietPulseAndroid");
+
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -128,6 +192,7 @@ public class MainActivity extends Activity {
                 else if (assetPath.endsWith(".js")) mimeType = "application/javascript";
                 else if (assetPath.endsWith(".json")) mimeType = "application/json";
                 else if (assetPath.endsWith(".html")) mimeType = "text/html";
+                else if (assetPath.endsWith(".apk")) mimeType = "application/vnd.android.package-archive";
 
                 try {
                     InputStream is = getAssets().open(assetPath);
@@ -171,6 +236,22 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (mWebView != null) {
+            mWebView.post(new Runnable() {
+                @Override
+                public void run() {
+                    mWebView.evaluateJavascript(
+                        "if (window.onAndroidResume) { window.onAndroidResume(); }",
+                        null
+                    );
+                }
+            });
+        }
+    }
+
+    @Override
     public void onBackPressed() {
         if (mWebView != null && mWebView.canGoBack()) {
             mWebView.goBack();
@@ -186,24 +267,180 @@ with open(os.path.join(COM_DIR, "MainActivity.java"), "w", encoding="utf-8") as 
 
 SERVICE_CODE = """package com.focusshield.ai.service;
 
+import android.app.Notification;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class FocusShieldNotificationListenerService extends NotificationListenerService {
     private static final String TAG = "QuietPulseService";
+    private static final String PREFS_NAME = "quietpulse_notifications";
+    private static final String KEY_EVENTS = "cached_events";
+    private static final int MAX_EVENTS = 50;
+
+    private static final List<String> memoryEvents = Collections.synchronizedList(new ArrayList<String>());
+    private static FocusShieldNotificationListenerService instance;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        instance = this;
+        Log.d(TAG, "QuietPulse NotificationListenerService created");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        instance = null;
+    }
+
+    public static FocusShieldNotificationListenerService getInstance() {
+        return instance;
+    }
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
         if (sbn == null) return;
-        String pkg = sbn.getPackageName();
-        Log.d(TAG, "Notification received from: " + pkg);
+        try {
+            String pkg = sbn.getPackageName();
+            if (pkg != null && pkg.equals(getPackageName())) return;
+
+            Notification n = sbn.getNotification();
+            if (n == null) return;
+
+            Bundle extras = n.extras;
+            String title = "";
+            String text = "";
+            if (extras != null) {
+                CharSequence titleSeq = extras.getCharSequence(Notification.EXTRA_TITLE);
+                if (titleSeq != null) title = titleSeq.toString();
+
+                CharSequence textSeq = extras.getCharSequence(Notification.EXTRA_TEXT);
+                if (textSeq != null) text = textSeq.toString();
+                if (text.isEmpty()) {
+                    CharSequence bigText = extras.getCharSequence(Notification.EXTRA_BIG_TEXT);
+                    if (bigText != null) text = bigText.toString();
+                }
+            }
+
+            String appName = pkg;
+            try {
+                PackageManager pm = getPackageManager();
+                ApplicationInfo ai = pm.getApplicationInfo(pkg, 0);
+                CharSequence label = pm.getApplicationLabel(ai);
+                if (label != null) appName = label.toString();
+            } catch (Exception ignored) {}
+
+            String category = n.category != null ? n.category : "other";
+            long postTime = sbn.getPostTime() > 0 ? sbn.getPostTime() : System.currentTimeMillis();
+            String id = pkg + "_" + postTime + "_" + sbn.getId();
+
+            String jsonItem = "{"
+                    + "\\"id\\":\\"" + escapeJson(id) + "\\","
+                    + "\\"packageName\\":\\"" + escapeJson(pkg) + "\\","
+                    + "\\"appName\\":\\"" + escapeJson(appName) + "\\","
+                    + "\\"title\\":\\"" + escapeJson(title) + "\\","
+                    + "\\"text\\":\\"" + escapeJson(text) + "\\","
+                    + "\\"category\\":\\"" + escapeJson(category) + "\\","
+                    + "\\"timestamp\\":" + postTime + ","
+                    + "\\"sourceType\\":\\"REAL\\""
+                    + "}";
+
+            memoryEvents.add(jsonItem);
+            while (memoryEvents.size() > MAX_EVENTS) {
+                memoryEvents.remove(0);
+            }
+
+            persistEvents();
+            Log.d(TAG, "Notification captured from: " + appName + " (" + pkg + ")");
+        } catch (Exception e) {
+            Log.e(TAG, "Error processing notification: " + e.getMessage());
+        }
     }
 
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn) {
         if (sbn == null) return;
-        Log.d(TAG, "Notification dismissed: " + sbn.getPackageName());
+        Log.d(TAG, "Notification dismissed from: " + sbn.getPackageName());
+    }
+
+    private void persistEvents() {
+        try {
+            SharedPreferences prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            StringBuilder sb = new StringBuilder("[");
+            synchronized (memoryEvents) {
+                for (int i = 0; i < memoryEvents.size(); i++) {
+                    if (i > 0) sb.append(",");
+                    sb.append(memoryEvents.get(i));
+                }
+            }
+            sb.append("]");
+            prefs.edit().putString(KEY_EVENTS, sb.toString()).apply();
+        } catch (Exception ignored) {}
+    }
+
+    public static String getRecentNotificationsJson(Context context) {
+        if (!memoryEvents.isEmpty()) {
+            StringBuilder sb = new StringBuilder("[");
+            synchronized (memoryEvents) {
+                for (int i = 0; i < memoryEvents.size(); i++) {
+                    if (i > 0) sb.append(",");
+                    sb.append(memoryEvents.get(i));
+                }
+            }
+            sb.append("]");
+            return sb.toString();
+        }
+
+        if (context != null) {
+            try {
+                SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+                return prefs.getString(KEY_EVENTS, "[]");
+            } catch (Exception ignored) {}
+        }
+        return "[]";
+    }
+
+    public static void clearNotifications(Context context) {
+        memoryEvents.clear();
+        if (context != null) {
+            try {
+                SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+                prefs.edit().remove(KEY_EVENTS).apply();
+            } catch (Exception ignored) {}
+        }
+    }
+
+    private static String escapeJson(String s) {
+        if (s == null) return "";
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c == '"') sb.append("\\\\\\\"");
+            else if (c == '\\\\') sb.append("\\\\\\\\");
+            else if (c == '\\b') sb.append("\\\\b");
+            else if (c == '\\f') sb.append("\\\\f");
+            else if (c == '\\n') sb.append("\\\\n");
+            else if (c == '\\r') sb.append("\\\\r");
+            else if (c == '\\t') sb.append("\\\\t");
+            else if (c < ' ') {
+                String hex = Integer.toHexString(c);
+                sb.append("\\\\u");
+                for (int k = 0; k < 4 - hex.length(); k++) sb.append('0');
+                sb.append(hex);
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
     }
 }
 """
@@ -380,17 +617,20 @@ run([
     FINAL_SIGNED
 ])
 
-# 15. Copy to target locations
+# 15. Copy to target locations (Root, Android Debug Output, and Web Public)
 OUT_ROOT_APK = os.path.join(BASE_DIR, "QuietPulse.apk")
 OUT_DEBUG_DIR = os.path.join(BASE_DIR, "android", "app", "build", "outputs", "apk", "debug")
 os.makedirs(OUT_DEBUG_DIR, exist_ok=True)
 OUT_DEBUG_APK = os.path.join(OUT_DEBUG_DIR, "app-debug.apk")
+OUT_WEB_PUBLIC_APK = os.path.join(BASE_DIR, "web", "public", "QuietPulse.apk")
 
 shutil.copyfile(FINAL_SIGNED, OUT_ROOT_APK)
 shutil.copyfile(FINAL_SIGNED, OUT_DEBUG_APK)
+shutil.copyfile(FINAL_SIGNED, OUT_WEB_PUBLIC_APK)
 
 print("=" * 60)
 print("SUCCESS: QuietPulse APK Built & Signed Successfully!")
 print(f"File 1: {OUT_ROOT_APK} ({os.path.getsize(OUT_ROOT_APK)} bytes)")
 print(f"File 2: {OUT_DEBUG_APK} ({os.path.getsize(OUT_DEBUG_APK)} bytes)")
+print(f"File 3: {OUT_WEB_PUBLIC_APK} ({os.path.getsize(OUT_WEB_PUBLIC_APK)} bytes)")
 print("=" * 60)

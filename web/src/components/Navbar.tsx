@@ -26,14 +26,14 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const isPearl = theme === 'pearl';
 
-  // Exact one-word names per Section 8 of Master Prompt:
-  // Home, NotiFy, FlowQueue, DeepFocus, PulseInsights, ChokasAI, Contact
+  // Navigation links: Home, NotiFy, FlowQueue, DeepFocus, PulseInsights, Modes, ChokasAI, Contact
   const navLinks = [
     { id: 'home', label: 'Home' },
     { id: 'notify', label: 'NotiFy' },
     { id: 'flowqueue', label: `FlowQueue${queueCount > 0 ? ` (${queueCount})` : ''}` },
     { id: 'deepfocus', label: 'DeepFocus' },
     { id: 'pulseinsights', label: 'PulseInsights' },
+    { id: 'rules', label: 'Modes' },
     { id: 'chokas', label: 'ChokasAI' },
     { id: 'contact', label: 'Contact' },
   ];

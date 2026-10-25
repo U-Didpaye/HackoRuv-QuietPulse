@@ -161,20 +161,9 @@ export const HomePage: React.FC<HomePageProps> = ({
               <span>Watch Demo</span>
             </button>
 
-            {onReplaySplash && (
-              <button
-                onClick={onReplaySplash}
-                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-black/60 hover:bg-black/80 backdrop-blur-md border border-white/25 text-neutral-200 hover:text-white font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2 font-mono"
-                title="Replay Cinematic Launch Animation"
-              >
-                <Play className="w-3.5 h-3.5 fill-current text-cyan-400" />
-                <span>Replay Cinematic Launch</span>
-              </button>
-            )}
-
             <button
               onClick={onOpenChokas}
-              className="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-neutral-900/70 hover:bg-neutral-800/80 backdrop-blur-md border border-white/15 text-neutral-300 font-medium text-xs tracking-wider transition flex items-center justify-center gap-2 font-mono"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-neutral-900/70 hover:bg-neutral-800/80 backdrop-blur-md border border-white/15 text-neutral-300 font-medium text-xs tracking-wider transition flex items-center justify-center gap-2 font-mono"
             >
               <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
               <span>Ask ChokasAI</span>
