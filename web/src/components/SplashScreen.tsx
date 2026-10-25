@@ -86,11 +86,11 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete, forceSho
         >
           {/* Authentic High-Res Centered Artwork on Black */}
           <img
-            src="/quietpulse-logo-centered.png"
+            src="./quietpulse-logo-centered.png"
             alt="QuietPulse"
             className="w-full h-auto object-contain filter drop-shadow-[0_0_35px_rgba(255,255,255,0.18)]"
             onError={(e) => {
-              (e.currentTarget as HTMLImageElement).src = '/quietpulse-logo.png';
+              (e.currentTarget as HTMLImageElement).src = './quietpulse-logo.png';
             }}
           />
 

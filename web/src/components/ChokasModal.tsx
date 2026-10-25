@@ -173,7 +173,7 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
         {/* Subtle Futuristic Cosmic Texture Overlay */}
         <div className="absolute inset-0 z-0 pointer-events-none opacity-20 overflow-hidden select-none">
           <img
-            src="/backgrounds/bg-violet-stream.png"
+            src="./backgrounds/bg-violet-stream.png"
             alt=""
             className="w-full h-full object-cover transform scale-110 animate-ambient-drift"
           />

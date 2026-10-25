@@ -59,11 +59,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
       */}
       <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
         <img
-          src="/backgrounds/bg-cosmic-rings.png"
+          src="./backgrounds/bg-cosmic-rings.png"
           alt="Cosmic Backdrop"
           className="w-full h-full object-cover object-center filter brightness-65 contrast-110 transform scale-105 animate-subtle-float"
           onError={(e) => {
-            (e.currentTarget as HTMLImageElement).src = '/quietpulse-hero-bg.jpg';
+            (e.currentTarget as HTMLImageElement).src = './quietpulse-hero-bg.jpg';
           }}
         />
         {/* Deep vignette overlay to ensure text contrast */}
@@ -85,11 +85,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
         <div className="flex flex-col items-center text-center mb-8">
           <div className="h-12 w-auto mb-3 flex items-center justify-center">
             <img
-              src="/quietpulse-neon-logo.png"
+              src="./quietpulse-neon-logo.png"
               alt="QuietPulse"
               className="h-11 w-auto object-contain filter drop-shadow-[0_0_25px_rgba(34,211,238,0.35)]"
               onError={(e) => {
-                (e.currentTarget as HTMLImageElement).src = '/quietpulse-logo-transparent.png';
+                (e.currentTarget as HTMLImageElement).src = './quietpulse-logo-transparent.png';
               }}
             />
           </div>

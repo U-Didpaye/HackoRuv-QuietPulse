@@ -48,11 +48,11 @@ export const Navbar: React.FC<NavbarProps> = ({
         >
           <div className="h-9 relative flex items-center justify-center bg-transparent">
             <img
-              src="/quietpulse-logo-transparent.png"
+              src="./quietpulse-logo-transparent.png"
               alt="QuietPulse"
               className="h-8 sm:h-9 w-auto object-contain filter group-hover:brightness-110 transition bg-transparent"
               onError={(e) => {
-                (e.currentTarget as HTMLImageElement).src = '/quietpulse-logo.png';
+                (e.currentTarget as HTMLImageElement).src = './quietpulse-logo.png';
               }}
             />
           </div>

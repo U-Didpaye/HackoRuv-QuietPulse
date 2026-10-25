@@ -65,7 +65,12 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
+import android.net.Uri;
 import android.graphics.Color;
+import java.io.InputStream;
+import java.io.IOException;
 
 public class MainActivity extends Activity {
     private WebView mWebView;
@@ -102,6 +107,62 @@ public class MainActivity extends Activity {
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 view.loadUrl(url);
                 return true;
+            }
+
+            private WebResourceResponse serveAsset(String path) {
+                if (path == null) return null;
+
+                String assetPath = path;
+                while (assetPath.startsWith("/")) {
+                    assetPath = assetPath.substring(1);
+                }
+                if (assetPath.startsWith("android_asset/")) {
+                    assetPath = assetPath.substring("android_asset/".length());
+                }
+
+                String mimeType = null;
+                if (assetPath.endsWith(".png")) mimeType = "image/png";
+                else if (assetPath.endsWith(".jpg") || assetPath.endsWith(".jpeg")) mimeType = "image/jpeg";
+                else if (assetPath.endsWith(".svg")) mimeType = "image/svg+xml";
+                else if (assetPath.endsWith(".css")) mimeType = "text/css";
+                else if (assetPath.endsWith(".js")) mimeType = "application/javascript";
+                else if (assetPath.endsWith(".json")) mimeType = "application/json";
+                else if (assetPath.endsWith(".html")) mimeType = "text/html";
+
+                try {
+                    InputStream is = getAssets().open(assetPath);
+                    return new WebResourceResponse(mimeType, "UTF-8", is);
+                } catch (IOException e) {
+                    if (assetPath.contains("/")) {
+                        String filename = assetPath.substring(assetPath.lastIndexOf("/") + 1);
+                        try {
+                            InputStream is2 = getAssets().open(filename);
+                            return new WebResourceResponse(mimeType, "UTF-8", is2);
+                        } catch (IOException ignored) {}
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+                if (request != null && request.getUrl() != null) {
+                    WebResourceResponse resp = serveAsset(request.getUrl().getPath());
+                    if (resp != null) return resp;
+                }
+                return super.shouldInterceptRequest(view, request);
+            }
+
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+                if (url != null) {
+                    try {
+                        Uri u = Uri.parse(url);
+                        WebResourceResponse resp = serveAsset(u.getPath());
+                        if (resp != null) return resp;
+                    } catch (Exception ignored) {}
+                }
+                return super.shouldInterceptRequest(view, url);
             }
         });
         mWebView.setWebChromeClient(new WebChromeClient());

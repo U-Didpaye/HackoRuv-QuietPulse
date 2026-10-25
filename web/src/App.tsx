@@ -275,7 +275,7 @@ function QuietPulseApp() {
 
         {/* NotiFy: Live Interception Feed (Cosmic Monolith Overlook Background) */}
         {(currentRoute === 'notify' || currentRoute === 'engine') && (
-          <PageBackground imageSrc="/backgrounds/bg-monolith-overlook.jpg">
+          <PageBackground imageSrc="./backgrounds/bg-monolith-overlook.jpg">
             <div className="px-4 sm:px-6 lg:px-8">
               <DashboardPage
                 isFocusActive={isFocusActive}
@@ -294,7 +294,7 @@ function QuietPulseApp() {
 
         {/* FlowQueue (Bioluminescent Flowing River Background) */}
         {(currentRoute === 'flowqueue' || currentRoute === 'queue') && (
-          <PageBackground imageSrc="/backgrounds/bg-bioluminescent-river.png">
+          <PageBackground imageSrc="./backgrounds/bg-bioluminescent-river.png">
             <div className="px-4 sm:px-6 lg:px-8">
               <QueuePage
                 items={items}
@@ -310,7 +310,7 @@ function QuietPulseApp() {
 
         {/* DeepFocus (Golden Summit Sanctuary Background) */}
         {(currentRoute === 'deepfocus' || currentRoute === 'focus') && (
-          <PageBackground imageSrc="/backgrounds/bg-golden-summit.png" overlayStyle="focused">
+          <PageBackground imageSrc="./backgrounds/bg-golden-summit.png" overlayStyle="focused">
             <div className="px-4 sm:px-6 lg:px-8">
               <FocusPage
                 isFocusActive={isFocusActive}
@@ -325,7 +325,7 @@ function QuietPulseApp() {
 
         {/* PulseInsights (Violet Cosmic Energy Stream Background) */}
         {(currentRoute === 'pulseinsights' || currentRoute === 'insights') && (
-          <PageBackground imageSrc="/backgrounds/bg-violet-stream.png">
+          <PageBackground imageSrc="./backgrounds/bg-violet-stream.png">
             <div className="px-4 sm:px-6 lg:px-8">
               <InsightsPage metrics={metrics} />
             </div>
@@ -334,7 +334,7 @@ function QuietPulseApp() {
 
         {/* Rules (Sovereign Metallic Crest Background) */}
         {currentRoute === 'rules' && (
-          <PageBackground imageSrc="/backgrounds/bg-metallic-portrait-emblem.png" overlayStyle="focused">
+          <PageBackground imageSrc="./backgrounds/bg-metallic-portrait-emblem.png" overlayStyle="focused">
             <div className="px-4 sm:px-6 lg:px-8">
               <RulesPage
                 rules={rules}
@@ -353,7 +353,7 @@ function QuietPulseApp() {
 
         {/* Privacy & Permissions (Sovereign Metallic Crest Background) */}
         {currentRoute === 'privacy' && (
-          <PageBackground imageSrc="/backgrounds/bg-metallic-portrait-emblem.png" overlayStyle="focused">
+          <PageBackground imageSrc="./backgrounds/bg-metallic-portrait-emblem.png" overlayStyle="focused">
             <div className="px-4 sm:px-6 lg:px-8">
               <PrivacyPage
                 onResetLearning={() => learningEngineRef.current.reset()}
@@ -366,7 +366,7 @@ function QuietPulseApp() {
 
         {/* Stress Testing Lab (Ringed Horizon Sunrise Background) */}
         {currentRoute === 'demo' && (
-          <PageBackground imageSrc="/backgrounds/bg-ringed-sunrise-landscape.jpg">
+          <PageBackground imageSrc="./backgrounds/bg-ringed-sunrise-landscape.jpg">
             <div className="px-4 sm:px-6 lg:px-8">
               <DemoLabPage
                 onRunScenario={handleRunScenario}
@@ -379,7 +379,7 @@ function QuietPulseApp() {
 
         {/* Contact Page (Cosmic Monolith Background) */}
         {currentRoute === 'contact' && (
-          <PageBackground imageSrc="/backgrounds/bg-monolith-overlook.jpg">
+          <PageBackground imageSrc="./backgrounds/bg-monolith-overlook.jpg">
             <ContactPage />
           </PageBackground>
         )}

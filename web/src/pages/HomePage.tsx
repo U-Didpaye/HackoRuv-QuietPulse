@@ -102,11 +102,11 @@ export const HomePage: React.FC<HomePageProps> = ({
         */}
         <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
           <img
-            src="/quietpulse-hero-bg.jpg"
+            src="./quietpulse-hero-bg.jpg"
             alt="Cosmic Horizon"
             className="w-full h-full object-cover object-center filter brightness-90 contrast-110 transform scale-105 animate-subtle-float"
             onError={(e) => {
-              (e.currentTarget as HTMLImageElement).src = '/backgrounds/bg-ringed-sunrise-landscape.jpg';
+              (e.currentTarget as HTMLImageElement).src = './backgrounds/bg-ringed-sunrise-landscape.jpg';
             }}
           />
           {/* Dual Multi-Stop Gradient Overlays for 100% text legibility */}
@@ -127,11 +127,11 @@ export const HomePage: React.FC<HomePageProps> = ({
           {/* Official QuietPulse Neon Logo Artwork per User Directive */}
           <div className="h-16 sm:h-20 w-auto mb-5 flex items-center justify-center animate-reveal">
             <img
-              src="/quietpulse-neon-logo.png"
+              src="./quietpulse-neon-logo.png"
               alt="QuietPulse"
               className="h-14 sm:h-18 w-auto object-contain filter drop-shadow-[0_0_35px_rgba(34,211,238,0.35)]"
               onError={(e) => {
-                (e.currentTarget as HTMLImageElement).src = '/quietpulse-logo-transparent.png';
+                (e.currentTarget as HTMLImageElement).src = './quietpulse-logo-transparent.png';
               }}
             />
           </div>
