@@ -7,6 +7,9 @@ on:
     branches: [ main, master ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build & Assemble QuietPulse Debug APK
@@ -21,17 +24,33 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-          cache: 'gradle'
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Download gradle-wrapper.jar if missing
+        run: |
+          mkdir -p gradle/wrapper
+          if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
+            echo "Downloading gradle-wrapper.jar..."
+            curl -sSL -o gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v8.7.0/gradle/wrapper/gradle-wrapper.jar || true
+          fi
+        working-directory: android
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
         working-directory: android
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --stacktrace
+        run: |
+          if [ -f gradle/wrapper/gradle-wrapper.jar ]; then
+            ./gradlew assembleDebug --stacktrace
+          else
+            gradle assembleDebug --stacktrace
+          fi
         working-directory: android
 
       - name: Upload Debug APK as Artifact
@@ -50,15 +69,10 @@ jobs:
           body: |
             # 🛡️ QuietPulse — LESS NOISE. MORE FOCUS.
             ### Official Native Android Application Release
-
             **Made With Creativity By HackoRuv - Team**
 
             #### Direct Download & Installation
-            Download the attached `QuietPulse-debug.apk` and open it on your physical Android phone to install immediately:
-            - **Package**: `QuietPulse-debug.apk`
-            - **Target**: Android 8.0+ (API 26+)
-            - **Architecture**: 100% On-Device Attention Firewall
-            - **Features**: NotiFy Engine, FlowQueue Digest, DeepFocus Timer, PulseInsights Telemetry, 5 Handcrafted Themes, and Real NotificationListenerService integration.
+            Download the attached `QuietPulse-debug.apk` to install on your Android phone.
           files: android/app/build/outputs/apk/debug/app-debug.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
