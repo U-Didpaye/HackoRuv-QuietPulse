@@ -630,17 +630,21 @@ function QuietPulseApp() {
 
         {/* Demo Lab */}
         {currentRoute === 'demo' && (
-          <DemoLabPage
-            onRunScenario={handleRunScenario}
-            onResetDemo={handleResetDemo}
-            metrics={metrics}
-            onNavigate={navigateTo}
-          />
+          <PageBackground imageSrc="./backgrounds/bg-ringed-sunrise-landscape.jpg">
+            <div className="px-3 sm:px-6 lg:px-8">
+              <DemoLabPage
+                onRunScenario={handleRunScenario}
+                onResetDemo={handleResetDemo}
+                metrics={metrics}
+                onNavigate={navigateTo}
+              />
+            </div>
+          </PageBackground>
         )}
 
         {/* Privacy */}
         {currentRoute === 'privacy' && (
-          <PageBackground imageSrc="./backgrounds/bg-monolith-overlook.jpg">
+          <PageBackground imageSrc="./backgrounds/bg-metallic-portrait-emblem.png" overlayStyle="focused">
             <div className="px-3 sm:px-6 lg:px-8">
               <PrivacyPage
                 onResetLearning={() => {
@@ -656,7 +660,7 @@ function QuietPulseApp() {
 
         {/* Contact */}
         {currentRoute === 'contact' && (
-          <PageBackground imageSrc="./backgrounds/bg-golden-summit.png">
+          <PageBackground imageSrc="./backgrounds/bg-monolith-overlook.jpg">
             <div className="px-3 sm:px-6 lg:px-8">
               <ContactPage />
             </div>

@@ -101,24 +101,24 @@ export const HomePage: React.FC<HomePageProps> = ({
         
         {/* 
           OFFICIAL COSMIC SPACE-HORIZON HERO BACKGROUND
-          Giant ringed planet, starry nebula, mountain peaks over clouds/water
+          Pristine cosmic galaxy wallpaper: planetary rings, alien mountain landscape, twilight horizon over water
         */}
         <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
           <img
-            src="./quietpulse-hero-bg.jpg"
-            alt="Cosmic Horizon"
-            className="w-full h-full object-cover object-center filter brightness-90 contrast-110 transform scale-105 animate-subtle-float"
+            src="./backgrounds/bg-cosmic-rings.png"
+            alt="Cosmic Galaxy Horizon"
+            className="w-full h-full object-cover object-center filter brightness-95 contrast-105 transform scale-100 animate-subtle-float"
             onError={(e) => {
-              (e.currentTarget as HTMLImageElement).src = './backgrounds/bg-ringed-sunrise-landscape.jpg';
+              (e.currentTarget as HTMLImageElement).src = './quietpulse-hero-bg.jpg';
             }}
           />
-          {/* Dual Multi-Stop Gradient Overlays for 100% text legibility */}
+          {/* Subtle multi-stop atmospheric vignette preserving galaxy visibility across all 3 themes */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
               background: `
-                radial-gradient(ellipse at 50% 45%, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.8) 75%, var(--v-bg) 100%),
-                linear-gradient(to bottom, var(--v-bg) 0%, transparent 18%, transparent 75%, var(--v-bg) 100%)
+                radial-gradient(ellipse at 50% 40%, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.65) 75%, rgba(0, 0, 0, 0.85) 100%),
+                linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 20%, transparent 75%, rgba(0,0,0,0.85) 100%)
               `
             }}
           />

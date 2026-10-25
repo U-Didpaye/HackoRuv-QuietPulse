@@ -25,7 +25,7 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
   onStartFocus,
   onClearQueue,
 }) => {
-  const { setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'init_1',
@@ -161,32 +161,60 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
-      <div className="relative w-full max-w-xl max-h-[90vh] h-[560px] bg-v-surface border border-v-border rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-reveal">
-        
-        {/* Subtle Ambient Obsidian Gradient (No Purple Landscape) */}
-        <div className="absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-v-secondary/40 via-transparent to-v-bg/60" />
+      <div
+        className={`relative w-full max-w-xl max-h-[90vh] h-[580px] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-reveal border backdrop-blur-xl ${
+          theme === 'emerald'
+            ? 'bg-[#061813]/95 border-emerald-500/40 shadow-[0_0_60px_rgba(20,184,166,0.18)]'
+            : theme === 'pearl'
+            ? 'bg-[#0c0c0e]/95 border-neutral-700/80 shadow-[0_0_60px_rgba(0,0,0,0.6)]'
+            : 'bg-[#0a0a0c]/95 border-neutral-700/80 shadow-[0_0_60px_rgba(255,255,255,0.06)]'
+        }`}
+      >
+        {/* Subtle Ambient Cosmic Background Image Overlay */}
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-20 overflow-hidden select-none">
+          <img
+            src="./backgrounds/bg-cosmic-rings.png"
+            alt=""
+            className="w-full h-full object-cover filter brightness-90 contrast-125 mix-blend-screen"
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).src = './backgrounds/bg-violet-stream.png';
+            }}
+          />
+        </div>
 
         {/* Header - Fixed Height & High Contrast */}
-        <div className="relative z-10 px-5 py-3.5 border-b border-v-border flex items-center justify-between bg-v-surface/95 backdrop-blur-sm flex-shrink-0">
+        <div className="relative z-10 px-5 py-3.5 border-b border-white/10 flex items-center justify-between bg-black/60 backdrop-blur-md flex-shrink-0 text-white">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-v-secondary border border-v-border flex items-center justify-center text-v-text shadow-sm">
-              <Sparkles className="w-4 h-4 text-cyan-400" />
+            <div
+              className={`w-8 h-8 rounded-xl border flex items-center justify-center shadow-sm ${
+                theme === 'emerald'
+                  ? 'bg-emerald-950/80 border-emerald-500/40 text-emerald-400'
+                  : 'bg-neutral-900 border-neutral-700 text-cyan-400'
+              }`}
+            >
+              <Sparkles className="w-4 h-4" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-v-text uppercase font-mono tracking-wider">
+                <span className="text-xs font-bold text-white uppercase font-mono tracking-wider">
                   ChokasAI Assistant
                 </span>
-                <span className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                <span
+                  className={`text-[9px] font-mono px-2 py-0.5 rounded-full border ${
+                    theme === 'emerald'
+                      ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                      : 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30'
+                  }`}
+                >
                   ON-DEVICE
                 </span>
               </div>
-              <p className="text-[10px] text-v-text-muted">Natural-language command router &amp; guide</p>
+              <p className="text-[10px] text-neutral-400">Natural-language command router &amp; guide</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-v-text-muted hover:text-v-text hover:bg-v-secondary transition"
+            className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition"
             aria-label="Close"
           >
             <X className="w-4 h-4" />
@@ -201,30 +229,36 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
               className={`flex gap-2.5 ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {m.sender === 'chokas' && (
-                <div className="w-6 h-6 rounded-md bg-v-secondary border border-v-border flex items-center justify-center text-cyan-400 shrink-0 mt-0.5 shadow-sm">
+                <div
+                  className={`w-6 h-6 rounded-md border flex items-center justify-center shrink-0 mt-0.5 shadow-sm ${
+                    theme === 'emerald'
+                      ? 'bg-emerald-950 border-emerald-500/40 text-emerald-400'
+                      : 'bg-neutral-900 border-neutral-700 text-cyan-400'
+                  }`}
+                >
                   <Bot className="w-3.5 h-3.5" />
                 </div>
               )}
               <div
                 className={`max-w-[85%] sm:max-w-[80%] p-3.5 rounded-xl border leading-relaxed shadow-sm ${
                   m.sender === 'user'
-                    ? 'bg-v-text text-v-bg border-v-text font-medium'
-                    : 'bg-v-secondary/80 text-v-text border-v-border'
+                    ? 'bg-white text-black border-white/80 font-medium'
+                    : 'bg-white/10 backdrop-blur-md text-neutral-100 border-white/15'
                 }`}
               >
                 <p className="whitespace-pre-line text-xs font-normal">{m.text}</p>
                 {m.actionTaken && (
-                  <div className="mt-2 pt-2 border-t border-v-border/60 flex items-center gap-1.5 text-[10px] font-mono text-emerald-400 font-bold">
+                  <div className="mt-2 pt-2 border-t border-white/15 flex items-center gap-1.5 text-[10px] font-mono text-emerald-400 font-bold">
                     <Check className="w-3 h-3" />
                     <span>Action: {m.actionTaken}</span>
                   </div>
                 )}
-                <span className="text-[9px] opacity-50 mt-1.5 block text-right font-mono">
+                <span className="text-[9px] opacity-60 mt-1.5 block text-right font-mono">
                   {m.timestamp}
                 </span>
               </div>
               {m.sender === 'user' && (
-                <div className="w-6 h-6 rounded-md bg-v-text text-v-bg flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-6 h-6 rounded-md bg-white text-black flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
                   <User className="w-3.5 h-3.5" />
                 </div>
               )}
@@ -233,29 +267,29 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
         </div>
 
         {/* Suggested Quick Action Chips - Flex-shrink-0 for mobile */}
-        <div className="relative z-10 px-4 py-2 border-t border-v-border bg-v-secondary/90 backdrop-blur-sm flex items-center gap-2 overflow-x-auto text-[11px] font-mono flex-shrink-0">
-          <span className="text-v-text-muted text-[10px] uppercase shrink-0 font-bold">Try:</span>
+        <div className="relative z-10 px-4 py-2 border-t border-white/10 bg-black/60 backdrop-blur-md flex items-center gap-2 overflow-x-auto text-[11px] font-mono flex-shrink-0">
+          <span className="text-neutral-400 text-[10px] uppercase shrink-0 font-bold">Try:</span>
           <button
             onClick={() => handleCommand('Start 25m focus session')}
-            className="px-2.5 py-1 rounded-lg bg-v-surface border border-v-border text-v-text hover:border-cyan-400/50 transition shrink-0"
+            className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/15 text-neutral-200 hover:text-white hover:border-cyan-400 transition shrink-0"
           >
             Start 25m Focus
           </button>
           <button
             onClick={() => handleCommand('Switch to Emerald theme')}
-            className="px-2.5 py-1 rounded-lg bg-v-surface border border-v-border text-emerald-400 hover:border-emerald-400 transition shrink-0"
+            className="px-2.5 py-1 rounded-lg bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 hover:border-emerald-400 transition shrink-0"
           >
             Emerald Theme
           </button>
           <button
             onClick={() => handleCommand('Switch to Pearl theme')}
-            className="px-2.5 py-1 rounded-lg bg-v-surface border border-v-border text-v-text hover:border-white transition shrink-0"
+            className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/15 text-neutral-200 hover:text-white hover:border-white transition shrink-0"
           >
             Pearl Theme
           </button>
           <button
             onClick={() => handleCommand('What is a notification burst?')}
-            className="px-2.5 py-1 rounded-lg bg-v-surface border border-v-border text-v-text hover:border-cyan-400/50 transition shrink-0"
+            className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/15 text-neutral-200 hover:text-white hover:border-cyan-400 transition shrink-0"
           >
             Explain Bursts
           </button>
@@ -267,18 +301,18 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
             e.preventDefault();
             handleCommand(input);
           }}
-          className="relative z-10 p-3 border-t border-v-border bg-v-surface backdrop-blur-sm flex items-center gap-2 flex-shrink-0"
+          className="relative z-10 p-3 border-t border-white/10 bg-black/70 backdrop-blur-md flex items-center gap-2 flex-shrink-0"
         >
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask ChokasAI or enter a command (e.g. 'start 25m focus', 'switch pearl')..."
-            className="flex-1 px-3.5 py-2.5 text-xs bg-v-secondary border border-v-border rounded-xl text-v-text placeholder-v-text-muted focus:outline-none focus:border-cyan-400 transition font-sans"
+            className="flex-1 px-3.5 py-2.5 text-xs bg-white/5 border border-white/15 rounded-xl text-white placeholder-neutral-400 focus:outline-none focus:border-cyan-400 transition font-sans"
           />
           <button
             type="submit"
-            className="p-2.5 rounded-xl bg-v-text text-v-bg hover:opacity-90 transition shrink-0 shadow-md"
+            className="p-2.5 rounded-xl bg-white text-black hover:bg-neutral-200 transition shrink-0 shadow-md"
             title="Send Message"
           >
             <Send className="w-3.5 h-3.5" />

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Send, CheckCircle2, AlertCircle, Mail, MessageSquare, Terminal, HelpCircle } from 'lucide-react';
 import { ScrollReveal } from '../components/ScrollReveal';
+import { supabase, isSupabaseConfigured } from '../data/supabaseClient';
 
 export const ContactPage: React.FC = () => {
   const [name, setName] = useState('');
@@ -9,7 +10,7 @@ export const ContactPage: React.FC = () => {
   const [message, setMessage] = useState('');
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!name.trim() || !email.trim() || !message.trim()) {
@@ -19,29 +20,45 @@ export const ContactPage: React.FC = () => {
 
     setStatus('submitting');
 
-    // Simulate verified frontend processing
-    setTimeout(() => {
-      // Record locally in localStorage for persistent client audit
-      try {
-        const existing = JSON.parse(localStorage.getItem('quietpulse_contact_submissions') || '[]');
-        existing.push({
-          id: 'sub_' + Date.now(),
-          name,
-          email,
-          subject,
-          message,
-          timestamp: new Date().toISOString(),
-        });
-        localStorage.setItem('quietpulse_contact_submissions', JSON.stringify(existing));
-      } catch (err) {
-        // Safe fallback
-      }
+    const submissionPayload = {
+      id: 'sub_' + Date.now(),
+      name: name.trim(),
+      email: email.trim(),
+      subject,
+      message: message.trim(),
+      timestamp: new Date().toISOString(),
+    };
 
+    // 1. Attempt Supabase backend persistence if configured
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase.from('inquiries').insert([{
+          name: submissionPayload.name,
+          email: submissionPayload.email,
+          subject: submissionPayload.subject,
+          message: submissionPayload.message,
+          created_at: submissionPayload.timestamp,
+        }]);
+      } catch (err) {
+        console.warn('Supabase inquiry insert skipped/fallback:', err);
+      }
+    }
+
+    // 2. Always record in localStorage for reliable offline client persistence
+    try {
+      const existing = JSON.parse(localStorage.getItem('quietpulse_contact_submissions') || '[]');
+      existing.push(submissionPayload);
+      localStorage.setItem('quietpulse_contact_submissions', JSON.stringify(existing));
+    } catch (err) {
+      // Safe fallback
+    }
+
+    setTimeout(() => {
       setStatus('success');
       setName('');
       setEmail('');
       setMessage('');
-    }, 700);
+    }, 400);
   };
 
   return (
