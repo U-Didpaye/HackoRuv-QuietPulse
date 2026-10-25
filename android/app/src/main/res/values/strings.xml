@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">FocusShield AI</string>
+    <string name="notification_service_label">FocusShield Attention Firewall</string>
+    <string name="dashboard_title">Focus Dashboard</string>
+    <string name="queue_title">Attention Queue</string>
+    <string name="sessions_title">Focus Sessions</string>
+    <string name="insights_title">Insights &amp; Analytics</string>
+    <string name="rules_title">Personalization Rules</string>
+    <string name="privacy_title">Privacy &amp; Permissions</string>
+    <string name="demo_title">Demo Lab</string>
+</resources>
