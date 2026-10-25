@@ -60,7 +60,9 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete, forceSho
   const handleSkip = () => {
     sessionStorage.setItem('quietpulse_splash_seen', 'true');
     setIsFadingOut(true);
-    setTimeout(onComplete, 250);
+    setTimeout(() => {
+      onComplete();
+    }, 200);
   };
 
   return (

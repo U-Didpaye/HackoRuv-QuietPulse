@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-export type QuietPulseTheme = 'obsidian' | 'emerald' | 'violet' | 'crimson' | 'pearl';
+export type QuietPulseTheme = 'obsidian' | 'emerald' | 'pearl';
 
 export interface ThemeInfo {
   id: QuietPulseTheme;
@@ -29,22 +29,6 @@ export const THEMES: ThemeInfo[] = [
     swatchAccent: '#14B8A6',
   },
   {
-    id: 'violet',
-    name: 'Violet',
-    character: 'Celestial Dark & Lavender',
-    swatchBg: '#0C0817',
-    swatchSurface: '#1D1535',
-    swatchAccent: '#8B5CF6',
-  },
-  {
-    id: 'crimson',
-    name: 'Crimson',
-    character: 'Dark Rose & Soft Crimson',
-    swatchBg: '#140508',
-    swatchSurface: '#2C0D14',
-    swatchAccent: '#FF4757',
-  },
-  {
     id: 'pearl',
     name: 'Pearl',
     character: 'Clean Architectural Light',
@@ -70,7 +54,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [theme, setThemeState] = useState<QuietPulseTheme>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('quietpulse_theme') as QuietPulseTheme;
-      if (saved && ['obsidian', 'emerald', 'violet', 'crimson', 'pearl'].includes(saved)) {
+      if (saved && ['obsidian', 'emerald', 'pearl'].includes(saved)) {
         return saved;
       }
     }

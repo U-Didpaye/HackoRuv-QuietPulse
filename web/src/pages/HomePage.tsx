@@ -18,7 +18,8 @@ import {
   BellRing,
   Filter,
   Zap,
-  HelpCircle
+  HelpCircle,
+  Download
 } from 'lucide-react';
 import { AnalyticsMetrics } from '../types';
 
@@ -26,12 +27,14 @@ interface HomePageProps {
   onNavigate: (route: string) => void;
   onOpenChokas: () => void;
   metrics: AnalyticsMetrics;
+  onReplaySplash?: () => void;
 }
 
 export const HomePage: React.FC<HomePageProps> = ({
   onNavigate,
   onOpenChokas,
   metrics,
+  onReplaySplash,
 }) => {
   // Section 10: Interactive Attention-Management Demo State
   const [demoActiveNotification, setDemoActiveNotification] = useState<{
@@ -121,23 +124,11 @@ export const HomePage: React.FC<HomePageProps> = ({
           />
         </div>
 
-        {/* Hero Foreground Content Layer */}
-        <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center pt-8 sm:pt-14">
+        {/* Hero Foreground Content Layer (Balanced Composition without Central Logo) */}
+        <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center pt-16 sm:pt-24 md:pt-28">
           
-          {/* Official QuietPulse Neon Logo Artwork per User Directive */}
-          <div className="h-16 sm:h-20 w-auto mb-5 flex items-center justify-center animate-reveal">
-            <img
-              src="./quietpulse-neon-logo.png"
-              alt="QuietPulse"
-              className="h-14 sm:h-18 w-auto object-contain filter drop-shadow-[0_0_35px_rgba(34,211,238,0.35)]"
-              onError={(e) => {
-                (e.currentTarget as HTMLImageElement).src = './quietpulse-logo-transparent.png';
-              }}
-            />
-          </div>
-
           {/* Exact Master Tagline */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-neutral-200 text-xs sm:text-sm font-mono tracking-[0.25em] uppercase mb-4 shadow-2xl">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-neutral-200 text-xs sm:text-sm font-mono tracking-[0.25em] uppercase mb-6 shadow-2xl animate-reveal">
             <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
             LESS NOISE. MORE FOCUS.
           </div>
@@ -148,12 +139,12 @@ export const HomePage: React.FC<HomePageProps> = ({
           </h1>
 
           {/* Concise Product Statement per Mockup & Master Prompt */}
-          <p className="text-base sm:text-xl text-neutral-200 max-w-2xl mx-auto mt-5 leading-relaxed font-sans drop-shadow-[0_2px_15px_rgba(0,0,0,0.85)]">
+          <p className="text-base sm:text-xl text-neutral-200 max-w-2xl mx-auto mt-6 leading-relaxed font-sans drop-shadow-[0_2px_15px_rgba(0,0,0,0.85)]">
             QuietPulse helps you prioritize what matters and filter out what doesn't, so you can do your best work without notification anxiety.
           </p>
 
           {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row items-center gap-3.5 mt-8 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 mt-9 w-full sm:w-auto">
             <button
               onClick={() => onNavigate('notify')}
               className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-white text-black font-bold text-xs uppercase tracking-widest hover:bg-neutral-200 transition shadow-2xl flex items-center justify-center gap-2 font-mono group"
@@ -169,6 +160,17 @@ export const HomePage: React.FC<HomePageProps> = ({
               <Play className="w-3.5 h-3.5 fill-current text-cyan-400" />
               <span>Watch Demo</span>
             </button>
+
+            {onReplaySplash && (
+              <button
+                onClick={onReplaySplash}
+                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-black/60 hover:bg-black/80 backdrop-blur-md border border-white/25 text-neutral-200 hover:text-white font-bold text-xs uppercase tracking-wider transition flex items-center justify-center gap-2 font-mono"
+                title="Replay Cinematic Launch Animation"
+              >
+                <Play className="w-3.5 h-3.5 fill-current text-cyan-400" />
+                <span>Replay Cinematic Launch</span>
+              </button>
+            )}
 
             <button
               onClick={onOpenChokas}
@@ -624,7 +626,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               03 // IN-APP COMPANION
             </span>
             <h2 className="text-3xl sm:text-4xl font-black text-v-text uppercase font-editorial mt-3">
-              Meet ChokasAI
+              MEET CHOKASAI
             </h2>
             <p className="text-sm text-v-text-muted mt-3 leading-relaxed font-sans">
               A lightweight, 100% offline intelligence guide engineered to help you navigate, explain, and command QuietPulse without sending queries to the cloud.
@@ -632,51 +634,58 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
         </ScrollReveal>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <ScrollReveal delayMs={100}>
-            <div className="p-6 rounded-2xl bg-v-surface border border-v-border h-full">
-              <span className="text-[11px] font-mono text-v-accent uppercase">Mode 01</span>
-              <h3 className="text-base font-bold text-v-text mt-1">Explain</h3>
-              <p className="text-xs text-v-text-muted mt-2 leading-relaxed">
-                Answers questions about how notifications were categorized, what burst thresholds mean, and why specific alerts were buffered.
-              </p>
-              <div className="mt-4 p-2.5 rounded-lg bg-v-secondary text-[11px] font-mono text-v-text-muted border border-v-border">
+        {/* ChokasAI Cards Grid: Fully visible, responsive, without horizontal clipping */}
+        <div className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+          <ScrollReveal delayMs={100} className="w-full min-w-0">
+            <div className="p-6 sm:p-7 rounded-2xl bg-v-surface border border-v-border h-full flex flex-col justify-between overflow-hidden">
+              <div>
+                <span className="text-[11px] font-mono text-v-accent uppercase">Mode 01</span>
+                <h3 className="text-base font-bold text-v-text mt-1.5">Explain</h3>
+                <p className="text-xs text-v-text-muted mt-2.5 leading-relaxed">
+                  Answers questions about how notifications were categorized, what burst thresholds mean, and why specific alerts were buffered.
+                </p>
+              </div>
+              <div className="mt-5 p-3 rounded-lg bg-v-secondary text-[11px] font-mono text-v-text-muted border border-v-border break-words">
                 "Why was my social notification delayed?"
               </div>
             </div>
           </ScrollReveal>
 
-          <ScrollReveal delayMs={200}>
-            <div className="p-6 rounded-2xl bg-v-surface border border-v-border h-full">
-              <span className="text-[11px] font-mono text-v-accent uppercase">Mode 02</span>
-              <h3 className="text-base font-bold text-v-text mt-1">Navigate</h3>
-              <p className="text-xs text-v-text-muted mt-2 leading-relaxed">
-                Directly transports you across NotiFy, FlowQueue, DeepFocus, PulseInsights, and Privacy with natural voice-like commands.
-              </p>
-              <div className="mt-4 p-2.5 rounded-lg bg-v-secondary text-[11px] font-mono text-v-text-muted border border-v-border">
+          <ScrollReveal delayMs={200} className="w-full min-w-0">
+            <div className="p-6 sm:p-7 rounded-2xl bg-v-surface border border-v-border h-full flex flex-col justify-between overflow-hidden">
+              <div>
+                <span className="text-[11px] font-mono text-v-accent uppercase">Mode 02</span>
+                <h3 className="text-base font-bold text-v-text mt-1.5">Navigate</h3>
+                <p className="text-xs text-v-text-muted mt-2.5 leading-relaxed">
+                  Directly transports you across NotiFy, FlowQueue, DeepFocus, PulseInsights, and Privacy with natural voice-like commands.
+                </p>
+              </div>
+              <div className="mt-5 p-3 rounded-lg bg-v-secondary text-[11px] font-mono text-v-text-muted border border-v-border break-words">
                 "Open my focus settings"
               </div>
             </div>
           </ScrollReveal>
 
-          <ScrollReveal delayMs={300}>
-            <div className="p-6 rounded-2xl bg-v-surface border border-v-border h-full">
-              <span className="text-[11px] font-mono text-v-accent uppercase">Mode 03</span>
-              <h3 className="text-base font-bold text-v-text mt-1">Act</h3>
-              <p className="text-xs text-v-text-muted mt-2 leading-relaxed">
-                Executes verified in-app commands: starts DeepFocus sessions, clears FlowQueue, or switches between Obsidian, Emerald, Violet, Crimson, and Pearl themes.
-              </p>
-              <div className="mt-4 p-2.5 rounded-lg bg-v-secondary text-[11px] font-mono text-v-text-muted border border-v-border">
-                "Start a 25m focus session"
+          <ScrollReveal delayMs={300} className="w-full min-w-0">
+            <div className="p-6 sm:p-7 rounded-2xl bg-v-surface border border-v-border h-full flex flex-col justify-between overflow-hidden">
+              <div>
+                <span className="text-[11px] font-mono text-v-accent uppercase">Mode 03</span>
+                <h3 className="text-base font-bold text-v-text mt-1.5">Act</h3>
+                <p className="text-xs text-v-text-muted mt-2.5 leading-relaxed">
+                  Executes verified in-app commands: starts DeepFocus sessions, clears FlowQueue, or switches between Obsidian Silver, Emerald, and Pearl themes.
+                </p>
+              </div>
+              <div className="mt-5 p-3 rounded-lg bg-v-secondary text-[11px] font-mono text-v-text-muted border border-v-border break-words">
+                "Switch to Emerald theme"
               </div>
             </div>
           </ScrollReveal>
         </div>
 
-        <div className="mt-10 text-center">
+        <div className="mt-12 text-center">
           <button
             onClick={onOpenChokas}
-            className="px-6 py-3 rounded-xl bg-v-text text-v-bg font-bold text-xs uppercase tracking-widest font-mono hover:opacity-90 transition inline-flex items-center gap-2"
+            className="px-6 py-3 rounded-xl bg-v-text text-v-bg font-bold text-xs uppercase tracking-widest font-mono hover:opacity-90 transition inline-flex items-center gap-2 shadow-lg"
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>Launch ChokasAI Assistant</span>
@@ -686,7 +695,7 @@ export const HomePage: React.FC<HomePageProps> = ({
 
       {/* 
         ========================================================================
-        CALL TO ACTION
+        CALL TO ACTION (Clean Download Android App & Contact Team, No Launch NotiFy)
         ========================================================================
       */}
       <section className="py-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto border-t border-v-border text-center">
@@ -700,15 +709,18 @@ export const HomePage: React.FC<HomePageProps> = ({
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
-              <button
-                onClick={() => onNavigate('notify')}
-                className="w-full sm:w-auto px-7 py-3 rounded-xl bg-v-text text-v-bg font-bold text-xs uppercase tracking-widest font-mono hover:opacity-90 transition shadow-lg"
+              <a
+                href="./QuietPulse.apk"
+                download="QuietPulse.apk"
+                className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-v-text text-v-bg font-bold text-xs uppercase tracking-widest font-mono hover:opacity-90 transition shadow-lg flex items-center justify-center gap-2.5 group"
+                title="Download Official QuietPulse Android APK"
               >
-                Launch NotiFy
-              </button>
+                <Download className="w-4 h-4" />
+                <span>Download Android App</span>
+              </a>
               <button
                 onClick={() => onNavigate('contact')}
-                className="w-full sm:w-auto px-7 py-3 rounded-xl bg-v-secondary hover:bg-v-elevated border border-v-border text-v-text font-bold text-xs uppercase tracking-widest font-mono transition"
+                className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-v-secondary hover:bg-v-elevated border border-v-border text-v-text font-bold text-xs uppercase tracking-widest font-mono transition flex items-center justify-center gap-2"
               >
                 Contact Team
               </button>

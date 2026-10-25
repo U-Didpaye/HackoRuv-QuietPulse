@@ -37,6 +37,8 @@ function QuietPulseApp() {
     }
     return true;
   });
+  const [splashKey, setSplashKey] = useState<number>(0);
+  const [forceSplash, setForceSplash] = useState<boolean>(false);
 
   const [currentRoute, setCurrentRoute] = useState<string>('home');
   const [isChokasOpen, setIsChokasOpen] = useState<boolean>(false);
@@ -265,6 +267,12 @@ function QuietPulseApp() {
     navigateTo('home');
   };
 
+  const handleTriggerReplaySplash = () => {
+    setForceSplash(true);
+    setSplashKey(prev => prev + 1);
+    setShowSplash(true);
+  };
+
   const handleLogout = async () => {
     try {
       await signOutUser();
@@ -281,7 +289,12 @@ function QuietPulseApp() {
       {/* 2.5-Second Cinematic Launch Screen */}
       {showSplash && (
         <SplashScreen
-          onComplete={() => setShowSplash(false)}
+          key={splashKey}
+          forceShow={forceSplash}
+          onComplete={() => {
+            setShowSplash(false);
+            setForceSplash(false);
+          }}
         />
       )}
 
@@ -303,6 +316,7 @@ function QuietPulseApp() {
             onNavigate={navigateTo}
             onOpenChokas={() => setIsChokasOpen(true)}
             metrics={metrics}
+            onReplaySplash={handleTriggerReplaySplash}
           />
         )}
 
@@ -438,7 +452,7 @@ function QuietPulseApp() {
       {/* Professional Footer */}
       <Footer
         onNavigate={navigateTo}
-        onReplaySplash={() => setShowSplash(true)}
+        onReplaySplash={handleTriggerReplaySplash}
         onOpenChokas={() => setIsChokasOpen(true)}
       />
     </div>

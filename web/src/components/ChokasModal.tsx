@@ -85,19 +85,11 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
         reply = "FlowQueue has been cleared. All buffered notification records have been safely wiped.";
         action = "Cleared FlowQueue";
       }
-      // 3. Theme Switching (5 Official Themes: obsidian, emerald, violet, crimson, pearl)
+      // 3. Theme Switching (3 Official Retained Themes: obsidian, emerald, pearl)
       else if (fuzzyMatch(lower, ['emerald', 'emrald', 'green', 'mint'])) {
         setTheme('emerald');
         reply = "Switched to Emerald theme (Deep forest with mint accents).";
         action = "Theme changed to Emerald";
-      } else if (fuzzyMatch(lower, ['violet', 'purple', 'voilet', 'lavender'])) {
-        setTheme('violet');
-        reply = "Switched to Violet theme (Dark celestial with lavender accents).";
-        action = "Theme changed to Violet";
-      } else if (fuzzyMatch(lower, ['crimson', 'crmison', 'red', 'rose'])) {
-        setTheme('crimson');
-        reply = "Switched to Crimson theme (Dark red with soft rose accents).";
-        action = "Theme changed to Crimson";
       } else if (fuzzyMatch(lower, ['pearl', 'light theme', 'white theme', 'peral'])) {
         setTheme('pearl');
         reply = "Switched to Pearl theme (Clean architectural light).";
@@ -107,7 +99,7 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
         reply = "Switched to Obsidian Silver theme (Cinematic black & metallic silver).";
         action = "Theme changed to Obsidian Silver";
       } else if (fuzzyMatch(lower, ['help themes', 'themes', 'show themes', 'list themes'])) {
-        reply = "QuietPulse supports 5 handcrafted themes:\n1. Obsidian Silver (Default black/silver)\n2. Emerald (#14B8A6 mint)\n3. Violet (#8B5CF6 lavender)\n4. Crimson (#FF4757 rose)\n5. Pearl (Architectural light).\nType 'switch to emerald' or 'switch to violet' to apply any theme.";
+        reply = "QuietPulse supports 3 handcrafted themes:\n1. Obsidian Silver (Default black & metallic silver)\n2. Emerald (#14B8A6 mint)\n3. Pearl (Clean architectural light).\nType 'switch to emerald' or 'switch to pearl' to apply any theme.";
       }
       // 4. Navigation Commands (Strict One-Word Features: Home, NotiFy, FlowQueue, DeepFocus, PulseInsights, Contact)
       else if (fuzzyMatch(lower, ['open queue', 'show queue', 'go queue', 'flowqueue', 'flow queue'])) {
@@ -151,7 +143,7 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
       } else if (fuzzyMatch(lower, ['who are you', 'what are you', 'chokas'])) {
         reply = "I am ChokasAI, an embedded 100% on-device assistant for QuietPulse. I execute commands, manage themes, explain triage decisions, and never transmit your private data over the network.";
       } else {
-        reply = "I understand. You can ask me to explain triage rules, switch themes (Obsidian, Emerald, Violet, Crimson, Pearl), start a DeepFocus timer, or navigate directly to NotiFy, FlowQueue, or PulseInsights.";
+        reply = "I understand. You can ask me to explain triage rules, switch themes (Obsidian Silver, Emerald, Pearl), start a DeepFocus timer, or navigate directly to NotiFy, FlowQueue, or PulseInsights.";
       }
 
       setMessages((prev) => [
@@ -257,10 +249,10 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
             Emerald Theme
           </button>
           <button
-            onClick={() => handleCommand('Switch to Violet theme')}
-            className="px-2.5 py-1 rounded bg-v-surface border border-v-border text-v-text hover:border-v-accent transition shrink-0 text-purple-300"
+            onClick={() => handleCommand('Switch to Pearl theme')}
+            className="px-2.5 py-1 rounded bg-v-surface border border-v-border text-v-text hover:border-v-accent transition shrink-0 text-neutral-300"
           >
-            Violet Theme
+            Pearl Theme
           </button>
           <button
             onClick={() => handleCommand('What is a notification burst?')}
