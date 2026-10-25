@@ -15,6 +15,7 @@ import { PrivacyPage } from './pages/PrivacyPage';
 import { ContactPage } from './pages/ContactPage';
 import { LoginPage } from './pages/LoginPage';
 import { PageBackground } from './components/PageBackground';
+import { isSupabaseConfigured, supabase, getCurrentSession, signOutUser } from './data/supabaseClient';
 
 import { BurstDetector } from './intelligence/burstDetector';
 import { LocalLearningEngine } from './intelligence/localLearning';
@@ -89,6 +90,33 @@ function QuietPulseApp() {
     userCorrectionCount: 0,
     estimatedInterruptionsDeflected: 0
   });
+
+  // Synchronize Supabase authentication session
+  useEffect(() => {
+    if (!isSupabaseConfigured || !supabase) return;
+
+    getCurrentSession().then((session) => {
+      if (session?.user?.email) {
+        setUserEmail(session.user.email);
+        localStorage.setItem('quietpulse_user', session.user.email);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user?.email) {
+        setUserEmail(session.user.email);
+        localStorage.setItem('quietpulse_user', session.user.email);
+      } else if (_event === 'SIGNED_OUT') {
+        setUserEmail(null);
+        localStorage.removeItem('quietpulse_user');
+        sessionStorage.removeItem('quietpulse_user');
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
   // Focus Timer Tick
   useEffect(() => {
@@ -237,7 +265,12 @@ function QuietPulseApp() {
     navigateTo('home');
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await signOutUser();
+    } catch (err) {
+      console.warn('Sign out warning:', err);
+    }
     localStorage.removeItem('quietpulse_user');
     sessionStorage.removeItem('quietpulse_user');
     setUserEmail(null);

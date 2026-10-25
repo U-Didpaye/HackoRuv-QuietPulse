@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff, Lock, Mail, ArrowRight, ShieldCheck, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, ArrowRight, ShieldCheck, AlertCircle, CheckCircle2, Cloud } from 'lucide-react';
+import { isSupabaseConfigured, signInWithEmail, signUpWithEmail, signInWithGoogle, supabase } from '../data/supabaseClient';
 
 interface LoginPageProps {
   onLoginSuccess: (email: string) => void;
@@ -16,13 +17,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
     setSuccessMessage(null);
 
     // Form validation
-    if (!email || !email.includes('@')) {
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail || !trimmedEmail.includes('@') || !trimmedEmail.includes('.')) {
       setErrorMessage('Please enter a valid email address.');
       return;
     }
@@ -33,23 +35,114 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
 
     setIsLoading(true);
 
-    // Local Sovereign Authentication Simulation
-    setTimeout(() => {
-      setIsLoading(false);
-      if (rememberMe) {
-        localStorage.setItem('quietpulse_user', email);
+    try {
+      if (isSupabaseConfigured) {
+        if (isSignUp) {
+          const { user, session, error } = await signUpWithEmail(trimmedEmail, password);
+          if (error) {
+            setErrorMessage(error.message);
+            setIsLoading(false);
+            return;
+          }
+
+          if (rememberMe) {
+            localStorage.setItem('quietpulse_user', trimmedEmail);
+          } else {
+            sessionStorage.setItem('quietpulse_user', trimmedEmail);
+          }
+
+          if (session && user) {
+            setSuccessMessage('Account created and verified! Entering QuietPulse...');
+            setTimeout(() => {
+              onLoginSuccess(user.email || trimmedEmail);
+            }, 600);
+          } else {
+            setSuccessMessage('Registration submitted! Please check your email inbox for a verification link to activate your account.');
+            setIsLoading(false);
+          }
+        } else {
+          const { user, error } = await signInWithEmail(trimmedEmail, password);
+          if (error) {
+            setErrorMessage(error.message);
+            setIsLoading(false);
+            return;
+          }
+
+          if (rememberMe) {
+            localStorage.setItem('quietpulse_user', trimmedEmail);
+          } else {
+            sessionStorage.setItem('quietpulse_user', trimmedEmail);
+          }
+
+          setSuccessMessage('Welcome back! Entering QuietPulse...');
+          setTimeout(() => {
+            onLoginSuccess(user?.email || trimmedEmail);
+          }, 600);
+        }
       } else {
-        sessionStorage.setItem('quietpulse_user', email);
+        // Fallback: Local sovereign simulation if Supabase is not configured
+        setTimeout(() => {
+          setIsLoading(false);
+          if (rememberMe) {
+            localStorage.setItem('quietpulse_user', trimmedEmail);
+          } else {
+            sessionStorage.setItem('quietpulse_user', trimmedEmail);
+          }
+          setSuccessMessage(isSignUp ? 'Account created locally! Entering QuietPulse...' : 'Welcome back! Entering QuietPulse...');
+          setTimeout(() => {
+            onLoginSuccess(trimmedEmail);
+          }, 700);
+        }, 800);
       }
-      setSuccessMessage(isSignUp ? 'Account created successfully! Entering QuietPulse...' : 'Welcome back! Entering QuietPulse...');
-      setTimeout(() => {
-        onLoginSuccess(email);
-      }, 750);
-    }, 900);
+    } catch (err: any) {
+      setErrorMessage(err?.message || 'An unexpected error occurred during authentication.');
+      setIsLoading(false);
+    }
   };
 
-  const handleGoogleAuthClick = () => {
-    setErrorMessage('Google OAuth requires Supabase backend credentials to be configured in your environment (.env). Sovereign email sign-in is currently active.');
+  const handleForgotPassword = async () => {
+    setErrorMessage(null);
+    setSuccessMessage(null);
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail || !trimmedEmail.includes('@')) {
+      setErrorMessage('Please enter your email address in the field above to receive a password reset link.');
+      return;
+    }
+
+    if (isSupabaseConfigured && supabase) {
+      setIsLoading(true);
+      try {
+        const { error } = await supabase.auth.resetPasswordForEmail(trimmedEmail, {
+          redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/#reset` : undefined,
+        });
+        setIsLoading(false);
+        if (error) {
+          setErrorMessage(error.message);
+        } else {
+          setSuccessMessage(`Password recovery email dispatched to ${trimmedEmail}.`);
+        }
+      } catch (err: any) {
+        setIsLoading(false);
+        setErrorMessage(err?.message || 'Failed to dispatch password recovery email.');
+      }
+    } else {
+      setSuccessMessage(`Password reset simulated for ${trimmedEmail}.`);
+    }
+  };
+
+  const handleGoogleAuthClick = async () => {
+    setErrorMessage(null);
+    setSuccessMessage(null);
+    if (isSupabaseConfigured) {
+      setIsLoading(true);
+      const { error } = await signInWithGoogle();
+      if (error) {
+        setIsLoading(false);
+        setErrorMessage(error.message);
+      }
+    } else {
+      setErrorMessage('Google OAuth requires Supabase backend credentials to be configured in .env.local.');
+    }
   };
 
   return (
@@ -179,7 +272,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
             </label>
             <button
               type="button"
-              onClick={() => setErrorMessage('Password reset link has been dispatched to your email address.')}
+              onClick={handleForgotPassword}
               className="text-neutral-400 hover:text-white transition text-[11px] underline underline-offset-4"
             >
               Forgot password?
@@ -270,10 +363,16 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
           )}
         </div>
 
-        {/* Privacy Note */}
-        <div className="mt-8 pt-4 border-t border-white/10 flex items-center justify-center gap-1.5 text-[10px] text-neutral-400 font-mono">
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-          <span>100% On-Device Data Privacy</span>
+        {/* Privacy & Backend Note */}
+        <div className="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-[10px] text-neutral-400 font-mono">
+          <div className="flex items-center gap-1.5">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <span>100% Privacy-Preserving</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-neutral-400">
+            <Cloud className="w-3.5 h-3.5 text-cyan-400" />
+            <span>{isSupabaseConfigured ? 'Supabase Auth' : 'Sovereign Mode'}</span>
+          </div>
         </div>
       </div>
     </div>
