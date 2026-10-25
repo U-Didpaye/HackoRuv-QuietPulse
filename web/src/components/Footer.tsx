@@ -24,19 +24,16 @@ export const Footer: React.FC<FooterProps> = ({
           {/* Brand Info */}
           <div className="md:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 relative flex items-center justify-center">
+              <div className="h-10 relative flex items-center justify-center">
                 <img
-                  src="/vyrox-emblem.svg"
+                  src="/vyrox-logo-transparent.png"
                   alt="VYROX"
-                  className="w-full h-full object-contain"
+                  className="h-10 w-auto object-contain"
                   onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).src = '/vyrox-emblem.png';
+                    (e.currentTarget as HTMLImageElement).src = '/vyrox-emblem.svg';
                   }}
                 />
               </div>
-              <span className="text-lg font-black tracking-[0.25em] uppercase font-editorial text-v-text">
-                VYROX
-              </span>
             </div>
             <p className="text-xs text-v-text-muted max-w-sm leading-relaxed font-sans">
               An independent, privacy-first attention firewall designed to protect human cognitive capacity from manipulative digital interruptions.

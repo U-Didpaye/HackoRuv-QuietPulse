@@ -33,65 +33,63 @@ export const HomePage: React.FC<HomePageProps> = ({
     <div className="relative overflow-x-hidden">
       {/* 
         ========================================================================
-        PAGE 2 HERO SECTION WITH THE LARGE VYROX LOGO BACKGROUND ARTWORK
+        PAGE 2 HERO SECTION WITH THE OFFICIAL COSMIC METALLIC BG ARTWORK
         ========================================================================
       */}
-      <section className="relative min-h-[90vh] flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8 py-20 overflow-hidden">
+      <section className="relative min-h-[92vh] flex flex-col justify-center items-center text-center px-4 sm:px-6 lg:px-8 py-20 sm:py-28 overflow-hidden">
         
         {/* 
-          ATMOSPHERIC OVERSIZED VYROX LOGO BACKGROUND (HOMEPAGE ONLY) 
-          Preserves original proportions, responsive, non-blocking, subtle metallic aura.
+          OFFICIAL ATMOSPHERIC BACKGROUND (PAGE 2 HOMEPAGE ONLY)
+          Uses the user-provided leftmost cinematic image with cosmic light arc & emblem
         */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0 overflow-hidden">
-          <div className="relative w-[340px] sm:w-[580px] lg:w-[840px] aspect-square flex items-center justify-center opacity-10 md:opacity-15 animate-subtle-float">
-            <img
-              src="/vyrox-emblem.svg"
-              alt=""
-              aria-hidden="true"
-              className="w-full h-full object-contain filter contrast-125"
-              onError={(e) => {
-                (e.currentTarget as HTMLImageElement).src = '/vyrox-emblem.png';
-              }}
-            />
-            {/* Subtle Radial Vignette Gradient to blend seamlessly with theme backgrounds */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background: 'radial-gradient(circle, transparent 35%, var(--v-bg) 85%)',
-              }}
-            />
-          </div>
+        <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
+          <img
+            src="/vyrox-hero-bg.png"
+            alt=""
+            aria-hidden="true"
+            className="w-full h-full object-cover object-center filter brightness-90 sm:brightness-95 contrast-110 transform scale-105 animate-subtle-float"
+          />
+          {/* Dual Multi-Stop Gradient Overlays to preserve 100% text legibility & integrate with themes */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: `
+                radial-gradient(ellipse at 50% 45%, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.8) 70%, var(--v-bg) 100%),
+                linear-gradient(to bottom, var(--v-bg) 0%, transparent 18%, transparent 75%, var(--v-bg) 100%)
+              `
+            }}
+          />
         </div>
 
-        {/* Hero Foreground Content */}
+        {/* Hero Foreground Content Layer */}
         <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
           
-          {/* Editorial Small Label */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-v-surface border border-v-border text-v-text-muted text-[11px] font-mono tracking-[0.25em] uppercase mb-8 shadow-sm">
-            <span className="w-1.5 h-1.5 rounded-full bg-v-accent animate-ping" />
+          {/* Editorial Label Pill */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-neutral-200 text-[11px] font-mono tracking-[0.25em] uppercase mb-8 shadow-2xl">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
             ATTENTION, BY DESIGN
           </div>
 
           {/* Monumental Editorial Headline */}
-          <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tight text-v-text uppercase font-editorial leading-none">
+          <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tight text-white uppercase font-editorial leading-none drop-shadow-[0_4px_30px_rgba(0,0,0,0.9)]">
             CHOOSE.
           </h1>
 
           {/* Supporting Statement */}
-          <p className="text-xl sm:text-2xl md:text-3xl font-light text-v-text mt-6 tracking-wide max-w-2xl">
-            Your attention. Your priorities. <span className="font-semibold text-v-accent">Your rules.</span>
+          <p className="text-xl sm:text-2xl md:text-3xl font-light text-neutral-100 mt-6 tracking-wide max-w-2xl drop-shadow-[0_2px_15px_rgba(0,0,0,0.8)]">
+            Your attention. Your priorities. <span className="font-semibold text-white underline decoration-white/30 underline-offset-8">Your rules.</span>
           </p>
 
           {/* Supporting Paragraph */}
-          <p className="text-sm sm:text-base text-v-text-muted max-w-xl mx-auto mt-4 leading-relaxed font-sans">
+          <p className="text-sm sm:text-base text-neutral-300 max-w-xl mx-auto mt-4 leading-relaxed font-sans drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
             VYROX helps you intercept manipulative digital interactions, organize notifications into intelligent batch digests, and protect uninterrupted time for deep focus.
           </p>
 
-          {/* Call to Action Controls */}
+          {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row items-center gap-3.5 mt-9">
             <button
               onClick={() => onNavigate('engine')}
-              className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-v-text text-v-bg font-bold text-xs uppercase tracking-widest hover:opacity-90 transition shadow-xl flex items-center justify-center gap-2 font-mono group"
+              className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-white text-black font-bold text-xs uppercase tracking-widest hover:bg-neutral-200 transition shadow-2xl flex items-center justify-center gap-2 font-mono group"
             >
               <span>Explore Firewall</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
@@ -99,43 +97,43 @@ export const HomePage: React.FC<HomePageProps> = ({
 
             <button
               onClick={() => onNavigate('focus')}
-              className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-v-surface hover:bg-v-secondary border border-v-border text-v-text font-bold text-xs uppercase tracking-widest transition flex items-center justify-center gap-2 font-mono"
+              className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-black/60 hover:bg-black/80 backdrop-blur-md border border-white/25 text-white font-bold text-xs uppercase tracking-widest transition flex items-center justify-center gap-2 font-mono"
             >
               <span>Focus Gateways</span>
             </button>
 
             <button
               onClick={onOpenChokas}
-              className="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-v-secondary hover:bg-v-elevated border border-v-border text-v-accent font-medium text-xs tracking-wider transition flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-neutral-900/70 hover:bg-neutral-800/80 backdrop-blur-md border border-white/15 text-neutral-300 font-medium text-xs tracking-wider transition flex items-center justify-center gap-2"
             >
-              <Sparkles className="w-3.5 h-3.5" />
+              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
               <span>Ask ChokasAI</span>
             </button>
           </div>
 
           {/* Live Quick Metric Bar */}
-          <div className="grid grid-cols-3 gap-6 sm:gap-12 mt-16 pt-10 border-t border-v-border/70 w-full max-w-2xl text-center">
+          <div className="grid grid-cols-3 gap-6 sm:gap-12 mt-16 pt-10 border-t border-white/15 w-full max-w-2xl text-center bg-black/40 backdrop-blur-sm rounded-2xl p-6">
             <div>
-              <div className="text-2xl sm:text-3xl font-black font-editorial text-v-text">
+              <div className="text-2xl sm:text-3xl font-black font-editorial text-white">
                 {metrics.estimatedInterruptionsDeflected}
               </div>
-              <div className="text-[11px] text-v-text-muted uppercase tracking-wider font-mono mt-1">
+              <div className="text-[11px] text-neutral-300 uppercase tracking-wider font-mono mt-1">
                 Alerts Deflected
               </div>
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl font-black font-editorial text-v-text">
+              <div className="text-2xl sm:text-3xl font-black font-editorial text-white">
                 {metrics.totalFocusMinutes}m
               </div>
-              <div className="text-[11px] text-v-text-muted uppercase tracking-wider font-mono mt-1">
+              <div className="text-[11px] text-neutral-300 uppercase tracking-wider font-mono mt-1">
                 Focus Time Logged
               </div>
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl font-black font-editorial text-v-accent">
+              <div className="text-2xl sm:text-3xl font-black font-editorial text-cyan-300">
                 100%
               </div>
-              <div className="text-[11px] text-v-text-muted uppercase tracking-wider font-mono mt-1">
+              <div className="text-[11px] text-neutral-300 uppercase tracking-wider font-mono mt-1">
                 On-Device Privacy
               </div>
             </div>

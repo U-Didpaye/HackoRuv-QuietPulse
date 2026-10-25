@@ -33,28 +33,20 @@ export const Navbar: React.FC<NavbarProps> = ({
     <header className="sticky top-0 z-40 bg-v-bg/90 backdrop-blur-md border-b border-v-border transition-colors duration-250">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         
-        {/* Brand Logo & Wordmark */}
+        {/* Official Brand Logo & Wordmark Asset */}
         <button
           onClick={() => onNavigate('home')}
-          className="flex items-center gap-3 group focus:outline-none"
+          className="flex items-center gap-2 group focus:outline-none"
         >
-          <div className="w-8 h-8 relative flex items-center justify-center">
+          <div className="h-9 relative flex items-center justify-center">
             <img
-              src="/vyrox-emblem.svg"
+              src="/vyrox-logo-transparent.png"
               alt="VYROX"
-              className="w-full h-full object-contain filter group-hover:brightness-125 transition"
+              className="h-8 sm:h-9 w-auto object-contain filter group-hover:brightness-125 transition"
               onError={(e) => {
-                (e.currentTarget as HTMLImageElement).src = '/vyrox-emblem.png';
+                (e.currentTarget as HTMLImageElement).src = '/vyrox-emblem.svg';
               }}
             />
-          </div>
-          <div className="flex flex-col text-left">
-            <span className="text-base font-black tracking-[0.2em] uppercase font-editorial text-v-text group-hover:text-v-accent transition">
-              VYROX
-            </span>
-            <span className="text-[9px] tracking-[0.25em] uppercase text-v-text-muted font-mono -mt-0.5">
-              ATTENTION FIREWALL
-            </span>
           </div>
         </button>
 
