@@ -83,8 +83,8 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
       else if (lower.includes('45')) mins = 45;
 
       onStartFocus(`${mins}m Session (via ChokasAI)`, mins);
-      reply = `Started an active ${mins}-minute DeepFocus session. Non-urgent alerts are now buffered into FlowQueue.`;
-      action = `Initiated ${mins}m DeepFocus Session`;
+      reply = `Started an active ${mins}-minute Deep Focus session. Non-urgent alerts are now buffered into FlowQueue.`;
+      action = `Initiated ${mins}m Deep Focus Session`;
     }
     // 2. Clear Queue Commands
     else if (fuzzyMatch(lower, ['clear queue', 'wip queue', 'wipe queue', 'empty queue', 'clear flowqueue', 'reset queue', 'purge queue'])) {
@@ -196,7 +196,7 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
       }
     } else {
       // Offline fallback
-      let fallback = "I can help you navigate QuietPulse, explain triage decisions, switch themes (Obsidian Silver, Emerald, Pearl), start DeepFocus timers, or manage your FlowQueue.";
+      let fallback = "I can help you navigate QuietPulse, explain triage decisions, switch themes (Obsidian Silver, Emerald, Pearl), start Deep Focus timers, or manage your FlowQueue.";
       if (fuzzyMatch(lower, ['burst', 'storm'])) {
         fallback = "A Notification Burst is when multiple notifications arrive rapidly across apps (5+ in 60s). QuietPulse quarantines bursts in FlowQueue to prevent distraction spiral.";
       } else if (fuzzyMatch(lower, ['urgency', 'relevance', 'classify', 'how it works'])) {

@@ -151,7 +151,7 @@ export const InsightsPage: React.FC<InsightsPageProps> = ({ metrics }) => {
             </span>
           </div>
           <div className="py-2.5 flex justify-between items-center">
-            <span className="text-v-text-muted">Total DeepFocus Minutes Logged</span>
+            <span className="text-v-text-muted">Total Deep Focus Minutes Logged</span>
             <span className="font-mono font-bold text-v-text">{metrics.totalFocusMinutes} mins</span>
           </div>
           <div className="py-2.5 flex justify-between items-center">

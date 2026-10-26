@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTheme, QuietPulseTheme } from '../context/ThemeContext';
-import { Menu, X, Sparkles, User, ChevronDown, LogIn, ShieldCheck } from 'lucide-react';
+import { Menu, X, Sparkles, User, ChevronDown, LogIn, ShieldCheck, Download } from 'lucide-react';
 
 interface NavbarProps {
   currentRoute: string;
@@ -26,12 +26,12 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const isPearl = theme === 'pearl';
 
-  // Navigation links: Home, NotiFy, FlowQueue, DeepFocus, PulseInsights, Modes, ChokasAI, Contact
+  // Navigation links: Home, NotiFy, FlowQueue, Deep Focus, PulseInsights, Modes, ChokasAI, Contact
   const navLinks = [
     { id: 'home', label: 'Home' },
     { id: 'notify', label: 'NotiFy' },
     { id: 'flowqueue', label: `FlowQueue${queueCount > 0 ? ` (${queueCount})` : ''}` },
-    { id: 'deepfocus', label: 'DeepFocus' },
+    { id: 'deepfocus', label: 'Deep Focus' },
     { id: 'pulseinsights', label: 'PulseInsights' },
     { id: 'rules', label: 'Modes' },
     { id: 'chokas', label: 'ChokasAI' },
@@ -96,17 +96,105 @@ export const Navbar: React.FC<NavbarProps> = ({
           })}
         </nav>
 
-        {/* Right Controls: Theme Selector, ChokasAI, Profile / Login */}
-        <div className="flex items-center gap-2.5 sm:gap-3">
+        {/* Right Controls in exact requested order: Login -> Theme Selector -> Hamburger Menu */}
+        <div className="flex items-center gap-2 sm:gap-3">
           
-          {/* 3-Theme Selector Dropdown */}
+          {/* Quick ChokasAI Launcher Button (Desktop only) */}
+          <button
+            onClick={onOpenChokas}
+            className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition font-mono ${
+              isPearl
+                ? 'bg-neutral-900 text-white border border-neutral-700 hover:bg-neutral-800 hover:border-cyan-400'
+                : 'bg-v-text text-v-bg hover:opacity-90'
+            }`}
+            title="Open ChokasAI Assistant"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+            <span>ChokasAI</span>
+          </button>
+
+          {/* 1. Profile / Login Menu */}
+          <div className="relative">
+            {userEmail ? (
+              <div>
+                <button
+                  onClick={() => {
+                    setProfileDropdownOpen(!profileDropdownOpen);
+                    setThemeDropdownOpen(false);
+                  }}
+                  className={`flex items-center gap-1.5 p-1 sm:px-2.5 sm:py-1.5 rounded-lg transition text-xs ${
+                    isPearl
+                      ? 'bg-neutral-900 border border-neutral-700 text-white hover:border-neutral-500'
+                      : 'bg-v-surface border border-v-border text-v-text hover:border-v-accent'
+                  }`}
+                >
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center font-mono text-[11px] font-bold ${
+                    isPearl
+                      ? 'bg-neutral-800 border border-neutral-600 text-white'
+                      : 'bg-v-accent/20 border border-v-accent text-v-text'
+                  }`}>
+                    {userEmail.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="hidden md:inline font-mono text-[11px] max-w-[100px] truncate">
+                    {userEmail}
+                  </span>
+                  <ChevronDown className={`w-3 h-3 hidden sm:inline ${isPearl ? 'text-neutral-400' : 'text-v-text-muted'}`} />
+                </button>
+
+                {profileDropdownOpen && (
+                  <div
+                    className={`absolute right-0 mt-2 w-48 p-2 rounded-xl shadow-2xl z-50 animate-reveal ${
+                      isPearl
+                        ? 'bg-neutral-950 border border-neutral-800 text-white'
+                        : 'bg-v-surface border border-v-border text-v-text'
+                    }`}
+                  >
+                    <div className={`px-3 py-2 border-b text-xs ${isPearl ? 'border-neutral-800' : 'border-v-border'}`}>
+                      <div className="font-semibold truncate">{userEmail}</div>
+                      <div className={`text-[10px] flex items-center gap-1 mt-0.5 ${isPearl ? 'text-neutral-400' : 'text-v-text-muted'}`}>
+                        <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                        <span>Sovereign Identity</span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setProfileDropdownOpen(false);
+                        if (onLogout) onLogout();
+                      }}
+                      className="w-full text-left px-3 py-2 mt-1 rounded-lg text-xs text-rose-400 hover:bg-neutral-900 transition"
+                    >
+                      Log Out
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button
+                onClick={() => onNavigate('login')}
+                className={`flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg transition ${
+                  isPearl
+                    ? currentRoute === 'login'
+                      ? 'bg-neutral-800 border border-neutral-600 text-white'
+                      : 'bg-neutral-900 border border-neutral-700 text-white hover:border-neutral-500'
+                    : currentRoute === 'login'
+                    ? 'bg-v-elevated border border-v-accent text-v-text'
+                    : 'bg-v-surface border border-v-border text-v-text hover:border-v-accent'
+                }`}
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span className="hidden xs:inline sm:inline">Log In</span>
+              </button>
+            )}
+          </div>
+
+          {/* 2. 3-Theme Selector Dropdown */}
           <div className="relative">
             <button
               onClick={() => {
                 setThemeDropdownOpen(!themeDropdownOpen);
                 setProfileDropdownOpen(false);
               }}
-              className={`flex items-center gap-2 px-2.5 py-1.5 text-xs font-medium rounded-lg transition ${
+              className={`flex items-center gap-1.5 px-2 py-1.5 text-xs font-medium rounded-lg transition ${
                 isPearl
                   ? 'bg-neutral-900 border border-neutral-700 text-white hover:border-neutral-500'
                   : 'bg-v-surface border border-v-border text-v-text hover:border-v-accent'
@@ -183,95 +271,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             )}
           </div>
 
-          {/* Quick ChokasAI Launcher Button */}
-          <button
-            onClick={onOpenChokas}
-            className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition font-mono ${
-              isPearl
-                ? 'bg-neutral-900 text-white border border-neutral-700 hover:bg-neutral-800 hover:border-cyan-400'
-                : 'bg-v-text text-v-bg hover:opacity-90'
-            }`}
-            title="Open ChokasAI Assistant"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-            <span>ChokasAI</span>
-          </button>
-
-          {/* Profile / Login Menu */}
-          <div className="relative">
-            {userEmail ? (
-              <div>
-                <button
-                  onClick={() => {
-                    setProfileDropdownOpen(!profileDropdownOpen);
-                    setThemeDropdownOpen(false);
-                  }}
-                  className={`flex items-center gap-2 p-1 sm:px-2.5 sm:py-1.5 rounded-lg transition text-xs ${
-                    isPearl
-                      ? 'bg-neutral-900 border border-neutral-700 text-white hover:border-neutral-500'
-                      : 'bg-v-surface border border-v-border text-v-text hover:border-v-accent'
-                  }`}
-                >
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center font-mono text-[11px] font-bold ${
-                    isPearl
-                      ? 'bg-neutral-800 border border-neutral-600 text-white'
-                      : 'bg-v-accent/20 border border-v-accent text-v-text'
-                  }`}>
-                    {userEmail.charAt(0).toUpperCase()}
-                  </div>
-                  <span className="hidden md:inline font-mono text-[11px] max-w-[100px] truncate">
-                    {userEmail}
-                  </span>
-                  <ChevronDown className={`w-3 h-3 hidden sm:inline ${isPearl ? 'text-neutral-400' : 'text-v-text-muted'}`} />
-                </button>
-
-                {profileDropdownOpen && (
-                  <div
-                    className={`absolute right-0 mt-2 w-48 p-2 rounded-xl shadow-2xl z-50 animate-reveal ${
-                      isPearl
-                        ? 'bg-neutral-950 border border-neutral-800 text-white'
-                        : 'bg-v-surface border border-v-border text-v-text'
-                    }`}
-                  >
-                    <div className={`px-3 py-2 border-b text-xs ${isPearl ? 'border-neutral-800' : 'border-v-border'}`}>
-                      <div className="font-semibold truncate">{userEmail}</div>
-                      <div className={`text-[10px] flex items-center gap-1 mt-0.5 ${isPearl ? 'text-neutral-400' : 'text-v-text-muted'}`}>
-                        <ShieldCheck className="w-3 h-3 text-emerald-400" />
-                        <span>Sovereign Identity</span>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => {
-                        setProfileDropdownOpen(false);
-                        if (onLogout) onLogout();
-                      }}
-                      className="w-full text-left px-3 py-2 mt-1 rounded-lg text-xs text-rose-400 hover:bg-neutral-900 transition"
-                    >
-                      Log Out
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <button
-                onClick={() => onNavigate('login')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition ${
-                  isPearl
-                    ? currentRoute === 'login'
-                      ? 'bg-neutral-800 border border-neutral-600 text-white'
-                      : 'bg-neutral-900 border border-neutral-700 text-white hover:border-neutral-500'
-                    : currentRoute === 'login'
-                    ? 'bg-v-elevated border border-v-accent text-v-text'
-                    : 'bg-v-surface border border-v-border text-v-text hover:border-v-accent'
-                }`}
-              >
-                <LogIn className="w-3.5 h-3.5" />
-                <span>Log In</span>
-              </button>
-            )}
-          </div>
-
-          {/* Mobile Menu Button */}
+          {/* 3. Mobile Menu Button (Hamburger) */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className={`lg:hidden p-2 rounded-lg border transition ${
@@ -324,6 +324,16 @@ export const Navbar: React.FC<NavbarProps> = ({
             <LogIn className="w-3.5 h-3.5" />
             <span>{userEmail ? `Account (${userEmail})` : 'Log In to QuietPulse'}</span>
           </button>
+
+          <a
+            href="./QuietPulse.apk"
+            download="QuietPulse.apk"
+            onClick={() => setMobileMenuOpen(false)}
+            className="w-full text-left py-2 px-3 rounded-lg text-xs font-semibold tracking-wider flex items-center gap-2 transition text-emerald-400 hover:bg-white/10"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span>Download Android App</span>
+          </a>
 
           {/* Clean Inline Theme Switcher for Mobile Devices */}
           <div className="pt-2.5 border-t border-white/10">

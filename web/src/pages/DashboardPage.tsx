@@ -243,20 +243,20 @@ export const DashboardPage: React.FC<DashboardProps> = ({
             {metrics.totalFocusMinutes} <span className="text-xs font-sans font-normal text-v-text-muted">mins</span>
           </div>
           <p className="text-[11px] text-v-text-muted mt-2 font-sans">
-            {metrics.completedSessionsCount} DeepFocus intervals completed without interruption.
+            {metrics.completedSessionsCount} Deep Focus intervals completed without interruption.
           </p>
         </div>
       </div>
 
-      {/* 4. DeepFocus Quick Gateway */}
+      {/* 4. Deep Focus Quick Gateway */}
       <div className="p-6 rounded-2xl bg-v-surface border border-v-border">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <span className="text-[10px] font-mono font-bold tracking-widest text-v-accent uppercase">
-              DeepFocus Window
+              Deep Focus Window
             </span>
             <h3 className="text-base font-bold text-v-text mt-0.5">
-              {isFocusActive ? 'DeepFocus Window Protected' : 'Initiate a Focused Work Window'}
+              {isFocusActive ? 'Deep Focus Window Protected' : 'Initiate a Focused Work Window'}
             </h3>
             <p className="text-xs text-v-text-muted mt-0.5 font-sans">
               Non-urgent notifications are routed into FlowQueue during active focus sessions.

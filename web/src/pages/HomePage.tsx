@@ -229,7 +229,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               Focus
             </h3>
             <p className="text-xs text-neutral-300 mt-1.5 leading-relaxed">
-              Enter DeepFocus sessions with zero distractions. Reclaim uninterrupted blocks for creative work.
+              Enter Deep Focus sessions with zero distractions. Reclaim uninterrupted blocks for creative work.
             </p>
           </button>
 
@@ -545,7 +545,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                   onClick={() => onNavigate('deepfocus')}
                   className="text-xs text-v-accent hover:text-v-text font-semibold flex items-center gap-1.5 transition"
                 >
-                  <span>Configure DeepFocus</span>
+                  <span>Configure Deep Focus</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -646,7 +646,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 <span className="text-[11px] font-mono text-v-accent uppercase">Mode 02</span>
                 <h3 className="text-base font-bold text-v-text mt-1.5">Navigate</h3>
                 <p className="text-xs text-v-text-muted mt-2.5 leading-relaxed">
-                  Directly transports you across NotiFy, FlowQueue, DeepFocus, PulseInsights, and Privacy with natural voice-like commands.
+                  Directly transports you across NotiFy, FlowQueue, Deep Focus, PulseInsights, and Privacy with natural voice-like commands.
                 </p>
               </div>
               <div className="mt-5 p-3 rounded-lg bg-v-secondary text-[11px] font-mono text-v-text-muted border border-v-border break-words">
@@ -661,7 +661,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 <span className="text-[11px] font-mono text-v-accent uppercase">Mode 03</span>
                 <h3 className="text-base font-bold text-v-text mt-1.5">Act</h3>
                 <p className="text-xs text-v-text-muted mt-2.5 leading-relaxed">
-                  Executes verified in-app commands: starts DeepFocus sessions, clears FlowQueue, or switches between Obsidian Silver, Emerald, and Pearl themes.
+                  Executes verified in-app commands: starts Deep Focus sessions, clears FlowQueue, or switches between Obsidian Silver, Emerald, and Pearl themes.
                 </p>
               </div>
               <div className="mt-5 p-3 rounded-lg bg-v-secondary text-[11px] font-mono text-v-text-muted border border-v-border break-words">

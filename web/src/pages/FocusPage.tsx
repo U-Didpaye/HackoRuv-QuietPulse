@@ -30,13 +30,13 @@ export const FocusPage: React.FC<FocusPageProps> = ({
 
   return (
     <div className="space-y-6 max-w-2xl mx-auto py-4">
-      {/* Title per Section 8: DeepFocus */}
+      {/* Title per Section 8: Deep Focus */}
       <div className="text-center">
         <span className="text-[10px] font-mono tracking-[0.25em] uppercase text-v-accent">
           COGNITIVE GATEWAYS
         </span>
         <h2 className="text-3xl font-black text-v-text uppercase font-editorial tracking-wide mt-1">
-          DeepFocus
+          Deep Focus
         </h2>
         <p className="text-xs text-v-text-muted mt-1 font-sans">
           Lock in your cognitive attention. Non-urgent alerts are organized into FlowQueue until your session finishes.
@@ -46,7 +46,7 @@ export const FocusPage: React.FC<FocusPageProps> = ({
       {/* Main Focus Dial Card */}
       <div className="p-8 rounded-3xl bg-v-surface border border-v-border shadow-2xl flex flex-col items-center">
         <span className="text-[10px] font-mono font-bold tracking-widest text-v-accent uppercase mb-4">
-          {isFocusActive ? 'Active DeepFocus Session' : 'Ready to Initialize'}
+          {isFocusActive ? 'Active Deep Focus Session' : 'Ready to Initialize'}
         </span>
 
         {/* Circular Progress Display */}
@@ -113,11 +113,11 @@ export const FocusPage: React.FC<FocusPageProps> = ({
             </div>
 
             <button
-              onClick={() => onStartFocus(`${customDuration}m DeepFocus Session`, customDuration)}
+              onClick={() => onStartFocus(`${customDuration}m Deep Focus Session`, customDuration)}
               className="w-full py-3.5 rounded-xl bg-v-text text-v-bg font-bold text-xs uppercase tracking-widest font-mono hover:opacity-90 transition shadow-xl flex items-center justify-center gap-2"
             >
               <Play className="w-4 h-4 fill-current text-cyan-400" />
-              <span>Begin DeepFocus Session</span>
+              <span>Begin Deep Focus Session</span>
             </button>
           </div>
         )}
@@ -158,7 +158,7 @@ export const FocusPage: React.FC<FocusPageProps> = ({
       <div className="p-4 rounded-xl bg-v-secondary/50 border border-v-border flex items-start gap-3 text-xs text-v-text-muted font-sans">
         <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
         <p className="leading-relaxed">
-          While DeepFocus is running, incoming notifications are evaluated silently. Time-sensitive emergencies (OTPs, urgent calls) still pass through, while recreational and promotional pings wait in FlowQueue.
+          While Deep Focus is running, incoming notifications are evaluated silently. Time-sensitive emergencies (OTPs, urgent calls) still pass through, while recreational and promotional pings wait in FlowQueue.
         </p>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, Sparkles, Play, ArrowUp } from 'lucide-react';
+import { Shield, Sparkles, Play, ArrowUp, Download } from 'lucide-react';
 
 interface FooterProps {
   onNavigate: (route: string) => void;
@@ -72,7 +72,7 @@ export const Footer: React.FC<FooterProps> = ({
               </li>
               <li>
                 <button onClick={() => onNavigate('deepfocus')} className="hover:text-v-text transition">
-                  DeepFocus
+                  Deep Focus
                 </button>
               </li>
               <li>
@@ -114,6 +114,17 @@ export const Footer: React.FC<FooterProps> = ({
                 <button onClick={() => onNavigate('contact')} className="hover:text-v-text transition">
                   Contact
                 </button>
+              </li>
+              <li>
+                <a
+                  href="./QuietPulse.apk"
+                  download="QuietPulse.apk"
+                  className="hover:text-v-text transition flex items-center gap-1.5 text-cyan-400 font-mono text-[11px]"
+                  title="Download Signed QuietPulse Android APK"
+                >
+                  <Download className="w-3 h-3" />
+                  <span>Download Android APK</span>
+                </a>
               </li>
             </ul>
           </div>
