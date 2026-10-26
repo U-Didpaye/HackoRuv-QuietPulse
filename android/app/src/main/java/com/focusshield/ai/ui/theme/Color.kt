@@ -47,6 +47,7 @@ val PearlSurface = Color(0xFFFFFFFF)
 val PearlElevated = Color(0xFFECEBE7)
 val PearlAccent = Color(0xFF167D68)
 val PearlText = Color(0xFF17191D)
+val PearlOutline = Color(0xFFDDE1E7)
 
 // Common Status & Classification Tokens
 val UrgencyRed = Color(0xFFEF4444)

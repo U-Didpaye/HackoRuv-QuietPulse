@@ -4,6 +4,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
 enum class QuietPulseThemeType {
     OBSIDIAN,
@@ -90,7 +91,7 @@ private val PearlColorScheme = lightColorScheme(
     onSurface = PearlText,
     surfaceVariant = PearlElevated,
     onSurfaceVariant = PearlAccent,
-    outline = Color(0xFFDAD9D4)
+    outline = PearlOutline
 )
 
 @Composable
