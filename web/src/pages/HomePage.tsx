@@ -614,8 +614,8 @@ export const HomePage: React.FC<HomePageProps> = ({
             <span className="text-xs font-mono tracking-[0.25em] uppercase text-cyan-400">
               03 // IN-APP COMPANION
             </span>
-            <h2 className="text-3xl sm:text-5xl font-black text-v-text uppercase font-editorial mt-3 tracking-tight">
-              MEET CHOKASAI
+            <h2 className="text-3xl sm:text-5xl font-black text-v-text font-editorial mt-3 tracking-tight">
+              Meet <span className="text-cyan-400">ChokasAI</span>
             </h2>
             <p className="text-sm text-v-text-muted mt-3 leading-relaxed font-sans max-w-xl mx-auto">
               Your intelligent attention copilot powered by Google Gemini conversational AI and on-device command execution. Explain triage decisions, navigate features, and protect your focus.
@@ -674,7 +674,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div className="mt-12 text-center">
           <button
             onClick={onOpenChokas}
-            className="px-8 py-3.5 rounded-xl bg-white text-black font-bold text-xs uppercase tracking-widest font-mono hover:bg-neutral-200 transition inline-flex items-center gap-2.5 shadow-2xl group"
+            className="px-8 py-3.5 rounded-xl bg-white text-black font-bold text-xs tracking-wider font-mono hover:bg-neutral-200 transition inline-flex items-center gap-2.5 shadow-2xl group"
           >
             <Sparkles className="w-4 h-4 text-cyan-500 group-hover:scale-110 transition-transform" />
             <span>Launch ChokasAI Assistant</span>

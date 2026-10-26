@@ -217,41 +217,20 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
-      <div
-        className={`relative w-full max-w-xl max-h-[90vh] h-[580px] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-reveal border backdrop-blur-2xl ${
-          theme === 'emerald'
-            ? 'bg-[#061813]/95 border-emerald-500/40 text-emerald-100 shadow-[0_0_60px_rgba(20,184,166,0.2)]'
-            : theme === 'pearl'
-            ? 'bg-[#faf9f5]/98 border-neutral-300 text-neutral-900 shadow-[0_20px_70px_rgba(0,0,0,0.3)]'
-            : 'bg-[#0e0e11]/95 border-neutral-700/80 text-neutral-100 shadow-[0_20px_70px_rgba(0,0,0,0.8)]'
-        }`}
-      >
+    <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
+      <div className="relative w-full max-w-xl max-h-[90vh] h-[580px] bg-v-surface border border-v-border rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-reveal">
+        {/* Pleasant Theme-Native Ambient Gradient (Reconstructed per original design) */}
+        <div className="absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-v-secondary/50 via-transparent to-v-bg/70" />
+
         {/* Header - Fixed Height & High Contrast */}
-        <div
-          className={`relative z-10 px-5 py-3.5 border-b flex items-center justify-between flex-shrink-0 ${
-            theme === 'pearl'
-              ? 'bg-black text-white border-neutral-800'
-              : theme === 'emerald'
-              ? 'bg-[#0a231b] text-white border-emerald-500/30'
-              : 'bg-[#141418] text-white border-neutral-800'
-          }`}
-        >
+        <div className="relative z-10 px-5 py-3.5 border-b border-v-border flex items-center justify-between bg-v-surface/95 backdrop-blur-sm flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div
-              className={`w-8 h-8 rounded-xl border flex items-center justify-center shadow-sm ${
-                theme === 'emerald'
-                  ? 'bg-emerald-950/80 border-emerald-500/40 text-emerald-400'
-                  : theme === 'pearl'
-                  ? 'bg-neutral-900 border-neutral-700 text-cyan-400'
-                  : 'bg-neutral-900 border-neutral-700 text-cyan-400'
-              }`}
-            >
-              <Sparkles className="w-4 h-4" />
+            <div className="w-8 h-8 rounded-xl bg-v-secondary border border-v-border flex items-center justify-center text-v-text shadow-sm">
+              <Sparkles className="w-4 h-4 text-cyan-400" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold uppercase font-mono tracking-wider">
+                <span className="text-xs font-bold font-mono tracking-wider text-v-text">
                   ChokasAI Assistant
                 </span>
                 <span
@@ -267,7 +246,7 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
                   {isGeminiConfigured ? 'GEMINI 3.5 AI' : '100% ON-DEVICE'}
                 </span>
               </div>
-              <p className={`text-[10px] ${theme === 'pearl' ? 'text-neutral-400' : 'text-neutral-400'}`}>
+              <p className="text-[10px] text-v-text-muted">
                 {isGeminiConfigured
                   ? 'Multi-turn conversational intelligence & command router'
                   : 'Natural-language command router & guide'}
@@ -276,7 +255,7 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition"
+            className="p-1.5 rounded-lg text-v-text-muted hover:text-v-text hover:bg-v-secondary transition"
             aria-label="Close"
           >
             <X className="w-4 h-4" />
@@ -284,55 +263,27 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
         </div>
 
         {/* Message Thread - Flexible & Scrollable with Clean Legible Contrast */}
-        <div
-          className={`relative z-10 flex-1 min-h-0 p-4 overflow-y-auto space-y-3 font-sans text-xs ${
-            theme === 'pearl' ? 'bg-[#f4f3ef]' : 'bg-transparent'
-          }`}
-        >
+        <div className="relative z-10 flex-1 min-h-0 p-4 overflow-y-auto space-y-3 font-sans text-xs">
           {messages.map((m) => (
             <div
               key={m.id}
               className={`flex gap-2.5 ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {m.sender === 'chokas' && (
-                <div
-                  className={`w-6 h-6 rounded-md border flex items-center justify-center shrink-0 mt-0.5 shadow-sm ${
-                    theme === 'emerald'
-                      ? 'bg-emerald-950 border-emerald-500/40 text-emerald-400'
-                      : theme === 'pearl'
-                      ? 'bg-black border-neutral-700 text-white'
-                      : 'bg-neutral-900 border-neutral-700 text-cyan-400'
-                  }`}
-                >
+                <div className="w-6 h-6 rounded-md bg-v-secondary border border-v-border flex items-center justify-center text-cyan-400 shrink-0 mt-0.5 shadow-sm">
                   <Bot className="w-3.5 h-3.5" />
                 </div>
               )}
               <div
                 className={`max-w-[85%] sm:max-w-[80%] p-3.5 rounded-xl border leading-relaxed shadow-sm ${
                   m.sender === 'user'
-                    ? theme === 'emerald'
-                      ? 'bg-emerald-400 text-black border-emerald-300 font-medium'
-                      : theme === 'pearl'
-                      ? 'bg-black text-white border-neutral-800 font-medium'
-                      : 'bg-white text-black border-white/80 font-medium'
-                    : theme === 'emerald'
-                    ? 'bg-[#0e2c24] text-emerald-100 border-emerald-500/30'
-                    : theme === 'pearl'
-                    ? 'bg-white text-neutral-900 border-neutral-300'
-                    : 'bg-neutral-800/80 text-neutral-100 border-neutral-700'
+                    ? 'bg-v-text text-v-bg border-v-text font-medium'
+                    : 'bg-v-secondary/80 text-v-text border-v-border'
                 }`}
               >
                 <p className="whitespace-pre-line text-xs font-normal">{m.text}</p>
                 {m.actionTaken && (
-                  <div
-                    className={`mt-2 pt-2 border-t flex items-center gap-1.5 text-[10px] font-mono font-bold ${
-                      theme === 'emerald'
-                        ? 'border-emerald-500/20 text-emerald-300'
-                        : theme === 'pearl'
-                        ? 'border-neutral-200 text-emerald-600'
-                        : 'border-white/15 text-emerald-400'
-                    }`}
-                  >
+                  <div className="mt-2 pt-2 border-t border-v-border/60 flex items-center gap-1.5 text-[10px] font-mono text-emerald-400 font-bold">
                     <Check className="w-3 h-3" />
                     <span>Action: {m.actionTaken}</span>
                   </div>
@@ -342,15 +293,7 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
                 </span>
               </div>
               {m.sender === 'user' && (
-                <div
-                  className={`w-6 h-6 rounded-md flex items-center justify-center shrink-0 mt-0.5 shadow-sm ${
-                    theme === 'emerald'
-                      ? 'bg-emerald-400 text-black'
-                      : theme === 'pearl'
-                      ? 'bg-black text-white'
-                      : 'bg-white text-black'
-                  }`}
-                >
+                <div className="w-6 h-6 rounded-md bg-v-text text-v-bg flex items-center justify-center shrink-0 mt-0.5">
                   <User className="w-3.5 h-3.5" />
                 </div>
               )}
@@ -360,30 +303,14 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
           {/* Thinking / Streaming Indicator */}
           {isThinking && (
             <div className="flex gap-2.5 justify-start animate-fade-in">
-              <div
-                className={`w-6 h-6 rounded-md border flex items-center justify-center shrink-0 mt-0.5 shadow-sm ${
-                  theme === 'emerald'
-                    ? 'bg-emerald-950 border-emerald-500/40 text-emerald-400'
-                    : theme === 'pearl'
-                    ? 'bg-black border-neutral-700 text-white'
-                    : 'bg-neutral-900 border-neutral-700 text-cyan-400'
-                }`}
-              >
+              <div className="w-6 h-6 rounded-md bg-v-secondary border border-v-border flex items-center justify-center text-cyan-400 shrink-0 mt-0.5 shadow-sm">
                 <Bot className="w-3.5 h-3.5" />
               </div>
-              <div
-                className={`p-3.5 rounded-xl border leading-relaxed shadow-sm flex items-center gap-2 ${
-                  theme === 'emerald'
-                    ? 'bg-[#0e2c24] text-emerald-200 border-emerald-500/30'
-                    : theme === 'pearl'
-                    ? 'bg-white text-neutral-800 border-neutral-300'
-                    : 'bg-neutral-800/80 text-neutral-200 border-neutral-700'
-                }`}
-              >
+              <div className="p-3.5 rounded-xl border leading-relaxed shadow-sm bg-v-secondary/80 text-v-text border-v-border flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-bounce" />
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-bounce [animation-delay:0.2s]" />
                 <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-bounce [animation-delay:0.4s]" />
-                <span className="text-[11px] font-mono ml-1.5 opacity-80">ChokasAI is thinking...</span>
+                <span className="text-[11px] font-mono text-v-text-muted ml-1.5">ChokasAI is thinking...</span>
               </div>
             </div>
           )}
@@ -392,65 +319,37 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
         </div>
 
         {/* Suggested Quick Action Chips - Flex-shrink-0 for mobile */}
-        <div
-          className={`relative z-10 px-4 py-2 border-t flex items-center gap-2 overflow-x-auto text-[11px] font-mono flex-shrink-0 ${
-            theme === 'pearl'
-              ? 'bg-[#ecebe6] border-neutral-300'
-              : theme === 'emerald'
-              ? 'bg-[#081f18] border-emerald-500/30'
-              : 'bg-[#121216] border-neutral-800'
-          }`}
-        >
-          <span className={`text-[10px] uppercase shrink-0 font-bold ${theme === 'pearl' ? 'text-neutral-500' : 'text-neutral-400'}`}>
+        <div className="relative z-10 px-4 py-2 border-t border-v-border bg-v-secondary/90 backdrop-blur-sm flex items-center gap-2 overflow-x-auto text-[11px] font-mono flex-shrink-0">
+          <span className="text-v-text-muted text-[10px] uppercase shrink-0 font-bold">
             Try:
           </span>
           <button
             onClick={() => handleCommand('How can I stop notification anxiety?')}
-            className={`px-2.5 py-1 rounded-lg border transition shrink-0 ${
-              theme === 'pearl'
-                ? 'bg-white border-neutral-300 text-neutral-800 hover:border-black'
-                : 'bg-cyan-500/10 border-cyan-400/30 text-cyan-300 hover:bg-cyan-500/20'
-            }`}
+            className="px-2.5 py-1 rounded-lg bg-v-surface border border-v-border text-v-text hover:border-cyan-400/50 transition shrink-0"
           >
             Stop Notification Anxiety
           </button>
           <button
             onClick={() => handleCommand('Start 25m focus session')}
-            className={`px-2.5 py-1 rounded-lg border transition shrink-0 ${
-              theme === 'pearl'
-                ? 'bg-white border-neutral-300 text-neutral-800 hover:border-black'
-                : 'bg-white/5 border-white/15 text-neutral-200 hover:text-white hover:border-cyan-400'
-            }`}
+            className="px-2.5 py-1 rounded-lg bg-v-surface border border-v-border text-v-text hover:border-cyan-400/50 transition shrink-0"
           >
             Start 25m Focus
           </button>
           <button
             onClick={() => handleCommand('Switch to Emerald theme')}
-            className={`px-2.5 py-1 rounded-lg border transition shrink-0 ${
-              theme === 'emerald'
-                ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300 font-bold'
-                : 'bg-emerald-950/60 border-emerald-500/40 text-emerald-300 hover:border-emerald-400'
-            }`}
+            className="px-2.5 py-1 rounded-lg bg-v-surface border border-v-border text-emerald-400 hover:border-emerald-400 transition shrink-0 font-semibold"
           >
             Emerald Theme
           </button>
           <button
             onClick={() => handleCommand('Switch to Pearl theme')}
-            className={`px-2.5 py-1 rounded-lg border transition shrink-0 ${
-              theme === 'pearl'
-                ? 'bg-black text-white border-black font-bold'
-                : 'bg-white/5 border-white/15 text-neutral-200 hover:text-white hover:border-white'
-            }`}
+            className="px-2.5 py-1 rounded-lg bg-v-surface border border-v-border text-v-text hover:border-white transition shrink-0 font-semibold"
           >
             Pearl Theme
           </button>
           <button
             onClick={() => handleCommand('What is a notification burst?')}
-            className={`px-2.5 py-1 rounded-lg border transition shrink-0 ${
-              theme === 'pearl'
-                ? 'bg-white border-neutral-300 text-neutral-800 hover:border-black'
-                : 'bg-white/5 border-white/15 text-neutral-200 hover:text-white hover:border-cyan-400'
-            }`}
+            className="px-2.5 py-1 rounded-lg bg-v-surface border border-v-border text-v-text hover:border-cyan-400/50 transition shrink-0"
           >
             Explain Bursts
           </button>
@@ -462,13 +361,7 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
             e.preventDefault();
             handleCommand(input);
           }}
-          className={`relative z-10 p-3 border-t flex items-center gap-2 flex-shrink-0 ${
-            theme === 'pearl'
-              ? 'bg-[#f4f3ef] border-neutral-300'
-              : theme === 'emerald'
-              ? 'bg-[#061813] border-emerald-500/30'
-              : 'bg-[#0e0e12] border-neutral-800'
-          }`}
+          className="relative z-10 p-3 border-t border-v-border bg-v-surface backdrop-blur-sm flex items-center gap-2 flex-shrink-0"
         >
           <input
             type="text"
@@ -480,20 +373,12 @@ export const ChokasModal: React.FC<ChokasModalProps> = ({
                 ? "ChokasAI is generating response..."
                 : "Ask Gemini anything or type a command (e.g. 'how to focus', 'start 25m focus')..."
             }
-            className={`flex-1 px-3.5 py-2.5 text-xs rounded-xl focus:outline-none transition font-sans border ${
-              theme === 'pearl'
-                ? 'bg-white border-neutral-300 text-neutral-900 placeholder-neutral-400 focus:border-black'
-                : 'bg-white/5 border-white/15 text-white placeholder-neutral-400 focus:border-cyan-400'
-            } disabled:opacity-60`}
+            className="flex-1 px-3.5 py-2.5 text-xs bg-v-secondary border border-v-border rounded-xl text-v-text placeholder-v-text-muted focus:outline-none focus:border-cyan-400 transition font-sans disabled:opacity-60"
           />
           <button
             type="submit"
             disabled={isThinking || !input.trim()}
-            className={`p-2.5 rounded-xl disabled:opacity-40 disabled:cursor-not-allowed transition shrink-0 shadow-md ${
-              theme === 'pearl'
-                ? 'bg-black text-white hover:bg-neutral-800'
-                : 'bg-white text-black hover:bg-neutral-200'
-            }`}
+            className="p-2.5 rounded-xl bg-v-text text-v-bg hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition shrink-0 shadow-md"
             title="Send Message"
           >
             {isThinking ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
