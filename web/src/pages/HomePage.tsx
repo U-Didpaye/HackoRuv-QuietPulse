@@ -853,7 +853,9 @@ export const HomePage: React.FC<HomePageProps> = ({
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
               <a
-                href="./QuietPulse.apk"
+                href="https://github.com/U-Didpaye/HackoRuv-QuietPulse/releases/download/v1.0.0-release-18/app-debug.apk"
+                target="_blank"
+                rel="noopener noreferrer"
                 download="QuietPulse.apk"
                 className={`w-full sm:w-auto px-8 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest font-mono transition shadow-md flex items-center justify-center gap-2.5 group ${
                   isPearl

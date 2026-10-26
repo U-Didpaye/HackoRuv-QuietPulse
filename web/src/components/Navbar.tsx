@@ -98,6 +98,23 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Right Controls in exact requested order: Login -> Theme Selector -> Hamburger Menu */}
         <div className="flex items-center gap-2 sm:gap-3">
           
+          {/* Direct APK Download (Desktop) */}
+          <a
+            href="https://github.com/U-Didpaye/HackoRuv-QuietPulse/releases/download/v1.0.0-release-18/app-debug.apk"
+            target="_blank"
+            rel="noopener noreferrer"
+            download="QuietPulse.apk"
+            className={`hidden md:flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition font-mono border ${
+              isPearl
+                ? 'bg-[#FFFFFF] border-[#DDE1E7] text-[#167D68] hover:bg-[#F7F8FA] hover:border-[#167D68]'
+                : 'bg-v-surface border-v-border text-v-text hover:border-v-accent'
+            }`}
+            title="Download Official QuietPulse Android APK"
+          >
+            <Download className="w-3.5 h-3.5 text-[#167D68]" />
+            <span>Download APK</span>
+          </a>
+
           {/* Quick ChokasAI Launcher Button (Desktop only) */}
           <button
             onClick={onOpenChokas}
@@ -338,7 +355,9 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
 
           <a
-            href="./QuietPulse.apk"
+            href="https://github.com/U-Didpaye/HackoRuv-QuietPulse/releases/download/v1.0.0-release-18/app-debug.apk"
+            target="_blank"
+            rel="noopener noreferrer"
             download="QuietPulse.apk"
             onClick={() => setMobileMenuOpen(false)}
             className={`w-full text-left py-2 px-3 rounded-lg text-xs font-semibold tracking-wider flex items-center gap-2 transition ${

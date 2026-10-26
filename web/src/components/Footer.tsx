@@ -121,10 +121,12 @@ export const Footer: React.FC<FooterProps> = ({
               </li>
               <li>
                 <a
-                  href="./QuietPulse.apk"
+                  href="https://github.com/U-Didpaye/HackoRuv-QuietPulse/releases/download/v1.0.0-release-18/app-debug.apk"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   download="QuietPulse.apk"
                   className="hover:text-v-text transition flex items-center gap-1.5 text-cyan-400 font-mono text-[11px]"
-                  title="Download Signed QuietPulse Android APK"
+                  title="Download Official QuietPulse Android APK"
                 >
                   <Download className="w-3 h-3" />
                   <span>Download Android APK</span>
