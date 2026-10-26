@@ -13,9 +13,11 @@ export default {
         'v-elevated': 'var(--v-elevated)',
         'v-text': 'var(--v-primary-text)',
         'v-text-muted': 'var(--v-secondary-text)',
+        'v-muted': 'var(--v-muted-text)',
         'v-border': 'var(--v-border)',
         'v-border-subtle': 'var(--v-border-subtle)',
         'v-accent': 'var(--v-accent)',
+        'v-accent-hover': 'var(--v-accent-hover)',
         'v-badge': 'var(--v-badge-bg)',
       },
       fontFamily: {

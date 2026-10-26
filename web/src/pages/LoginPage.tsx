@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Lock, Mail, ArrowRight, ShieldCheck, AlertCircle, CheckCircle2, Cloud } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 import { isSupabaseConfigured, signInWithEmail, signUpWithEmail, signInWithGoogle, supabase } from '../data/supabaseClient';
 
 interface LoginPageProps {
@@ -8,6 +9,8 @@ interface LoginPageProps {
 }
 
 export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigateHome }) => {
+  const { theme } = useTheme();
+  const isPearl = theme === 'pearl';
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -171,28 +174,38 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
         />
       </div>
 
-      {/* Frosted Glass Login Panel (Recreated faithfully from the reference mockup) */}
-      <div className="relative z-10 w-full max-w-md p-8 sm:p-10 rounded-3xl bg-black/60 backdrop-blur-xl border border-white/20 shadow-[0_8px_40px_rgba(0,0,0,0.85)] animate-reveal">
+      {/* Login Panel */}
+      <div className={`relative z-10 w-full max-w-md p-8 sm:p-10 rounded-3xl transition ${
+        isPearl
+          ? 'bg-[#FFFFFF] border border-[#DDE1E7] shadow-2xl'
+          : 'bg-black/60 backdrop-blur-xl border border-white/20 shadow-[0_8px_40px_rgba(0,0,0,0.85)]'
+      } animate-reveal`}>
         
         {/* Brand Emblem & Header */}
         <div className="flex flex-col items-center text-center mb-8">
           <div className="h-12 w-auto mb-3 flex items-center justify-center">
             <img
-              src="./quietpulse-neon-logo.png"
+              src={isPearl ? "./quietpulse-logo-pearl.png" : "./quietpulse-neon-logo.png"}
               alt="QuietPulse"
-              className="h-11 w-auto object-contain filter drop-shadow-[0_0_25px_rgba(34,211,238,0.35)]"
+              className="h-11 w-auto object-contain"
               onError={(e) => {
-                (e.currentTarget as HTMLImageElement).src = './quietpulse-logo-transparent.png';
+                (e.currentTarget as HTMLImageElement).src = './quietpulse-logo-pearl.png';
               }}
             />
           </div>
-          <p className="text-[11px] font-mono tracking-[0.25em] text-neutral-300 uppercase font-semibold">
+          <p className={`text-[11px] font-mono tracking-[0.25em] uppercase font-semibold ${
+            isPearl ? 'text-[#167D68]' : 'text-neutral-300'
+          }`}>
             LESS NOISE. MORE FOCUS.
           </p>
-          <h2 className="text-xl sm:text-2xl font-bold text-white mt-4 tracking-tight">
+          <h2 className={`text-xl sm:text-2xl font-bold mt-4 tracking-tight ${
+            isPearl ? 'text-[#17191D]' : 'text-white'
+          }`}>
             {isSignUp ? 'Create Sovereign Account' : 'Welcome to QuietPulse'}
           </h2>
-          <p className="text-xs text-neutral-400 mt-1 max-w-xs">
+          <p className={`text-xs mt-1 max-w-xs ${
+            isPearl ? 'text-[#525866]' : 'text-neutral-400'
+          }`}>
             {isSignUp
               ? 'Join the privacy-first attention firewall and protect your cognitive focus.'
               : 'Sign in to access your attention queue and personalized focus rules.'}
@@ -201,16 +214,16 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
 
         {/* Feedback Alerts */}
         {errorMessage && (
-          <div className="mb-5 p-3 rounded-xl bg-rose-950/70 border border-rose-500/40 text-rose-200 text-xs flex items-start gap-2.5">
-            <AlertCircle className="w-4 h-4 shrink-0 text-rose-400 mt-0.5" />
-            <span className="leading-relaxed">{errorMessage}</span>
+          <div className="mb-5 p-3 rounded-xl bg-rose-50 border border-rose-300 text-rose-700 text-xs flex items-start gap-2.5">
+            <AlertCircle className="w-4 h-4 shrink-0 text-rose-500 mt-0.5" />
+            <span className="leading-relaxed font-medium">{errorMessage}</span>
           </div>
         )}
 
         {successMessage && (
-          <div className="mb-5 p-3 rounded-xl bg-emerald-950/70 border border-emerald-500/40 text-emerald-200 text-xs flex items-center gap-2.5">
-            <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
-            <span>{successMessage}</span>
+          <div className="mb-5 p-3 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs flex items-center gap-2.5">
+            <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+            <span className="font-medium">{successMessage}</span>
           </div>
         )}
 
@@ -218,41 +231,59 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Email Input */}
           <div>
-            <label className="block text-[11px] font-mono uppercase tracking-wider text-neutral-300 mb-1.5">
+            <label className={`block text-[11px] font-mono uppercase tracking-wider mb-1.5 ${
+              isPearl ? 'text-[#17191D] font-bold' : 'text-neutral-300'
+            }`}>
               Email Address
             </label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Mail className={`w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 ${
+                isPearl ? 'text-[#626977]' : 'text-neutral-400'
+              }`} />
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@company.com"
                 required
-                className="w-full pl-10 pr-4 py-2.5 bg-black/50 border border-white/20 rounded-xl text-white text-xs placeholder-neutral-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition"
+                className={`w-full pl-10 pr-4 py-2.5 rounded-xl text-xs transition ${
+                  isPearl
+                    ? 'bg-[#FFFFFF] border border-[#DDE1E7] text-[#17191D] placeholder-[#626977] focus:outline-none focus:border-[#167D68] focus:ring-1 focus:ring-[#167D68]'
+                    : 'bg-black/50 border border-white/20 text-white placeholder-neutral-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400'
+                }`}
               />
             </div>
           </div>
 
           {/* Password Input */}
           <div>
-            <label className="block text-[11px] font-mono uppercase tracking-wider text-neutral-300 mb-1.5">
+            <label className={`block text-[11px] font-mono uppercase tracking-wider mb-1.5 ${
+              isPearl ? 'text-[#17191D] font-bold' : 'text-neutral-300'
+            }`}>
               Password
             </label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Lock className={`w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 ${
+                isPearl ? 'text-[#626977]' : 'text-neutral-400'
+              }`} />
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••••••"
                 required
-                className="w-full pl-10 pr-10 py-2.5 bg-black/50 border border-white/20 rounded-xl text-white text-xs placeholder-neutral-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition font-mono"
+                className={`w-full pl-10 pr-10 py-2.5 rounded-xl text-xs font-mono transition ${
+                  isPearl
+                    ? 'bg-[#FFFFFF] border border-[#DDE1E7] text-[#17191D] placeholder-[#626977] focus:outline-none focus:border-[#167D68] focus:ring-1 focus:ring-[#167D68]'
+                    : 'bg-black/50 border border-white/20 text-white placeholder-neutral-500 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400'
+                }`}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white transition"
+                className={`absolute right-3.5 top-1/2 -translate-y-1/2 transition ${
+                  isPearl ? 'text-[#626977] hover:text-[#17191D]' : 'text-neutral-400 hover:text-white'
+                }`}
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
@@ -261,19 +292,25 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
 
           {/* Remember Me & Forgot Password */}
           <div className="flex items-center justify-between text-xs pt-1">
-            <label className="flex items-center gap-2 cursor-pointer select-none text-neutral-300">
+            <label className={`flex items-center gap-2 cursor-pointer select-none ${
+              isPearl ? 'text-[#525866]' : 'text-neutral-300'
+            }`}>
               <input
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="w-3.5 h-3.5 rounded border-white/20 bg-black/50 text-cyan-500 focus:ring-0"
+                className={`w-3.5 h-3.5 rounded ${
+                  isPearl ? 'border-[#DDE1E7] text-[#167D68] focus:ring-[#167D68]' : 'border-white/20 bg-black/50 text-cyan-500 focus:ring-0'
+                }`}
               />
               <span>Remember me</span>
             </label>
             <button
               type="button"
               onClick={handleForgotPassword}
-              className="text-neutral-400 hover:text-white transition text-[11px] underline underline-offset-4"
+              className={`transition text-[11px] underline underline-offset-4 ${
+                isPearl ? 'text-[#525866] hover:text-[#167D68]' : 'text-neutral-400 hover:text-white'
+              }`}
             >
               Forgot password?
             </button>
@@ -283,7 +320,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full mt-4 py-3 px-4 rounded-xl bg-white text-black font-bold text-xs uppercase tracking-widest hover:bg-neutral-200 transition shadow-xl flex items-center justify-center gap-2 group font-mono disabled:opacity-60"
+            className={`w-full mt-4 py-3 px-4 rounded-xl font-bold text-xs uppercase tracking-widest transition shadow-md flex items-center justify-center gap-2 group font-mono disabled:opacity-60 ${
+              isPearl
+                ? 'bg-[#167D68] text-white hover:bg-[#106653]'
+                : 'bg-white text-black hover:bg-neutral-200 shadow-xl'
+            }`}
           >
             {isLoading ? (
               <span className="inline-block animate-spin mr-2">⟳</span>
@@ -296,9 +337,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
         {/* Divider */}
         <div className="relative my-6 text-center">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-white/10" />
+            <div className={`w-full border-t ${isPearl ? 'border-[#DDE1E7]' : 'border-white/10'}`} />
           </div>
-          <span className="relative px-3 bg-black/60 text-[10px] font-mono uppercase tracking-wider text-neutral-400">
+          <span className={`relative px-3 text-[10px] font-mono uppercase tracking-wider ${
+            isPearl ? 'bg-[#FFFFFF] text-[#626977]' : 'bg-black/60 text-neutral-400'
+          }`}>
             or continue with
           </span>
         </div>
@@ -307,7 +350,11 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
         <button
           type="button"
           onClick={handleGoogleAuthClick}
-          className="w-full py-2.5 px-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-white text-xs font-medium transition flex items-center justify-center gap-2.5"
+          className={`w-full py-2.5 px-4 rounded-xl text-xs font-medium transition flex items-center justify-center gap-2.5 ${
+            isPearl
+              ? 'bg-[#F7F8FA] hover:bg-[#FFFFFF] border border-[#DDE1E7] text-[#17191D] shadow-xs'
+              : 'bg-white/5 hover:bg-white/10 border border-white/15 text-white'
+          }`}
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24">
             <path
@@ -331,7 +378,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
         </button>
 
         {/* Toggle Sign Up / Log In */}
-        <div className="mt-6 text-center text-xs text-neutral-400">
+        <div className={`mt-6 text-center text-xs ${isPearl ? 'text-[#525866]' : 'text-neutral-400'}`}>
           {isSignUp ? (
             <span>
               Already have an account?{' '}
@@ -341,7 +388,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
                   setIsSignUp(false);
                   setErrorMessage(null);
                 }}
-                className="text-white hover:underline font-semibold"
+                className={`font-semibold hover:underline ${isPearl ? 'text-[#167D68]' : 'text-white'}`}
               >
                 Log In
               </button>
@@ -355,7 +402,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
                   setIsSignUp(true);
                   setErrorMessage(null);
                 }}
-                className="text-white hover:underline font-semibold"
+                className={`font-semibold hover:underline ${isPearl ? 'text-[#167D68]' : 'text-white'}`}
               >
                 Sign Up
               </button>
@@ -364,13 +411,15 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess, onNavigate
         </div>
 
         {/* Privacy & Backend Note */}
-        <div className="mt-8 pt-4 border-t border-white/10 flex items-center justify-between text-[10px] text-neutral-400 font-mono">
+        <div className={`mt-8 pt-4 border-t flex items-center justify-between text-[10px] font-mono ${
+          isPearl ? 'border-[#DDE1E7] text-[#626977]' : 'border-white/10 text-neutral-400'
+        }`}>
           <div className="flex items-center gap-1.5">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
             <span>100% Privacy-Preserving</span>
           </div>
-          <div className="flex items-center gap-1.5 text-neutral-400">
-            <Cloud className="w-3.5 h-3.5 text-cyan-400" />
+          <div className="flex items-center gap-1.5">
+            <Cloud className={`w-3.5 h-3.5 ${isPearl ? 'text-[#167D68]' : 'text-cyan-400'}`} />
             <span>{isSupabaseConfigured ? 'Supabase Auth' : 'Sovereign Mode'}</span>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Shield, Sparkles, Play, ArrowUp, Download } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 interface FooterProps {
   onNavigate: (route: string) => void;
@@ -12,6 +13,9 @@ export const Footer: React.FC<FooterProps> = ({
   onReplaySplash,
   onOpenChokas,
 }) => {
+  const { theme } = useTheme();
+  const isPearl = theme === 'pearl';
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -26,11 +30,11 @@ export const Footer: React.FC<FooterProps> = ({
             <div className="flex items-center gap-3">
               <div className="h-10 relative flex items-center justify-center bg-transparent">
                 <img
-                  src="./quietpulse-logo-transparent.png"
+                  src={isPearl ? "./quietpulse-logo-pearl.png" : "./quietpulse-logo-transparent.png"}
                   alt="QuietPulse"
                   className="h-9 w-auto object-contain bg-transparent"
                   onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).src = './quietpulse-logo.png';
+                    (e.currentTarget as HTMLImageElement).src = './quietpulse-logo-pearl.png';
                   }}
                 />
               </div>

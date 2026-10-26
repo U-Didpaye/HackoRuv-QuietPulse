@@ -13,9 +13,17 @@ export interface ThemeInfo {
 
 export const THEMES: ThemeInfo[] = [
   {
+    id: 'pearl',
+    name: 'Pearl',
+    character: 'Clean Architectural Light (Active)',
+    swatchBg: '#FFFFFF',
+    swatchSurface: '#FFFFFF',
+    swatchAccent: '#167D68',
+  },
+  {
     id: 'obsidian',
     name: 'Obsidian Silver',
-    character: 'Cinematic & Metallic (Default)',
+    character: 'Cinematic & Metallic',
     swatchBg: '#000000',
     swatchSurface: '#181818',
     swatchAccent: '#C6C6C6',
@@ -28,14 +36,6 @@ export const THEMES: ThemeInfo[] = [
     swatchSurface: '#0E2C24',
     swatchAccent: '#14B8A6',
   },
-  {
-    id: 'pearl',
-    name: 'Pearl',
-    character: 'Clean Architectural Light',
-    swatchBg: '#F5F4F0',
-    swatchSurface: '#ECEBE7',
-    swatchAccent: '#737373',
-  },
 ];
 
 interface ThemeContextType {
@@ -45,7 +45,7 @@ interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType>({
-  theme: 'obsidian',
+  theme: 'pearl',
   setTheme: () => {},
   themes: THEMES,
 });
@@ -58,7 +58,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         return saved;
       }
     }
-    return 'obsidian';
+    return 'pearl';
   });
 
   const setTheme = (newTheme: QuietPulseTheme) => {

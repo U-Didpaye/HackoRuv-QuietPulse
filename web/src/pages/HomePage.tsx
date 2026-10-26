@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ScrollReveal } from '../components/ScrollReveal';
+import { useTheme } from '../context/ThemeContext';
 import {
   Shield,
   ArrowRight,
@@ -36,6 +37,9 @@ export const HomePage: React.FC<HomePageProps> = ({
   metrics,
   onReplaySplash,
 }) => {
+  const { theme } = useTheme();
+  const isPearl = theme === 'pearl';
+
   // Section 10: Interactive Attention-Management Demo State
   const [demoActiveNotification, setDemoActiveNotification] = useState<{
     app: string;
@@ -93,27 +97,41 @@ export const HomePage: React.FC<HomePageProps> = ({
     <div className="relative overflow-x-hidden min-h-screen">
       {/* 
         OFFICIAL COSMIC SPACE-HORIZON ATMOSPHERIC BACKGROUND (Page-Wide)
-        Pristine cosmic galaxy wallpaper: planetary rings, mountain landscape, twilight horizon over calm water
+        In Pearl theme: high-key bright architectural backdrop with subtle light ambient radial glow
       */}
       <div className="fixed inset-0 z-0 pointer-events-none select-none overflow-hidden">
-        <img
-          src="./backgrounds/bg-cosmic-rings.png"
-          alt="Cosmic Galaxy Horizon"
-          className="w-full h-full object-cover object-center filter brightness-90 contrast-105"
-          onError={(e) => {
-            (e.currentTarget as HTMLImageElement).src = './quietpulse-hero-bg.jpg';
-          }}
-        />
-        {/* Multi-stop atmospheric vignette maintaining cosmic galaxy visibility across entire page */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `
-              radial-gradient(ellipse at 50% 30%, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.65) 60%, var(--v-bg) 100%),
-              linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.55) 40%, rgba(0,0,0,0.85) 75%, var(--v-bg) 100%)
-            `
-          }}
-        />
+        {isPearl ? (
+          <div
+            className="w-full h-full bg-[#FFFFFF]"
+            style={{
+              background: `
+                radial-gradient(ellipse at 50% 12%, rgba(22, 125, 104, 0.05) 0%, rgba(247, 248, 250, 0.7) 45%, #FFFFFF 100%),
+                linear-gradient(to bottom, #FFFFFF 0%, #F7F8FA 50%, #FFFFFF 100%)
+              `
+            }}
+          />
+        ) : (
+          <>
+            <img
+              src="./backgrounds/bg-cosmic-rings.png"
+              alt="Cosmic Galaxy Horizon"
+              className="w-full h-full object-cover object-center filter brightness-90 contrast-105"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).src = './quietpulse-hero-bg.jpg';
+              }}
+            />
+            {/* Multi-stop atmospheric vignette maintaining cosmic galaxy visibility across entire page */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: `
+                  radial-gradient(ellipse at 50% 30%, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.65) 60%, var(--v-bg) 100%),
+                  linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.55) 40%, rgba(0,0,0,0.85) 75%, var(--v-bg) 100%)
+                `
+              }}
+            />
+          </>
+        )}
       </div>
 
       {/* 
@@ -128,18 +146,30 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center pt-16 sm:pt-24 md:pt-28">
           
           {/* Exact Master Tagline */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-neutral-200 text-xs sm:text-sm font-mono tracking-[0.25em] uppercase mb-6 shadow-2xl animate-reveal">
-            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
+          <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs sm:text-sm font-mono tracking-[0.25em] uppercase mb-6 shadow-sm animate-reveal ${
+            isPearl
+              ? 'bg-[#F7F8FA] border border-[#DDE1E7] text-[#167D68]'
+              : 'bg-black/60 backdrop-blur-md border border-white/20 text-neutral-200 shadow-2xl'
+          }`}>
+            <span className={`w-1.5 h-1.5 rounded-full animate-ping ${isPearl ? 'bg-[#167D68]' : 'bg-cyan-400'}`} />
             LESS NOISE. MORE FOCUS.
           </div>
 
           {/* Monumental Headline */}
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-white uppercase font-editorial leading-tight drop-shadow-[0_4px_30px_rgba(0,0,0,0.9)] max-w-3xl">
+          <h1 className={`text-4xl sm:text-6xl md:text-7xl font-black tracking-tight uppercase font-editorial leading-tight max-w-3xl ${
+            isPearl
+              ? 'text-[#17191D]'
+              : 'text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.9)]'
+          }`}>
             THE ATTENTION FIREWALL
           </h1>
 
           {/* Concise Product Statement per Mockup & Master Prompt */}
-          <p className="text-base sm:text-xl text-neutral-200 max-w-2xl mx-auto mt-6 leading-relaxed font-sans drop-shadow-[0_2px_15px_rgba(0,0,0,0.85)]">
+          <p className={`text-base sm:text-xl max-w-2xl mx-auto mt-6 leading-relaxed font-sans ${
+            isPearl
+              ? 'text-[#525866]'
+              : 'text-neutral-200 drop-shadow-[0_2px_15px_rgba(0,0,0,0.85)]'
+          }`}>
             QuietPulse helps you prioritize what matters and filter out what doesn't, so you can do your best work without notification anxiety.
           </p>
 
@@ -147,7 +177,11 @@ export const HomePage: React.FC<HomePageProps> = ({
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 mt-9 w-full sm:w-auto">
             <button
               onClick={() => onNavigate('notify')}
-              className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-white text-black font-bold text-xs uppercase tracking-widest hover:bg-neutral-200 transition shadow-2xl flex items-center justify-center gap-2 font-mono group"
+              className={`w-full sm:w-auto px-8 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest transition shadow-md flex items-center justify-center gap-2 font-mono group ${
+                isPearl
+                  ? 'bg-[#167D68] text-white hover:bg-[#106653]'
+                  : 'bg-white text-black hover:bg-neutral-200 shadow-2xl'
+              }`}
             >
               <span>Get Started</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
@@ -155,25 +189,33 @@ export const HomePage: React.FC<HomePageProps> = ({
 
             <button
               onClick={() => onNavigate('demo')}
-              className="w-full sm:w-auto px-7 py-3.5 rounded-xl bg-black/60 hover:bg-black/80 backdrop-blur-md border border-white/25 text-white font-bold text-xs uppercase tracking-widest transition flex items-center justify-center gap-2 font-mono"
+              className={`w-full sm:w-auto px-7 py-3.5 rounded-xl border font-bold text-xs uppercase tracking-widest transition flex items-center justify-center gap-2 font-mono ${
+                isPearl
+                  ? 'bg-[#FFFFFF] border-[#DDE1E7] text-[#17191D] hover:bg-[#F7F8FA] shadow-xs'
+                  : 'bg-black/60 hover:bg-black/80 backdrop-blur-md border-white/25 text-white'
+              }`}
             >
-              <Play className="w-3.5 h-3.5 fill-current text-cyan-400" />
+              <Play className={`w-3.5 h-3.5 fill-current ${isPearl ? 'text-[#167D68]' : 'text-cyan-400'}`} />
               <span>Watch Demo</span>
             </button>
 
             <button
               onClick={onOpenChokas}
-              className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-neutral-900/70 hover:bg-neutral-800/80 backdrop-blur-md border border-white/15 text-neutral-300 font-medium text-xs tracking-wider transition flex items-center justify-center gap-2 font-mono"
+              className={`w-full sm:w-auto px-6 py-3.5 rounded-xl border font-medium text-xs tracking-wider transition flex items-center justify-center gap-2 font-mono ${
+                isPearl
+                  ? 'bg-[#F7F8FA] border-[#DDE1E7] text-[#17191D] hover:bg-[#FFFFFF] shadow-xs'
+                  : 'bg-neutral-900/70 hover:bg-neutral-800/80 backdrop-blur-md border-white/15 text-neutral-300'
+              }`}
             >
-              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+              <Sparkles className={`w-3.5 h-3.5 ${isPearl ? 'text-[#167D68]' : 'text-cyan-400'}`} />
               <span>Ask ChokasAI</span>
             </button>
           </div>
 
           {/* Subtle Scroll Cue */}
           <div className="mt-12 flex flex-col items-center gap-1.5 opacity-60 hover:opacity-100 transition cursor-pointer" onClick={() => window.scrollTo({ top: 750, behavior: 'smooth' })}>
-            <span className="text-[10px] font-mono tracking-widest uppercase text-neutral-400">Scroll to Explore</span>
-            <ChevronDown className="w-4 h-4 text-neutral-400 animate-bounce" />
+            <span className={`text-[10px] font-mono tracking-widest uppercase ${isPearl ? 'text-[#626977]' : 'text-neutral-400'}`}>Scroll to Explore</span>
+            <ChevronDown className={`w-4 h-4 animate-bounce ${isPearl ? 'text-[#626977]' : 'text-neutral-400'}`} />
           </div>
 
         </div>
@@ -184,19 +226,33 @@ export const HomePage: React.FC<HomePageProps> = ({
           1. Prioritize  2. Organize  3. Focus  4. Gain Insights
           ========================================================================
         */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8 pt-6 border-t border-white/15">
+        <div className={`relative z-10 w-full max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8 pt-6 border-t ${
+          isPearl ? 'border-[#DDE1E7]' : 'border-white/15'
+        }`}>
           {/* Card 1: Prioritize */}
           <button
             onClick={() => onNavigate('notify')}
-            className="p-5 rounded-2xl bg-black/50 hover:bg-black/75 backdrop-blur-md border border-white/15 hover:border-cyan-400/50 text-left transition shadow-lg group"
+            className={`p-5 rounded-2xl text-left transition group ${
+              isPearl
+                ? 'bg-[#FFFFFF] hover:bg-[#F7F8FA] border border-[#DDE1E7] hover:border-[#167D68] shadow-xs'
+                : 'bg-black/50 hover:bg-black/75 backdrop-blur-md border border-white/15 hover:border-cyan-400/50 shadow-lg'
+            }`}
           >
-            <div className="w-9 h-9 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-cyan-300 mb-3 group-hover:scale-110 transition-transform">
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform ${
+              isPearl
+                ? 'bg-[#E8F5F1] text-[#167D68] border border-[#167D68]/30'
+                : 'bg-white/10 border border-white/20 text-cyan-300'
+            }`}>
               <Filter className="w-4 h-4" />
             </div>
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider font-mono">
+            <h3 className={`text-sm font-bold uppercase tracking-wider font-mono ${
+              isPearl ? 'text-[#17191D]' : 'text-white'
+            }`}>
               Prioritize
             </h3>
-            <p className="text-xs text-neutral-300 mt-1.5 leading-relaxed">
+            <p className={`text-xs mt-1.5 leading-relaxed ${
+              isPearl ? 'text-[#525866]' : 'text-neutral-300'
+            }`}>
               Filter notifications based on what matters most to you. Critical alerts cut through; trivial pings wait.
             </p>
           </button>
@@ -204,15 +260,27 @@ export const HomePage: React.FC<HomePageProps> = ({
           {/* Card 2: Organize */}
           <button
             onClick={() => onNavigate('flowqueue')}
-            className="p-5 rounded-2xl bg-black/50 hover:bg-black/75 backdrop-blur-md border border-white/15 hover:border-cyan-400/50 text-left transition shadow-lg group"
+            className={`p-5 rounded-2xl text-left transition group ${
+              isPearl
+                ? 'bg-[#FFFFFF] hover:bg-[#F7F8FA] border border-[#DDE1E7] hover:border-[#167D68] shadow-xs'
+                : 'bg-black/50 hover:bg-black/75 backdrop-blur-md border border-white/15 hover:border-cyan-400/50 shadow-lg'
+            }`}
           >
-            <div className="w-9 h-9 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-cyan-300 mb-3 group-hover:scale-110 transition-transform">
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform ${
+              isPearl
+                ? 'bg-[#E8F5F1] text-[#167D68] border border-[#167D68]/30'
+                : 'bg-white/10 border border-white/20 text-cyan-300'
+            }`}>
               <Inbox className="w-4 h-4" />
             </div>
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider font-mono">
+            <h3 className={`text-sm font-bold uppercase tracking-wider font-mono ${
+              isPearl ? 'text-[#17191D]' : 'text-white'
+            }`}>
               Organize
             </h3>
-            <p className="text-xs text-neutral-300 mt-1.5 leading-relaxed">
+            <p className={`text-xs mt-1.5 leading-relaxed ${
+              isPearl ? 'text-[#525866]' : 'text-neutral-300'
+            }`}>
               Group and schedule notifications into FlowQueue digests so they don't interrupt your cognitive flow.
             </p>
           </button>
@@ -220,15 +288,27 @@ export const HomePage: React.FC<HomePageProps> = ({
           {/* Card 3: Focus */}
           <button
             onClick={() => onNavigate('deepfocus')}
-            className="p-5 rounded-2xl bg-black/50 hover:bg-black/75 backdrop-blur-md border border-white/15 hover:border-cyan-400/50 text-left transition shadow-lg group"
+            className={`p-5 rounded-2xl text-left transition group ${
+              isPearl
+                ? 'bg-[#FFFFFF] hover:bg-[#F7F8FA] border border-[#DDE1E7] hover:border-[#167D68] shadow-xs'
+                : 'bg-black/50 hover:bg-black/75 backdrop-blur-md border border-white/15 hover:border-cyan-400/50 shadow-lg'
+            }`}
           >
-            <div className="w-9 h-9 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-cyan-300 mb-3 group-hover:scale-110 transition-transform">
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform ${
+              isPearl
+                ? 'bg-[#E8F5F1] text-[#167D68] border border-[#167D68]/30'
+                : 'bg-white/10 border border-white/20 text-cyan-300'
+            }`}>
               <Timer className="w-4 h-4" />
             </div>
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider font-mono">
+            <h3 className={`text-sm font-bold uppercase tracking-wider font-mono ${
+              isPearl ? 'text-[#17191D]' : 'text-white'
+            }`}>
               Focus
             </h3>
-            <p className="text-xs text-neutral-300 mt-1.5 leading-relaxed">
+            <p className={`text-xs mt-1.5 leading-relaxed ${
+              isPearl ? 'text-[#525866]' : 'text-neutral-300'
+            }`}>
               Enter Deep Focus sessions with zero distractions. Reclaim uninterrupted blocks for creative work.
             </p>
           </button>
@@ -236,15 +316,27 @@ export const HomePage: React.FC<HomePageProps> = ({
           {/* Card 4: Gain Insights */}
           <button
             onClick={() => onNavigate('pulseinsights')}
-            className="p-5 rounded-2xl bg-black/50 hover:bg-black/75 backdrop-blur-md border border-white/15 hover:border-cyan-400/50 text-left transition shadow-lg group"
+            className={`p-5 rounded-2xl text-left transition group ${
+              isPearl
+                ? 'bg-[#FFFFFF] hover:bg-[#F7F8FA] border border-[#DDE1E7] hover:border-[#167D68] shadow-xs'
+                : 'bg-black/50 hover:bg-black/75 backdrop-blur-md border border-white/15 hover:border-cyan-400/50 shadow-lg'
+            }`}
           >
-            <div className="w-9 h-9 rounded-xl bg-white/10 border border-white/20 flex items-center justify-center text-cyan-300 mb-3 group-hover:scale-110 transition-transform">
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform ${
+              isPearl
+                ? 'bg-[#E8F5F1] text-[#167D68] border border-[#167D68]/30'
+                : 'bg-white/10 border border-white/20 text-cyan-300'
+            }`}>
               <BarChart3 className="w-4 h-4" />
             </div>
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider font-mono">
+            <h3 className={`text-sm font-bold uppercase tracking-wider font-mono ${
+              isPearl ? 'text-[#17191D]' : 'text-white'
+            }`}>
               Gain Insights
             </h3>
-            <p className="text-xs text-neutral-300 mt-1.5 leading-relaxed">
+            <p className={`text-xs mt-1.5 leading-relaxed ${
+              isPearl ? 'text-[#525866]' : 'text-neutral-300'
+            }`}>
               Understand your digital habits with PulseInsights: clear, actionable telemetry without privacy invasion.
             </p>
           </button>
@@ -608,14 +700,18 @@ export const HomePage: React.FC<HomePageProps> = ({
         SCROLL REVEAL SECTION 3: CHOKASAI ASSISTANT SPOTLIGHT
         ========================================================================
       */}
-      <section className="relative z-10 py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-white/10">
+      <section className={`relative z-10 py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t ${
+        isPearl ? 'border-[#DDE1E7]' : 'border-white/10'
+      }`}>
         <ScrollReveal>
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="text-xs font-mono tracking-[0.25em] uppercase text-cyan-400">
+            <span className={`text-xs font-mono tracking-[0.25em] uppercase ${
+              isPearl ? 'text-[#167D68]' : 'text-cyan-400'
+            }`}>
               03 // IN-APP COMPANION
             </span>
             <h2 className="text-3xl sm:text-5xl font-black text-v-text font-editorial mt-3 tracking-tight">
-              Meet <span className="text-cyan-400">ChokasAI</span>
+              Meet <span className={isPearl ? 'text-[#167D68]' : 'text-cyan-400'}>ChokasAI</span>
             </h2>
             <p className="text-sm text-v-text-muted mt-3 leading-relaxed font-sans max-w-xl mx-auto">
               Your intelligent attention copilot powered by Google Gemini conversational AI and on-device command execution. Explain triage decisions, navigate features, and protect your focus.
@@ -623,48 +719,90 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
         </ScrollReveal>
 
-        {/* ChokasAI Cards Grid: Translucent Frosted Glass floating over Cosmic Backdrop */}
+        {/* ChokasAI Cards Grid */}
         <div className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
           <ScrollReveal delayMs={100} className="w-full min-w-0">
-            <div className="p-6 sm:p-7 rounded-2xl bg-black/50 hover:bg-black/70 backdrop-blur-xl border border-white/15 hover:border-cyan-400/50 h-full flex flex-col justify-between overflow-hidden transition-all shadow-xl group">
+            <div className={`p-6 sm:p-7 rounded-2xl h-full flex flex-col justify-between overflow-hidden transition-all group ${
+              isPearl
+                ? 'bg-[#FFFFFF] hover:bg-[#F7F8FA] border border-[#DDE1E7] hover:border-[#167D68] shadow-md'
+                : 'bg-black/50 hover:bg-black/70 backdrop-blur-xl border border-white/15 hover:border-cyan-400/50 shadow-xl'
+            }`}>
               <div>
-                <span className="text-[11px] font-mono text-cyan-400 uppercase tracking-wider font-bold">Mode 01</span>
-                <h3 className="text-base font-bold text-white mt-1.5">Explain</h3>
-                <p className="text-xs text-neutral-300 mt-2.5 leading-relaxed font-sans">
+                <span className={`text-[11px] font-mono uppercase tracking-wider font-bold ${
+                  isPearl ? 'text-[#167D68]' : 'text-cyan-400'
+                }`}>Mode 01</span>
+                <h3 className={`text-base font-bold mt-1.5 ${
+                  isPearl ? 'text-[#17191D]' : 'text-white'
+                }`}>Explain</h3>
+                <p className={`text-xs mt-2.5 leading-relaxed font-sans ${
+                  isPearl ? 'text-[#525866]' : 'text-neutral-300'
+                }`}>
                   Answers questions about how notifications were categorized, what burst thresholds mean, and why specific alerts were buffered into FlowQueue.
                 </p>
               </div>
-              <div className="mt-5 p-3 rounded-lg bg-white/5 text-[11px] font-mono text-neutral-300 border border-white/10 break-words">
+              <div className={`mt-5 p-3 rounded-lg text-[11px] font-mono border break-words ${
+                isPearl
+                  ? 'bg-[#F7F8FA] text-[#17191D] border-[#DDE1E7]'
+                  : 'bg-white/5 text-neutral-300 border-white/10'
+              }`}>
                 "Why was my social notification delayed?"
               </div>
             </div>
           </ScrollReveal>
 
           <ScrollReveal delayMs={200} className="w-full min-w-0">
-            <div className="p-6 sm:p-7 rounded-2xl bg-black/50 hover:bg-black/70 backdrop-blur-xl border border-white/15 hover:border-cyan-400/50 h-full flex flex-col justify-between overflow-hidden transition-all shadow-xl group">
+            <div className={`p-6 sm:p-7 rounded-2xl h-full flex flex-col justify-between overflow-hidden transition-all group ${
+              isPearl
+                ? 'bg-[#FFFFFF] hover:bg-[#F7F8FA] border border-[#DDE1E7] hover:border-[#167D68] shadow-md'
+                : 'bg-black/50 hover:bg-black/70 backdrop-blur-xl border border-white/15 hover:border-cyan-400/50 shadow-xl'
+            }`}>
               <div>
-                <span className="text-[11px] font-mono text-cyan-400 uppercase tracking-wider font-bold">Mode 02</span>
-                <h3 className="text-base font-bold text-white mt-1.5">Navigate</h3>
-                <p className="text-xs text-neutral-300 mt-2.5 leading-relaxed font-sans">
+                <span className={`text-[11px] font-mono uppercase tracking-wider font-bold ${
+                  isPearl ? 'text-[#167D68]' : 'text-cyan-400'
+                }`}>Mode 02</span>
+                <h3 className={`text-base font-bold mt-1.5 ${
+                  isPearl ? 'text-[#17191D]' : 'text-white'
+                }`}>Navigate</h3>
+                <p className={`text-xs mt-2.5 leading-relaxed font-sans ${
+                  isPearl ? 'text-[#525866]' : 'text-neutral-300'
+                }`}>
                   Directly transports you across NotiFy, FlowQueue, Deep Focus, PulseInsights, and Privacy with natural voice-like commands.
                 </p>
               </div>
-              <div className="mt-5 p-3 rounded-lg bg-white/5 text-[11px] font-mono text-neutral-300 border border-white/10 break-words">
+              <div className={`mt-5 p-3 rounded-lg text-[11px] font-mono border break-words ${
+                isPearl
+                  ? 'bg-[#F7F8FA] text-[#17191D] border-[#DDE1E7]'
+                  : 'bg-white/5 text-neutral-300 border-white/10'
+              }`}>
                 "Open my focus settings"
               </div>
             </div>
           </ScrollReveal>
 
           <ScrollReveal delayMs={300} className="w-full min-w-0">
-            <div className="p-6 sm:p-7 rounded-2xl bg-black/50 hover:bg-black/70 backdrop-blur-xl border border-white/15 hover:border-cyan-400/50 h-full flex flex-col justify-between overflow-hidden transition-all shadow-xl group">
+            <div className={`p-6 sm:p-7 rounded-2xl h-full flex flex-col justify-between overflow-hidden transition-all group ${
+              isPearl
+                ? 'bg-[#FFFFFF] hover:bg-[#F7F8FA] border border-[#DDE1E7] hover:border-[#167D68] shadow-md'
+                : 'bg-black/50 hover:bg-black/70 backdrop-blur-xl border border-white/15 hover:border-cyan-400/50 shadow-xl'
+            }`}>
               <div>
-                <span className="text-[11px] font-mono text-cyan-400 uppercase tracking-wider font-bold">Mode 03</span>
-                <h3 className="text-base font-bold text-white mt-1.5">Act</h3>
-                <p className="text-xs text-neutral-300 mt-2.5 leading-relaxed font-sans">
+                <span className={`text-[11px] font-mono uppercase tracking-wider font-bold ${
+                  isPearl ? 'text-[#167D68]' : 'text-cyan-400'
+                }`}>Mode 03</span>
+                <h3 className={`text-base font-bold mt-1.5 ${
+                  isPearl ? 'text-[#17191D]' : 'text-white'
+                }`}>Act</h3>
+                <p className={`text-xs mt-2.5 leading-relaxed font-sans ${
+                  isPearl ? 'text-[#525866]' : 'text-neutral-300'
+                }`}>
                   Executes verified in-app commands: starts Deep Focus sessions, clears FlowQueue, or switches between Obsidian Silver, Emerald, and Pearl themes.
                 </p>
               </div>
-              <div className="mt-5 p-3 rounded-lg bg-white/5 text-[11px] font-mono text-neutral-300 border border-white/10 break-words">
+              <div className={`mt-5 p-3 rounded-lg text-[11px] font-mono border break-words ${
+                isPearl
+                  ? 'bg-[#F7F8FA] text-[#17191D] border-[#DDE1E7]'
+                  : 'bg-white/5 text-neutral-300 border-white/10'
+              }`}>
                 "Switch to Emerald theme"
               </div>
             </div>
@@ -674,9 +812,15 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div className="mt-12 text-center">
           <button
             onClick={onOpenChokas}
-            className="px-8 py-3.5 rounded-xl bg-white text-black font-bold text-xs tracking-wider font-mono hover:bg-neutral-200 transition inline-flex items-center gap-2.5 shadow-2xl group"
+            className={`px-8 py-3.5 rounded-xl font-bold text-xs tracking-wider font-mono transition inline-flex items-center gap-2.5 shadow-md group ${
+              isPearl
+                ? 'bg-[#167D68] text-white hover:bg-[#106653]'
+                : 'bg-white text-black hover:bg-neutral-200 shadow-2xl'
+            }`}
           >
-            <Sparkles className="w-4 h-4 text-cyan-500 group-hover:scale-110 transition-transform" />
+            <Sparkles className={`w-4 h-4 group-hover:scale-110 transition-transform ${
+              isPearl ? 'text-white' : 'text-cyan-500'
+            }`} />
             <span>Launch ChokasAI Assistant</span>
           </button>
         </div>
@@ -687,13 +831,23 @@ export const HomePage: React.FC<HomePageProps> = ({
         CALL TO ACTION (Clean Download Android App & Contact Team, No Launch NotiFy)
         ========================================================================
       */}
-      <section className="relative z-10 py-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto border-t border-white/10 text-center">
+      <section className={`relative z-10 py-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto border-t text-center ${
+        isPearl ? 'border-[#DDE1E7]' : 'border-white/10'
+      }`}>
         <ScrollReveal>
-          <div className="p-10 sm:p-14 rounded-3xl bg-black/60 backdrop-blur-xl border border-white/15 relative overflow-hidden shadow-2xl">
-            <h2 className="text-3xl sm:text-5xl font-black text-white uppercase font-editorial tracking-tight">
+          <div className={`p-10 sm:p-14 rounded-3xl relative overflow-hidden transition shadow-xl ${
+            isPearl
+              ? 'bg-[#F7F8FA] border border-[#DDE1E7]'
+              : 'bg-black/60 backdrop-blur-xl border border-white/15 shadow-2xl'
+          }`}>
+            <h2 className={`text-3xl sm:text-5xl font-black uppercase font-editorial tracking-tight ${
+              isPearl ? 'text-[#17191D]' : 'text-white'
+            }`}>
               Reclaim Your Cognitive Bandwidth.
             </h2>
-            <p className="text-sm text-neutral-300 max-w-lg mx-auto mt-4 leading-relaxed font-sans">
+            <p className={`text-sm max-w-lg mx-auto mt-4 leading-relaxed font-sans ${
+              isPearl ? 'text-[#525866]' : 'text-neutral-300'
+            }`}>
               Install QuietPulse on your mobile phone or run the live attention firewall directly in this environment.
             </p>
 
@@ -701,7 +855,11 @@ export const HomePage: React.FC<HomePageProps> = ({
               <a
                 href="./QuietPulse.apk"
                 download="QuietPulse.apk"
-                className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-white text-black font-bold text-xs uppercase tracking-widest font-mono hover:bg-neutral-200 transition shadow-2xl flex items-center justify-center gap-2.5 group"
+                className={`w-full sm:w-auto px-8 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest font-mono transition shadow-md flex items-center justify-center gap-2.5 group ${
+                  isPearl
+                    ? 'bg-[#167D68] text-white hover:bg-[#106653]'
+                    : 'bg-white text-black hover:bg-neutral-200 shadow-2xl'
+                }`}
                 title="Download Official QuietPulse Android APK"
               >
                 <Download className="w-4 h-4" />
@@ -709,7 +867,11 @@ export const HomePage: React.FC<HomePageProps> = ({
               </a>
               <button
                 onClick={() => onNavigate('contact')}
-                className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-black/50 hover:bg-black/80 border border-white/25 text-white font-bold text-xs uppercase tracking-widest font-mono transition flex items-center justify-center gap-2"
+                className={`w-full sm:w-auto px-8 py-3.5 rounded-xl border font-bold text-xs uppercase tracking-widest font-mono transition flex items-center justify-center gap-2 ${
+                  isPearl
+                    ? 'bg-[#FFFFFF] border-[#DDE1E7] text-[#17191D] hover:bg-[#F7F8FA] shadow-xs'
+                    : 'bg-black/50 hover:bg-black/80 border-white/25 text-white'
+                }`}
               >
                 Contact Team
               </button>

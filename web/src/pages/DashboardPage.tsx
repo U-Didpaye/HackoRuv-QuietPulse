@@ -64,9 +64,9 @@ export const DashboardPage: React.FC<DashboardProps> = ({
           <div className="flex items-center gap-4">
             <div className="relative">
               <div className="w-12 h-12 rounded-xl bg-v-elevated border border-v-border flex items-center justify-center text-v-text">
-                <Shield className="w-6 h-6 text-cyan-400" />
+                <Shield className="w-6 h-6 text-v-accent" />
               </div>
-              <span className={`absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-v-surface ${isNotificationAccessGranted ? 'bg-emerald-400' : 'bg-amber-400'}`} />
+              <span className={`absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-v-surface ${isNotificationAccessGranted ? 'bg-emerald-500' : 'bg-amber-500'}`} />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -76,7 +76,7 @@ export const DashboardPage: React.FC<DashboardProps> = ({
                 <span className="px-2 py-0.5 text-[10px] font-mono font-bold rounded-full bg-v-secondary text-v-text border border-v-border">
                   TRIAGE ACTIVE
                 </span>
-                <span className="px-2 py-0.5 text-[10px] font-mono font-bold rounded-full bg-v-elevated text-cyan-400 border border-v-border">
+                <span className="px-2 py-0.5 text-[10px] font-mono font-bold rounded-full bg-v-elevated text-v-accent border border-v-border">
                   {activeContextMode} MODE
                 </span>
               </div>
@@ -154,7 +154,7 @@ export const DashboardPage: React.FC<DashboardProps> = ({
               Active Context Mode
             </span>
             <h4 className="text-xs font-bold text-v-text mt-0.5">
-              Current Triage Heuristic: <span className="text-cyan-400">{activeContextMode}</span>
+              Current Triage Heuristic: <span className="text-v-accent font-bold">{activeContextMode}</span>
             </h4>
           </div>
 

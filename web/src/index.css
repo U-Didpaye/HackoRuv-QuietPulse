@@ -3,20 +3,40 @@
 @tailwind utilities;
 
 :root {
-  /* Default: Theme 1 — Obsidian Silver */
-  --v-bg: #000000;
-  --v-surface: #101010;
-  --v-secondary: #181818;
-  --v-elevated: #202020;
-  --v-primary-text: #F5F5F5;
-  --v-secondary-text: #A3A3A3;
-  --v-border: #303030;
-  --v-border-subtle: #242424;
-  --v-accent: #C6C6C6;
-  --v-accent-secondary: #E5E5E5;
-  --v-accent-glow: rgba(198, 198, 198, 0.15);
-  --v-badge-bg: #1C1C1C;
-  --v-hero-glow: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
+  /* Default: Pearl Theme */
+  --v-bg: #FFFFFF;
+  --v-surface: #FFFFFF;
+  --v-secondary: #F7F8FA;
+  --v-elevated: #F0F2F5;
+  --v-primary-text: #17191D;
+  --v-secondary-text: #525866;
+  --v-muted-text: #626977;
+  --v-border: #DDE1E7;
+  --v-border-subtle: #E9ECF0;
+  --v-accent: #167D68;
+  --v-accent-hover: #106653;
+  --v-accent-secondary: #0D5244;
+  --v-accent-glow: rgba(22, 125, 104, 0.15);
+  --v-badge-bg: #E8F5F1;
+  --v-hero-glow: radial-gradient(circle at 50% 30%, rgba(22, 125, 104, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
+}
+
+[data-theme="pearl"] {
+  --v-bg: #FFFFFF;
+  --v-surface: #FFFFFF;
+  --v-secondary: #F7F8FA;
+  --v-elevated: #F0F2F5;
+  --v-primary-text: #17191D;
+  --v-secondary-text: #525866;
+  --v-muted-text: #626977;
+  --v-border: #DDE1E7;
+  --v-border-subtle: #E9ECF0;
+  --v-accent: #167D68;
+  --v-accent-hover: #106653;
+  --v-accent-secondary: #0D5244;
+  --v-accent-glow: rgba(22, 125, 104, 0.15);
+  --v-badge-bg: #E8F5F1;
+  --v-hero-glow: radial-gradient(circle at 50% 30%, rgba(22, 125, 104, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
 }
 
 [data-theme="obsidian"] {
@@ -49,22 +69,6 @@
   --v-accent-glow: rgba(20, 184, 166, 0.22);
   --v-badge-bg: #10332A;
   --v-hero-glow: radial-gradient(circle at 50% 30%, rgba(20, 184, 166, 0.16) 0%, rgba(5, 20, 16, 0) 70%);
-}
-
-[data-theme="pearl"] {
-  --v-bg: #F5F4F0;
-  --v-surface: #FFFFFF;
-  --v-secondary: #ECEBE7;
-  --v-elevated: #FFFFFF;
-  --v-primary-text: #171717;
-  --v-secondary-text: #666666;
-  --v-border: #DAD9D4;
-  --v-border-subtle: #E5E4DE;
-  --v-accent: #737373;
-  --v-accent-secondary: #404040;
-  --v-accent-glow: rgba(115, 115, 115, 0.10);
-  --v-badge-bg: #EAE9E4;
-  --v-hero-glow: radial-gradient(circle at 50% 30%, rgba(0, 0, 0, 0.03) 0%, rgba(245, 244, 240, 0) 70%);
 }
 
 body {

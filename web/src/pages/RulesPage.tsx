@@ -94,7 +94,7 @@ export const RulesPage: React.FC<RulesPageProps> = ({
           <h2 className="text-xl font-bold text-v-text tracking-wide uppercase font-mono">
             Context Modes &amp; Policy Rules
           </h2>
-          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-v-secondary border border-v-border text-cyan-400">
+          <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-v-secondary border border-v-border text-v-accent font-bold">
             {activeContextMode} ACTIVE
           </span>
         </div>
@@ -110,17 +110,17 @@ export const RulesPage: React.FC<RulesPageProps> = ({
           onClick={() => onChangeContextMode('OFFICE')}
           className={`p-5 rounded-2xl border cursor-pointer transition flex flex-col justify-between ${
             activeContextMode === 'OFFICE'
-              ? 'bg-v-surface border-cyan-400/80 shadow-lg ring-1 ring-cyan-400/40'
+              ? 'bg-v-surface border-v-accent shadow-lg ring-1 ring-v-accent/40'
               : 'bg-v-surface/60 border-v-border hover:border-v-border/80'
           }`}
         >
           <div>
             <div className="flex items-center justify-between mb-3">
-              <div className="w-9 h-9 rounded-xl bg-v-secondary border border-v-border flex items-center justify-center text-cyan-400">
+              <div className="w-9 h-9 rounded-xl bg-v-secondary border border-v-border flex items-center justify-center text-v-accent">
                 <Briefcase className="w-4 h-4" />
               </div>
               {activeContextMode === 'OFFICE' && (
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-400/10 text-cyan-400 border border-cyan-400/30 uppercase">
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-v-secondary text-v-accent border border-v-accent/30 uppercase">
                   Active
                 </span>
               )}
@@ -130,7 +130,7 @@ export const RulesPage: React.FC<RulesPageProps> = ({
               Prioritizes work tools (Slack, Teams, Outlook, Zoom, Jira) and elevates critical incidents. Non-urgent social alerts are buffered into FlowQueue.
             </p>
           </div>
-          <div className="mt-4 pt-3 border-t border-v-border/60 text-[10px] font-mono text-v-accent">
+          <div className="mt-4 pt-3 border-t border-v-border/60 text-[10px] font-mono text-v-accent font-semibold">
             DEFAULT: WORK APPS HIGHER • SOCIAL BATCHED
           </div>
         </div>
@@ -140,17 +140,17 @@ export const RulesPage: React.FC<RulesPageProps> = ({
           onClick={() => onChangeContextMode('HOME')}
           className={`p-5 rounded-2xl border cursor-pointer transition flex flex-col justify-between ${
             activeContextMode === 'HOME'
-              ? 'bg-v-surface border-cyan-400/80 shadow-lg ring-1 ring-cyan-400/40'
+              ? 'bg-v-surface border-v-accent shadow-lg ring-1 ring-v-accent/40'
               : 'bg-v-surface/60 border-v-border hover:border-v-border/80'
           }`}
         >
           <div>
             <div className="flex items-center justify-between mb-3">
-              <div className="w-9 h-9 rounded-xl bg-v-secondary border border-v-border flex items-center justify-center text-cyan-400">
+              <div className="w-9 h-9 rounded-xl bg-v-secondary border border-v-border flex items-center justify-center text-v-accent">
                 <Home className="w-4 h-4" />
               </div>
               {activeContextMode === 'HOME' && (
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-400/10 text-cyan-400 border border-cyan-400/30 uppercase">
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-v-secondary text-v-accent border border-v-accent/30 uppercase">
                   Active
                 </span>
               )}
@@ -160,7 +160,7 @@ export const RulesPage: React.FC<RulesPageProps> = ({
               Prioritizes personal communications (Calls, Family, WhatsApp, Deliveries). Routine workplace alerts and marketing spam are deferred.
             </p>
           </div>
-          <div className="mt-4 pt-3 border-t border-v-border/60 text-[10px] font-mono text-v-accent">
+          <div className="mt-4 pt-3 border-t border-v-border/60 text-[10px] font-mono text-v-accent font-semibold">
             DEFAULT: PERSONAL APPS HIGHER • WORK BATCHED
           </div>
         </div>
@@ -170,17 +170,17 @@ export const RulesPage: React.FC<RulesPageProps> = ({
           onClick={() => onChangeContextMode('PERSONALIZED')}
           className={`p-5 rounded-2xl border cursor-pointer transition flex flex-col justify-between ${
             activeContextMode === 'PERSONALIZED'
-              ? 'bg-v-surface border-cyan-400/80 shadow-lg ring-1 ring-cyan-400/40'
+              ? 'bg-v-surface border-v-accent shadow-lg ring-1 ring-v-accent/40'
               : 'bg-v-surface/60 border-v-border hover:border-v-border/80'
           }`}
         >
           <div>
             <div className="flex items-center justify-between mb-3">
-              <div className="w-9 h-9 rounded-xl bg-v-secondary border border-v-border flex items-center justify-center text-cyan-400">
+              <div className="w-9 h-9 rounded-xl bg-v-secondary border border-v-border flex items-center justify-center text-v-accent">
                 <Sliders className="w-4 h-4" />
               </div>
               {activeContextMode === 'PERSONALIZED' && (
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-400/10 text-cyan-400 border border-cyan-400/30 uppercase">
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-v-secondary text-v-accent border border-v-accent/30 uppercase">
                   Active
                 </span>
               )}
@@ -190,7 +190,7 @@ export const RulesPage: React.FC<RulesPageProps> = ({
               Genuinely customizable heuristic engine. Tune VIP apps, custom urgent/spam tokens, contact exceptions, and urgency sensitivity thresholds.
             </p>
           </div>
-          <div className="mt-4 pt-3 border-t border-v-border/60 text-[10px] font-mono text-v-accent">
+          <div className="mt-4 pt-3 border-t border-v-border/60 text-[10px] font-mono text-v-accent font-semibold">
             CUSTOMIZABLE: TUNABLE THRESHOLDS &amp; TOKENS
           </div>
         </div>
@@ -198,11 +198,11 @@ export const RulesPage: React.FC<RulesPageProps> = ({
 
       {/* Personalized Mode Detailed Configurator */}
       {activeContextMode === 'PERSONALIZED' && (
-        <form onSubmit={handleSavePersonalized} className="p-6 rounded-2xl bg-v-surface border border-cyan-400/40 shadow-xl space-y-5 animate-reveal">
+        <form onSubmit={handleSavePersonalized} className="p-6 rounded-2xl bg-v-surface border border-v-accent/40 shadow-xl space-y-5 animate-reveal">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-v-border pb-4">
             <div>
               <div className="flex items-center gap-2">
-                <Sliders className="w-4 h-4 text-cyan-400" />
+                <Sliders className="w-4 h-4 text-v-accent" />
                 <h3 className="text-sm font-bold text-v-text uppercase font-mono">
                   Personalized Mode Configuration
                 </h3>
@@ -239,7 +239,7 @@ export const RulesPage: React.FC<RulesPageProps> = ({
                 value={vipAppsText}
                 onChange={e => setVipAppsText(e.target.value)}
                 placeholder="Comma-separated: Slack, WhatsApp, Dial, Phone..."
-                className="w-full px-3.5 py-2 text-xs bg-v-secondary border border-v-border rounded-xl text-v-text font-mono focus:outline-none focus:border-cyan-400"
+                className="w-full px-3.5 py-2 text-xs bg-v-secondary border border-v-border rounded-xl text-v-text font-mono focus:outline-none focus:border-v-accent"
               />
               <span className="text-[10px] text-v-text-muted font-sans block mt-1">
                 Notifications from these packages receive a +0.40 relevance boost.
@@ -255,7 +255,7 @@ export const RulesPage: React.FC<RulesPageProps> = ({
                 value={vipContactsText}
                 onChange={e => setVipContactsText(e.target.value)}
                 placeholder="Comma-separated: Mom, Team Lead, Manager, Dr. Smith..."
-                className="w-full px-3.5 py-2 text-xs bg-v-secondary border border-v-border rounded-xl text-v-text font-mono focus:outline-none focus:border-cyan-400"
+                className="w-full px-3.5 py-2 text-xs bg-v-secondary border border-v-border rounded-xl text-v-text font-mono focus:outline-none focus:border-v-accent"
               />
               <span className="text-[10px] text-v-text-muted font-sans block mt-1">
                 Messages from these contact labels bypass silent digests.
@@ -271,7 +271,7 @@ export const RulesPage: React.FC<RulesPageProps> = ({
                 value={urgentKeywordsText}
                 onChange={e => setUrgentKeywordsText(e.target.value)}
                 placeholder="otp, security, server down, urgent, blocker..."
-                className="w-full px-3.5 py-2 text-xs bg-v-secondary border border-v-border rounded-xl text-v-text font-mono focus:outline-none focus:border-cyan-400"
+                className="w-full px-3.5 py-2 text-xs bg-v-secondary border border-v-border rounded-xl text-v-text font-mono focus:outline-none focus:border-v-accent"
               />
               <span className="text-[10px] text-v-text-muted font-sans block mt-1">
                 Presence of these tokens triggers urgent pass-through.
@@ -287,7 +287,7 @@ export const RulesPage: React.FC<RulesPageProps> = ({
                 value={spamKeywordsText}
                 onChange={e => setSpamKeywordsText(e.target.value)}
                 placeholder="flash sale, limited offer, coins, discount..."
-                className="w-full px-3.5 py-2 text-xs bg-v-secondary border border-v-border rounded-xl text-v-text font-mono focus:outline-none focus:border-cyan-400"
+                className="w-full px-3.5 py-2 text-xs bg-v-secondary border border-v-border rounded-xl text-v-text font-mono focus:outline-none focus:border-v-accent"
               />
               <span className="text-[10px] text-v-text-muted font-sans block mt-1">
                 Matches are quarantined into Spam with vibrations suppressed.
@@ -300,7 +300,7 @@ export const RulesPage: React.FC<RulesPageProps> = ({
             <div>
               <div className="flex justify-between text-xs font-mono mb-1">
                 <span className="text-v-text font-bold">Urgency Threshold</span>
-                <span className="text-cyan-400">{Math.round(urgencyThreshold * 100)}%</span>
+                <span className="text-v-accent font-bold">{Math.round(urgencyThreshold * 100)}%</span>
               </div>
               <input
                 type="range"
@@ -309,7 +309,7 @@ export const RulesPage: React.FC<RulesPageProps> = ({
                 step="0.05"
                 value={urgencyThreshold}
                 onChange={e => setUrgencyThreshold(parseFloat(e.target.value))}
-                className="w-full accent-cyan-400"
+                className="w-full accent-[#167D68]"
               />
               <span className="text-[10px] text-v-text-muted font-sans block mt-0.5">
                 Notifications with urgency above this score cut through to sound/vibration.
@@ -319,7 +319,7 @@ export const RulesPage: React.FC<RulesPageProps> = ({
             <div>
               <div className="flex justify-between text-xs font-mono mb-1">
                 <span className="text-v-text font-bold">Relevance Threshold</span>
-                <span className="text-cyan-400">{Math.round(relevanceThreshold * 100)}%</span>
+                <span className="text-v-accent font-bold">{Math.round(relevanceThreshold * 100)}%</span>
               </div>
               <input
                 type="range"
@@ -328,7 +328,7 @@ export const RulesPage: React.FC<RulesPageProps> = ({
                 step="0.05"
                 value={relevanceThreshold}
                 onChange={e => setRelevanceThreshold(parseFloat(e.target.value))}
-                className="w-full accent-cyan-400"
+                className="w-full accent-[#167D68]"
               />
               <span className="text-[10px] text-v-text-muted font-sans block mt-0.5">
                 Notifications with relevance above this score are prioritized in FlowQueue.
