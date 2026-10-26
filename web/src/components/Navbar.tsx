@@ -26,15 +26,14 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const isPearl = theme === 'pearl';
 
-  // Navigation links: Home, NotiFy, FlowQueue, Deep Focus, PulseInsights, Modes, ChokasAI, Contact
+  // Navigation links: Home, NotiFy, FlowQueue, Deep Focus, PulseInsights, Context Modes, Contact
   const navLinks = [
     { id: 'home', label: 'Home' },
     { id: 'notify', label: 'NotiFy' },
     { id: 'flowqueue', label: `FlowQueue${queueCount > 0 ? ` (${queueCount})` : ''}` },
     { id: 'deepfocus', label: 'Deep Focus' },
     { id: 'pulseinsights', label: 'PulseInsights' },
-    { id: 'rules', label: 'Modes' },
-    { id: 'chokas', label: 'ChokasAI' },
+    { id: 'rules', label: 'Context Modes' },
     { id: 'contact', label: 'Contact' },
   ];
 
@@ -312,6 +311,19 @@ export const Navbar: React.FC<NavbarProps> = ({
               {link.label}
             </button>
           ))}
+          <button
+            onClick={() => {
+              setMobileMenuOpen(false);
+              onOpenChokas();
+            }}
+            className={`w-full text-left py-2 px-3 rounded-lg text-xs font-semibold tracking-wider flex items-center gap-2 transition ${
+              isPearl ? 'text-white hover:bg-neutral-900' : 'text-v-text hover:bg-v-secondary'
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+            <span>ChokasAI Assistant</span>
+          </button>
+
           <button
             onClick={() => {
               setMobileMenuOpen(false);

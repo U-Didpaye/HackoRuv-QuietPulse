@@ -90,39 +90,39 @@ export const HomePage: React.FC<HomePageProps> = ({
   };
 
   return (
-    <div className="relative overflow-x-hidden">
+    <div className="relative overflow-x-hidden min-h-screen">
+      {/* 
+        OFFICIAL COSMIC SPACE-HORIZON ATMOSPHERIC BACKGROUND (Page-Wide)
+        Pristine cosmic galaxy wallpaper: planetary rings, mountain landscape, twilight horizon over calm water
+      */}
+      <div className="fixed inset-0 z-0 pointer-events-none select-none overflow-hidden">
+        <img
+          src="./backgrounds/bg-cosmic-rings.png"
+          alt="Cosmic Galaxy Horizon"
+          className="w-full h-full object-cover object-center filter brightness-90 contrast-105"
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).src = './quietpulse-hero-bg.jpg';
+          }}
+        />
+        {/* Multi-stop atmospheric vignette maintaining cosmic galaxy visibility across entire page */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: `
+              radial-gradient(ellipse at 50% 30%, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.65) 60%, var(--v-bg) 100%),
+              linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.55) 40%, rgba(0,0,0,0.85) 75%, var(--v-bg) 100%)
+            `
+          }}
+        />
+      </div>
+
       {/* 
         ========================================================================
         HERO SECTION: RECREATING THE OFFICIAL QUIETPULSE DESKTOP HOMEPAGE
         Visual Direction: media_1792930078537_99d85ef5.jpg
         ========================================================================
       */}
-      <section className="relative min-h-[96vh] flex flex-col justify-between items-center text-center px-4 sm:px-6 lg:px-8 pt-16 pb-12 overflow-hidden">
-        
-        {/* 
-          OFFICIAL COSMIC SPACE-HORIZON HERO BACKGROUND
-          Pristine cosmic galaxy wallpaper: planetary rings, alien mountain landscape, twilight horizon over water
-        */}
-        <div className="absolute inset-0 z-0 pointer-events-none select-none overflow-hidden">
-          <img
-            src="./backgrounds/bg-cosmic-rings.png"
-            alt="Cosmic Galaxy Horizon"
-            className="w-full h-full object-cover object-center filter brightness-95 contrast-105 transform scale-100 animate-subtle-float"
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).src = './quietpulse-hero-bg.jpg';
-            }}
-          />
-          {/* Subtle multi-stop atmospheric vignette preserving galaxy visibility across all 3 themes */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background: `
-                radial-gradient(ellipse at 50% 40%, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.65) 75%, rgba(0, 0, 0, 0.85) 100%),
-                linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 20%, transparent 75%, rgba(0,0,0,0.85) 100%)
-              `
-            }}
-          />
-        </div>
+      <section className="relative min-h-[96vh] flex flex-col justify-between items-center text-center px-4 sm:px-6 lg:px-8 pt-16 pb-12 overflow-hidden z-10">
 
         {/* Hero Foreground Content Layer (Balanced Composition without Central Logo) */}
         <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center pt-16 sm:pt-24 md:pt-28">
@@ -608,63 +608,63 @@ export const HomePage: React.FC<HomePageProps> = ({
         SCROLL REVEAL SECTION 3: CHOKASAI ASSISTANT SPOTLIGHT
         ========================================================================
       */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-v-border">
+      <section className="relative z-10 py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-white/10">
         <ScrollReveal>
           <div className="text-center max-w-2xl mx-auto mb-16">
-            <span className="text-xs font-mono tracking-[0.25em] uppercase text-v-accent">
+            <span className="text-xs font-mono tracking-[0.25em] uppercase text-cyan-400">
               03 // IN-APP COMPANION
             </span>
-            <h2 className="text-3xl sm:text-4xl font-black text-v-text uppercase font-editorial mt-3">
+            <h2 className="text-3xl sm:text-5xl font-black text-v-text uppercase font-editorial mt-3 tracking-tight">
               MEET CHOKASAI
             </h2>
-            <p className="text-sm text-v-text-muted mt-3 leading-relaxed font-sans">
-              A lightweight, 100% offline intelligence guide engineered to help you navigate, explain, and command QuietPulse without sending queries to the cloud.
+            <p className="text-sm text-v-text-muted mt-3 leading-relaxed font-sans max-w-xl mx-auto">
+              Your intelligent attention copilot powered by Google Gemini conversational AI and on-device command execution. Explain triage decisions, navigate features, and protect your focus.
             </p>
           </div>
         </ScrollReveal>
 
-        {/* ChokasAI Cards Grid: Fully visible, responsive, without horizontal clipping */}
+        {/* ChokasAI Cards Grid: Translucent Frosted Glass floating over Cosmic Backdrop */}
         <div className="w-full max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
           <ScrollReveal delayMs={100} className="w-full min-w-0">
-            <div className="p-6 sm:p-7 rounded-2xl bg-v-surface border border-v-border h-full flex flex-col justify-between overflow-hidden">
+            <div className="p-6 sm:p-7 rounded-2xl bg-black/50 hover:bg-black/70 backdrop-blur-xl border border-white/15 hover:border-cyan-400/50 h-full flex flex-col justify-between overflow-hidden transition-all shadow-xl group">
               <div>
-                <span className="text-[11px] font-mono text-v-accent uppercase">Mode 01</span>
-                <h3 className="text-base font-bold text-v-text mt-1.5">Explain</h3>
-                <p className="text-xs text-v-text-muted mt-2.5 leading-relaxed">
-                  Answers questions about how notifications were categorized, what burst thresholds mean, and why specific alerts were buffered.
+                <span className="text-[11px] font-mono text-cyan-400 uppercase tracking-wider font-bold">Mode 01</span>
+                <h3 className="text-base font-bold text-white mt-1.5">Explain</h3>
+                <p className="text-xs text-neutral-300 mt-2.5 leading-relaxed font-sans">
+                  Answers questions about how notifications were categorized, what burst thresholds mean, and why specific alerts were buffered into FlowQueue.
                 </p>
               </div>
-              <div className="mt-5 p-3 rounded-lg bg-v-secondary text-[11px] font-mono text-v-text-muted border border-v-border break-words">
+              <div className="mt-5 p-3 rounded-lg bg-white/5 text-[11px] font-mono text-neutral-300 border border-white/10 break-words">
                 "Why was my social notification delayed?"
               </div>
             </div>
           </ScrollReveal>
 
           <ScrollReveal delayMs={200} className="w-full min-w-0">
-            <div className="p-6 sm:p-7 rounded-2xl bg-v-surface border border-v-border h-full flex flex-col justify-between overflow-hidden">
+            <div className="p-6 sm:p-7 rounded-2xl bg-black/50 hover:bg-black/70 backdrop-blur-xl border border-white/15 hover:border-cyan-400/50 h-full flex flex-col justify-between overflow-hidden transition-all shadow-xl group">
               <div>
-                <span className="text-[11px] font-mono text-v-accent uppercase">Mode 02</span>
-                <h3 className="text-base font-bold text-v-text mt-1.5">Navigate</h3>
-                <p className="text-xs text-v-text-muted mt-2.5 leading-relaxed">
+                <span className="text-[11px] font-mono text-cyan-400 uppercase tracking-wider font-bold">Mode 02</span>
+                <h3 className="text-base font-bold text-white mt-1.5">Navigate</h3>
+                <p className="text-xs text-neutral-300 mt-2.5 leading-relaxed font-sans">
                   Directly transports you across NotiFy, FlowQueue, Deep Focus, PulseInsights, and Privacy with natural voice-like commands.
                 </p>
               </div>
-              <div className="mt-5 p-3 rounded-lg bg-v-secondary text-[11px] font-mono text-v-text-muted border border-v-border break-words">
+              <div className="mt-5 p-3 rounded-lg bg-white/5 text-[11px] font-mono text-neutral-300 border border-white/10 break-words">
                 "Open my focus settings"
               </div>
             </div>
           </ScrollReveal>
 
           <ScrollReveal delayMs={300} className="w-full min-w-0">
-            <div className="p-6 sm:p-7 rounded-2xl bg-v-surface border border-v-border h-full flex flex-col justify-between overflow-hidden">
+            <div className="p-6 sm:p-7 rounded-2xl bg-black/50 hover:bg-black/70 backdrop-blur-xl border border-white/15 hover:border-cyan-400/50 h-full flex flex-col justify-between overflow-hidden transition-all shadow-xl group">
               <div>
-                <span className="text-[11px] font-mono text-v-accent uppercase">Mode 03</span>
-                <h3 className="text-base font-bold text-v-text mt-1.5">Act</h3>
-                <p className="text-xs text-v-text-muted mt-2.5 leading-relaxed">
+                <span className="text-[11px] font-mono text-cyan-400 uppercase tracking-wider font-bold">Mode 03</span>
+                <h3 className="text-base font-bold text-white mt-1.5">Act</h3>
+                <p className="text-xs text-neutral-300 mt-2.5 leading-relaxed font-sans">
                   Executes verified in-app commands: starts Deep Focus sessions, clears FlowQueue, or switches between Obsidian Silver, Emerald, and Pearl themes.
                 </p>
               </div>
-              <div className="mt-5 p-3 rounded-lg bg-v-secondary text-[11px] font-mono text-v-text-muted border border-v-border break-words">
+              <div className="mt-5 p-3 rounded-lg bg-white/5 text-[11px] font-mono text-neutral-300 border border-white/10 break-words">
                 "Switch to Emerald theme"
               </div>
             </div>
@@ -674,9 +674,9 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div className="mt-12 text-center">
           <button
             onClick={onOpenChokas}
-            className="px-6 py-3 rounded-xl bg-v-text text-v-bg font-bold text-xs uppercase tracking-widest font-mono hover:opacity-90 transition inline-flex items-center gap-2 shadow-lg"
+            className="px-8 py-3.5 rounded-xl bg-white text-black font-bold text-xs uppercase tracking-widest font-mono hover:bg-neutral-200 transition inline-flex items-center gap-2.5 shadow-2xl group"
           >
-            <Sparkles className="w-3.5 h-3.5" />
+            <Sparkles className="w-4 h-4 text-cyan-500 group-hover:scale-110 transition-transform" />
             <span>Launch ChokasAI Assistant</span>
           </button>
         </div>
@@ -687,13 +687,13 @@ export const HomePage: React.FC<HomePageProps> = ({
         CALL TO ACTION (Clean Download Android App & Contact Team, No Launch NotiFy)
         ========================================================================
       */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto border-t border-v-border text-center">
+      <section className="relative z-10 py-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto border-t border-white/10 text-center">
         <ScrollReveal>
-          <div className="p-10 sm:p-14 rounded-3xl bg-v-surface border border-v-border relative overflow-hidden">
-            <h2 className="text-3xl sm:text-5xl font-black text-v-text uppercase font-editorial tracking-tight">
+          <div className="p-10 sm:p-14 rounded-3xl bg-black/60 backdrop-blur-xl border border-white/15 relative overflow-hidden shadow-2xl">
+            <h2 className="text-3xl sm:text-5xl font-black text-white uppercase font-editorial tracking-tight">
               Reclaim Your Cognitive Bandwidth.
             </h2>
-            <p className="text-sm text-v-text-muted max-w-lg mx-auto mt-4 leading-relaxed font-sans">
+            <p className="text-sm text-neutral-300 max-w-lg mx-auto mt-4 leading-relaxed font-sans">
               Install QuietPulse on your mobile phone or run the live attention firewall directly in this environment.
             </p>
 
@@ -701,7 +701,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               <a
                 href="./QuietPulse.apk"
                 download="QuietPulse.apk"
-                className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-v-text text-v-bg font-bold text-xs uppercase tracking-widest font-mono hover:opacity-90 transition shadow-lg flex items-center justify-center gap-2.5 group"
+                className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-white text-black font-bold text-xs uppercase tracking-widest font-mono hover:bg-neutral-200 transition shadow-2xl flex items-center justify-center gap-2.5 group"
                 title="Download Official QuietPulse Android APK"
               >
                 <Download className="w-4 h-4" />
@@ -709,7 +709,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               </a>
               <button
                 onClick={() => onNavigate('contact')}
-                className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-v-secondary hover:bg-v-elevated border border-v-border text-v-text font-bold text-xs uppercase tracking-widest font-mono transition flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-black/50 hover:bg-black/80 border border-white/25 text-white font-bold text-xs uppercase tracking-widest font-mono transition flex items-center justify-center gap-2"
               >
                 Contact Team
               </button>
