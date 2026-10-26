@@ -128,7 +128,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             {themeDropdownOpen && (
               <div
-                className={`absolute right-0 mt-2 w-56 p-2 rounded-xl shadow-2xl z-50 animate-reveal ${
+                className={`absolute right-0 mt-2 w-56 max-w-[calc(100vw-2rem)] p-2 rounded-xl shadow-2xl z-50 animate-reveal ${
                   isPearl
                     ? 'bg-neutral-950 border border-neutral-800 text-white'
                     : 'bg-v-surface border border-v-border text-v-text'
@@ -324,6 +324,42 @@ export const Navbar: React.FC<NavbarProps> = ({
             <LogIn className="w-3.5 h-3.5" />
             <span>{userEmail ? `Account (${userEmail})` : 'Log In to QuietPulse'}</span>
           </button>
+
+          {/* Clean Inline Theme Switcher for Mobile Devices */}
+          <div className="pt-2.5 border-t border-white/10">
+            <span className={`text-[10px] font-mono uppercase tracking-wider block mb-2 px-1 ${isPearl ? 'text-neutral-400' : 'text-v-text-muted'}`}>
+              Theme (3 Options)
+            </span>
+            <div className="grid grid-cols-3 gap-2">
+              {themes.map((t) => {
+                const isSelected = t.id === theme;
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => setTheme(t.id)}
+                    className={`flex items-center justify-center gap-1.5 p-2 rounded-lg text-xs font-mono transition border ${
+                      isSelected
+                        ? isPearl
+                          ? 'bg-neutral-800 text-white border-neutral-600 font-bold'
+                          : 'bg-v-elevated text-v-text border-v-accent font-bold'
+                        : isPearl
+                        ? 'bg-neutral-900/60 text-neutral-400 border-neutral-800'
+                        : 'bg-v-secondary/60 text-v-text-muted border-v-border'
+                    }`}
+                  >
+                    <div
+                      className="w-2.5 h-2.5 rounded-full border shrink-0"
+                      style={{
+                        backgroundColor: t.swatchBg,
+                        borderColor: t.swatchAccent,
+                      }}
+                    />
+                    <span className="truncate">{t.name.split(' ')[0]}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
       )}
     </header>

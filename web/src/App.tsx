@@ -15,7 +15,14 @@ import { PrivacyPage } from './pages/PrivacyPage';
 import { ContactPage } from './pages/ContactPage';
 import { LoginPage } from './pages/LoginPage';
 import { PageBackground } from './components/PageBackground';
-import { isSupabaseConfigured, supabase, getCurrentSession, signOutUser } from './data/supabaseClient';
+import {
+  isSupabaseConfigured,
+  supabase,
+  getCurrentSession,
+  signOutUser,
+  syncPreferencesToCloud,
+  fetchPreferencesFromCloud
+} from './data/supabaseClient';
 
 import { BurstDetector } from './intelligence/burstDetector';
 import { LocalLearningEngine } from './intelligence/localLearning';
@@ -66,6 +73,7 @@ function QuietPulseApp() {
     }
     return null;
   });
+  const [userId, setUserId] = useState<string | null>(null);
 
   // Context Modes State (Office, Home, Personalized Mode)
   const [activeContextMode, setActiveContextMode] = useState<ContextMode>(() => {
@@ -139,72 +147,118 @@ function QuietPulseApp() {
     };
   });
 
-  const [metrics, setMetrics] = useState<AnalyticsMetrics>({
-    totalNotificationsObserved: 0,
-    burstsDetected: 0,
-    repeatedInterruptionCount: 0,
-    urgentCount: 0,
-    importantCount: 0,
-    batchedCount: 0,
-    lowPriorityCount: 0,
-    spamCount: 0,
-    totalFocusMinutes: 0,
-    completedSessionsCount: 0,
-    userCorrectionCount: 0,
-    estimatedInterruptionsDeflected: 0
+  const [metrics, setMetrics] = useState<AnalyticsMetrics>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('quietpulse_cumulative_metrics');
+        if (saved) return JSON.parse(saved);
+      } catch (ignored) {}
+    }
+    return {
+      totalNotificationsObserved: 0,
+      burstsDetected: 0,
+      repeatedInterruptionCount: 0,
+      urgentCount: 0,
+      importantCount: 0,
+      batchedCount: 0,
+      lowPriorityCount: 0,
+      spamCount: 0,
+      totalFocusMinutes: 0,
+      completedSessionsCount: 0,
+      userCorrectionCount: 0,
+      estimatedInterruptionsDeflected: 0
+    };
   });
 
-  // Recompute and synchronize metrics whenever items change
-  const recalculateMetrics = useCallback((currentItems: UiNotificationItem[], burstCountDelta: number = 0) => {
-    const total = currentItems.length;
-    const urgent = currentItems.filter(i => i.result.category === 'URGENT').length;
-    const important = currentItems.filter(i => i.result.category === 'IMPORTANT').length;
-    const batched = currentItems.filter(i => i.result.category === 'BATCH').length;
-    const low = currentItems.filter(i => i.result.category === 'LOW_PRIORITY').length;
-    const spam = currentItems.filter(i => i.result.category === 'SPAM').length;
-    const deflected = batched + low + spam;
-
-    setMetrics(m => ({
-      ...m,
-      totalNotificationsObserved: total,
-      burstsDetected: m.burstsDetected + burstCountDelta,
-      urgentCount: urgent,
-      importantCount: important,
-      batchedCount: batched,
-      lowPriorityCount: low,
-      spamCount: spam,
-      estimatedInterruptionsDeflected: deflected
-    }));
-
+  // Synchronize items with persistent storage
+  const syncItemsToStorage = useCallback((currentItems: UiNotificationItem[]) => {
     try {
       localStorage.setItem('quietpulse_queued_items', JSON.stringify(currentItems));
     } catch (ignored) {}
   }, []);
 
-  // Initialize metrics from stored items on mount
-  useEffect(() => {
-    if (items.length > 0) {
-      recalculateMetrics(items, 0);
-    }
-  }, [items, recalculateMetrics]);
+  // Update cumulative metrics in state and durable storage
+  const updateCumulativeMetrics = useCallback((updater: (prev: AnalyticsMetrics) => AnalyticsMetrics) => {
+    setMetrics(prev => {
+      const updated = updater(prev);
+      try {
+        localStorage.setItem('quietpulse_cumulative_metrics', JSON.stringify(updated));
+      } catch (ignored) {}
+      return updated;
+    });
+  }, []);
 
-  // Synchronize Supabase session
+  // One-time bootstrap: if cumulative metrics were empty but stored queue items exist
+  useEffect(() => {
+    const hasSavedMetrics = Boolean(localStorage.getItem('quietpulse_cumulative_metrics'));
+    if (!hasSavedMetrics && items.length > 0) {
+      const total = items.length;
+      const urgent = items.filter(i => i.result.category === 'URGENT').length;
+      const important = items.filter(i => i.result.category === 'IMPORTANT').length;
+      const batched = items.filter(i => i.result.category === 'BATCH').length;
+      const low = items.filter(i => i.result.category === 'LOW_PRIORITY').length;
+      const spam = items.filter(i => i.result.category === 'SPAM').length;
+      const deflected = batched + low + spam;
+
+      updateCumulativeMetrics(m => ({
+        ...m,
+        totalNotificationsObserved: total,
+        urgentCount: urgent,
+        importantCount: important,
+        batchedCount: batched,
+        lowPriorityCount: low,
+        spamCount: spam,
+        estimatedInterruptionsDeflected: deflected
+      }));
+    }
+  }, [items, updateCumulativeMetrics]);
+
+  // Synchronize Supabase session & user cloud preferences
   useEffect(() => {
     if (!isSupabaseConfigured || !supabase) return;
+
+    const syncCloudPreferences = async (uid: string) => {
+      const cloud = await fetchPreferencesFromCloud(uid);
+      if (cloud) {
+        if (cloud.contextMode && ['OFFICE', 'HOME', 'PERSONALIZED'].includes(cloud.contextMode)) {
+          setActiveContextMode(cloud.contextMode);
+          try {
+            localStorage.setItem('quietpulse_context_mode', cloud.contextMode);
+          } catch (ignored) {}
+        }
+        if (cloud.personalizedSettings) {
+          setPersonalizedSettings(cloud.personalizedSettings);
+          try {
+            localStorage.setItem('quietpulse_personalized_settings', JSON.stringify(cloud.personalizedSettings));
+          } catch (ignored) {}
+        }
+        if (cloud.rules) {
+          setRules(cloud.rules);
+          try {
+            localStorage.setItem('quietpulse_rules', JSON.stringify(cloud.rules));
+          } catch (ignored) {}
+        }
+      }
+    };
 
     getCurrentSession().then((session) => {
       if (session?.user?.email) {
         setUserEmail(session.user.email);
+        setUserId(session.user.id);
         localStorage.setItem('quietpulse_user', session.user.email);
+        syncCloudPreferences(session.user.id);
       }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user?.email) {
         setUserEmail(session.user.email);
+        setUserId(session.user.id);
         localStorage.setItem('quietpulse_user', session.user.email);
+        syncCloudPreferences(session.user.id);
       } else if (_event === 'SIGNED_OUT') {
         setUserEmail(null);
+        setUserId(null);
         localStorage.removeItem('quietpulse_user');
         sessionStorage.removeItem('quietpulse_user');
       }
@@ -263,14 +317,29 @@ function QuietPulseApp() {
     setBurstRate(rate);
     setIsBurstActive(isBurst);
 
+    const isDeflected = ['BATCH', 'LOW_PRIORITY', 'SPAM'].includes(classification.category);
+
     setItems(prev => {
       // Prevent duplicate event IDs
       if (prev.some(i => i.event.id === event.id)) return prev;
       const updated = [newItem, ...prev];
-      recalculateMetrics(updated, burst ? 1 : 0);
+      syncItemsToStorage(updated);
       return updated;
     });
-  }, [rules, isFocusActive, activeContextMode, personalizedSettings, recalculateMetrics]);
+
+    // Permanently record in durable cumulative metrics ledger
+    updateCumulativeMetrics(m => ({
+      ...m,
+      totalNotificationsObserved: m.totalNotificationsObserved + 1,
+      burstsDetected: m.burstsDetected + (burst ? 1 : 0),
+      urgentCount: m.urgentCount + (classification.category === 'URGENT' ? 1 : 0),
+      importantCount: m.importantCount + (classification.category === 'IMPORTANT' ? 1 : 0),
+      batchedCount: m.batchedCount + (classification.category === 'BATCH' ? 1 : 0),
+      lowPriorityCount: m.lowPriorityCount + (classification.category === 'LOW_PRIORITY' ? 1 : 0),
+      spamCount: m.spamCount + (classification.category === 'SPAM' ? 1 : 0),
+      estimatedInterruptionsDeflected: m.estimatedInterruptionsDeflected + (isDeflected ? 1 : 0)
+    }));
+  }, [rules, isFocusActive, activeContextMode, personalizedSettings, syncItemsToStorage, updateCumulativeMetrics]);
 
   // Android notification polling loop
   useEffect(() => {
@@ -318,6 +387,9 @@ function QuietPulseApp() {
     try {
       localStorage.setItem('quietpulse_context_mode', mode);
     } catch (ignored) {}
+    if (userId) {
+      syncPreferencesToCloud(userId, { contextMode: mode });
+    }
   };
 
   // Update Personalized Settings
@@ -326,6 +398,9 @@ function QuietPulseApp() {
     try {
       localStorage.setItem('quietpulse_personalized_settings', JSON.stringify(settings));
     } catch (ignored) {}
+    if (userId) {
+      syncPreferencesToCloud(userId, { personalizedSettings: settings });
+    }
   };
 
   // Reset Personalized Settings
@@ -334,6 +409,9 @@ function QuietPulseApp() {
     try {
       localStorage.setItem('quietpulse_personalized_settings', JSON.stringify(defaultPersonalizedSettings));
     } catch (ignored) {}
+    if (userId) {
+      syncPreferencesToCloud(userId, { personalizedSettings: defaultPersonalizedSettings });
+    }
   };
 
   // Focus Timer Tick
@@ -373,7 +451,7 @@ function QuietPulseApp() {
   const handleMarkReviewed = (id: string) => {
     setItems(prev => {
       const updated = prev.map(i => (i.event.id === id ? { ...i, isReviewed: true } : i));
-      recalculateMetrics(updated, 0);
+      syncItemsToStorage(updated);
       return updated;
     });
   };
@@ -381,7 +459,7 @@ function QuietPulseApp() {
   const handleDismiss = (id: string) => {
     setItems(prev => {
       const updated = prev.filter(i => i.event.id !== id);
-      recalculateMetrics(updated, 0);
+      syncItemsToStorage(updated);
       return updated;
     });
   };
@@ -389,14 +467,14 @@ function QuietPulseApp() {
   const handleReviewAll = () => {
     setItems(prev => {
       const updated = prev.map(i => ({ ...i, isReviewed: true }));
-      recalculateMetrics(updated, 0);
+      syncItemsToStorage(updated);
       return updated;
     });
   };
 
   const handleClearQueue = () => {
     setItems([]);
-    recalculateMetrics([], 0);
+    syncItemsToStorage([]);
   };
 
   // FlowQueue Action Handler (Was Urgent, Batch It, Spam)
@@ -405,9 +483,12 @@ function QuietPulseApp() {
     newCategory: ClassificationCategory,
     feedbackType: 'WAS_URGENT' | 'BATCHED' | 'SPAM'
   ) => {
+    let oldCategory: ClassificationCategory | null = null;
+
     setItems(prev => {
       const updated = prev.map(i => {
         if (i.event.id === id) {
+          oldCategory = i.result.category;
           return {
             ...i,
             userFeedback: feedbackType,
@@ -420,16 +501,41 @@ function QuietPulseApp() {
         }
         return i;
       });
-      recalculateMetrics(updated, 0);
+      syncItemsToStorage(updated);
       return updated;
     });
+
+    // Idempotently adjust cumulative metrics if category was modified
+    if (oldCategory && oldCategory !== newCategory) {
+      updateCumulativeMetrics(m => {
+        const catMap: Record<ClassificationCategory, keyof AnalyticsMetrics> = {
+          URGENT: 'urgentCount',
+          IMPORTANT: 'importantCount',
+          BATCH: 'batchedCount',
+          LOW_PRIORITY: 'lowPriorityCount',
+          SPAM: 'spamCount'
+        };
+        const oldKey = catMap[oldCategory as ClassificationCategory];
+        const newKey = catMap[newCategory];
+        const wasDeflected = ['BATCH', 'LOW_PRIORITY', 'SPAM'].includes(oldCategory);
+        const isDeflected = ['BATCH', 'LOW_PRIORITY', 'SPAM'].includes(newCategory);
+        const deflectedDelta = (isDeflected ? 1 : 0) - (wasDeflected ? 1 : 0);
+
+        return {
+          ...m,
+          [oldKey]: Math.max(0, (m[oldKey] as number) - 1),
+          [newKey]: (m[newKey] as number) + 1,
+          estimatedInterruptionsDeflected: Math.max(0, m.estimatedInterruptionsDeflected + deflectedDelta)
+        };
+      });
+    }
   };
 
   const handleFeedback = (id: string, type: UserFeedbackType) => {
     const item = items.find(i => i.event.id === id);
     if (!item) return;
 
-    learningEngineRef.current.recordFeedback({
+    const { isNew } = learningEngineRef.current.recordFeedback({
       eventId: id,
       packageName: item.event.packageName,
       originalCategory: item.result.category,
@@ -437,7 +543,13 @@ function QuietPulseApp() {
       timestamp: Date.now()
     });
 
-    setMetrics(m => ({ ...m, userCorrectionCount: m.userCorrectionCount + 1 }));
+    // Idempotent: only increment if this is a fresh user calibration
+    if (isNew) {
+      updateCumulativeMetrics(m => ({
+        ...m,
+        userCorrectionCount: m.userCorrectionCount + 1
+      }));
+    }
   };
 
   const handleRunScenario = (scen: DemoScenario) => {
@@ -453,7 +565,7 @@ function QuietPulseApp() {
     burstDetectorRef.current.clear();
     setItems(prev => {
       const updated = prev.filter(i => i.event.sourceType === 'REAL');
-      recalculateMetrics(updated, 0);
+      syncItemsToStorage(updated);
       return updated;
     });
     setBurstRate(0);
@@ -605,6 +717,9 @@ function QuietPulseApp() {
                     try {
                       localStorage.setItem('quietpulse_rules', JSON.stringify(updated));
                     } catch (ignored) {}
+                    if (userId) {
+                      syncPreferencesToCloud(userId, { rules: updated });
+                    }
                     return updated;
                   });
                 }}
@@ -615,6 +730,9 @@ function QuietPulseApp() {
                     try {
                       localStorage.setItem('quietpulse_rules', JSON.stringify(copy));
                     } catch (ignored) {}
+                    if (userId) {
+                      syncPreferencesToCloud(userId, { rules: copy });
+                    }
                     return copy;
                   });
                 }}

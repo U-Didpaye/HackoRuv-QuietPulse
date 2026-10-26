@@ -158,39 +158,39 @@ export const DashboardPage: React.FC<DashboardProps> = ({
             </h4>
           </div>
 
-          <div className="flex items-center gap-1.5 bg-v-secondary p-1 rounded-xl border border-v-border">
+          <div className="grid grid-cols-3 w-full sm:w-auto gap-1 bg-v-secondary p-1 rounded-xl border border-v-border">
             <button
               onClick={() => onChangeContextMode('OFFICE')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono font-bold rounded-lg transition ${
+              className={`flex items-center justify-center gap-1.5 px-2.5 py-1.5 text-xs font-mono font-bold rounded-lg transition ${
                 activeContextMode === 'OFFICE'
                   ? 'bg-v-text text-v-bg shadow-sm'
                   : 'text-v-text-muted hover:text-v-text'
               }`}
             >
-              <Briefcase className="w-3.5 h-3.5" />
-              <span>Office</span>
+              <Briefcase className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">Office</span>
             </button>
             <button
               onClick={() => onChangeContextMode('HOME')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono font-bold rounded-lg transition ${
+              className={`flex items-center justify-center gap-1.5 px-2.5 py-1.5 text-xs font-mono font-bold rounded-lg transition ${
                 activeContextMode === 'HOME'
                   ? 'bg-v-text text-v-bg shadow-sm'
                   : 'text-v-text-muted hover:text-v-text'
               }`}
             >
-              <Home className="w-3.5 h-3.5" />
-              <span>Home</span>
+              <Home className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">Home</span>
             </button>
             <button
               onClick={() => onChangeContextMode('PERSONALIZED')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono font-bold rounded-lg transition ${
+              className={`flex items-center justify-center gap-1.5 px-2.5 py-1.5 text-xs font-mono font-bold rounded-lg transition ${
                 activeContextMode === 'PERSONALIZED'
                   ? 'bg-v-text text-v-bg shadow-sm'
                   : 'text-v-text-muted hover:text-v-text'
               }`}
             >
-              <Sliders className="w-3.5 h-3.5" />
-              <span>Personalized</span>
+              <Sliders className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">Personalized</span>
             </button>
           </div>
         </div>

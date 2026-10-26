@@ -8,7 +8,7 @@ export const ContactPage: React.FC = () => {
   const [email, setEmail] = useState('');
   const [subject, setSubject] = useState('Product Inquiries & Feedback');
   const [message, setMessage] = useState('');
-  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'cloud_success' | 'offline_success' | 'error'>('idle');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,32 +29,47 @@ export const ContactPage: React.FC = () => {
       timestamp: new Date().toISOString(),
     };
 
+    let cloudSynced = false;
+
     // 1. Attempt Supabase backend persistence if configured
     if (isSupabaseConfigured && supabase) {
       try {
-        await supabase.from('inquiries').insert([{
+        const { error } = await supabase.from('inquiries').insert([{
           name: submissionPayload.name,
           email: submissionPayload.email,
           subject: submissionPayload.subject,
           message: submissionPayload.message,
           created_at: submissionPayload.timestamp,
         }]);
+        if (!error) {
+          cloudSynced = true;
+        } else {
+          console.warn('Supabase inquiry insert error:', error.message);
+        }
       } catch (err) {
-        console.warn('Supabase inquiry insert skipped/fallback:', err);
+        console.warn('Supabase inquiry network/exception fallback:', err);
       }
     }
 
     // 2. Always record in localStorage for reliable offline client persistence
+    let localSaved = false;
     try {
       const existing = JSON.parse(localStorage.getItem('quietpulse_contact_submissions') || '[]');
       existing.push(submissionPayload);
       localStorage.setItem('quietpulse_contact_submissions', JSON.stringify(existing));
+      localSaved = true;
     } catch (err) {
-      // Safe fallback
+      console.warn('localStorage contact persist error:', err);
     }
 
     setTimeout(() => {
-      setStatus('success');
+      if (cloudSynced) {
+        setStatus('cloud_success');
+      } else if (localSaved) {
+        setStatus('offline_success');
+      } else {
+        setStatus('error');
+      }
       setName('');
       setEmail('');
       setMessage('');
@@ -79,16 +94,40 @@ export const ContactPage: React.FC = () => {
 
       <ScrollReveal delayMs={100}>
         <div className="p-8 sm:p-10 rounded-3xl bg-v-surface border border-v-border shadow-2xl">
-          {status === 'success' ? (
+          {status === 'cloud_success' ? (
             <div className="text-center py-12 space-y-4">
-              <div className="w-12 h-12 rounded-full bg-v-elevated border border-v-border flex items-center justify-center mx-auto text-emerald-400">
+              <div className="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mx-auto text-emerald-400">
                 <CheckCircle2 className="w-6 h-6" />
               </div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[10px] font-mono font-bold uppercase tracking-wider">
+                <span>Supabase Cloud Confirmed</span>
+              </div>
               <h3 className="text-xl font-bold text-v-text font-editorial uppercase">
-                Transmission Recorded
+                Transmission Synchronized
               </h3>
               <p className="text-xs text-v-text-muted max-w-md mx-auto leading-relaxed font-sans">
-                Your message has been captured in the local communication register. In production environments, this endpoint integrates with an authorized secure webhook or Supabase backend.
+                Your inquiry has been successfully transmitted and registered in the QuietPulse cloud database. Our team will review your message.
+              </p>
+              <button
+                onClick={() => setStatus('idle')}
+                className="mt-4 px-6 py-2.5 rounded-xl bg-v-secondary hover:bg-v-elevated border border-v-border text-v-text text-xs font-mono font-semibold transition"
+              >
+                Send Another Message
+              </button>
+            </div>
+          ) : status === 'offline_success' ? (
+            <div className="text-center py-12 space-y-4">
+              <div className="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto text-amber-400">
+                <CheckCircle2 className="w-6 h-6" />
+              </div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30 text-[10px] font-mono font-bold uppercase tracking-wider">
+                <span>Local Offline Buffer</span>
+              </div>
+              <h3 className="text-xl font-bold text-v-text font-editorial uppercase">
+                Captured in Sovereign Storage
+              </h3>
+              <p className="text-xs text-v-text-muted max-w-md mx-auto leading-relaxed font-sans">
+                Your message has been safely saved in your browser's persistent local register. The remote cloud database was unreachable or unconfigured.
               </p>
               <button
                 onClick={() => setStatus('idle')}

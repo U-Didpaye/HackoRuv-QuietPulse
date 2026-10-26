@@ -39,8 +39,24 @@ export class LocalLearningEngine {
     }
   }
 
-  recordFeedback(record: FeedbackRecord) {
-    this.history.push(record);
+  recordFeedback(record: FeedbackRecord): { isNew: boolean; changed: boolean } {
+    const existingIndex = this.history.findIndex(h => h.eventId === record.eventId);
+    let isNew = false;
+    let changed = false;
+
+    if (existingIndex >= 0) {
+      const existing = this.history[existingIndex];
+      if (existing.feedbackType === record.feedbackType) {
+        return { isNew: false, changed: false };
+      }
+      changed = true;
+      this.history[existingIndex] = record;
+    } else {
+      isNew = true;
+      changed = true;
+      this.history.push(record);
+    }
+
     const current = this.packageOffsets[record.packageName] || 0;
     let delta = 0;
 
@@ -68,6 +84,13 @@ export class LocalLearningEngine {
     const next = Math.max(-this.maxDelta, Math.min(this.maxDelta, current + delta));
     this.packageOffsets[record.packageName] = Number(next.toFixed(3));
     this.saveToStorage();
+
+    return { isNew, changed };
+  }
+
+  getUniqueCorrectionCount(): number {
+    const uniqueEvents = new Set(this.history.map(h => h.eventId));
+    return uniqueEvents.size;
   }
 
   getOffset(packageName: string): number {

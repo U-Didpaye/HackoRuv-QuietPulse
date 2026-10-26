@@ -93,3 +93,45 @@ export async function signInWithGoogle(): Promise<{ error: Error | null }> {
   });
   return { error: error ? new Error(error.message) : null };
 }
+
+/**
+ * Synchronize user settings/preferences (Context mode, personalized settings, rules)
+ * to Supabase if authenticated, keeping notification contents sovereign and local.
+ */
+export async function syncPreferencesToCloud(
+  userId: string,
+  preferences: {
+    contextMode?: string;
+    personalizedSettings?: any;
+    rules?: any;
+  }
+): Promise<boolean> {
+  if (!supabase) return false;
+  try {
+    const { error } = await supabase.from('user_preferences').upsert({
+      user_id: userId,
+      ...preferences,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_id' });
+    return !error;
+  } catch (e) {
+    console.warn('Cloud preferences sync skipped:', e);
+    return false;
+  }
+}
+
+export async function fetchPreferencesFromCloud(userId: string): Promise<any | null> {
+  if (!supabase) return null;
+  try {
+    const { data, error } = await supabase
+      .from('user_preferences')
+      .select('*')
+      .eq('user_id', userId)
+      .maybeSingle();
+    if (error || !data) return null;
+    return data;
+  } catch (e) {
+    console.warn('Cloud preferences fetch skipped:', e);
+    return null;
+  }
+}
