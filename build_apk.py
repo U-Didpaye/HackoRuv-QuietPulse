@@ -331,7 +331,7 @@ public class MainActivity extends Activity {
         if (uri == null) return;
         final String uriStr = uri.toString();
         Log.d(TAG, "Handling deep link callback: " + uriStr);
-        if (uriStr.startsWith("quietpulse://")) {
+        if (uriStr.startsWith("quietpulse://") || uriStr.contains("localhost") || uriStr.contains("127.0.0.1")) {
             if (mWebView != null) {
                 mWebView.post(new Runnable() {
                     @Override
@@ -634,6 +634,14 @@ with open(MANIFEST_PATH, "w", encoding="utf-8") as f:
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="quietpulse" />
+            </intent-filter>
+            <!-- Fallback for Supabase localhost Site URL redirect -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http" android:host="localhost" />
+                <data android:scheme="http" android:host="127.0.0.1" />
             </intent-filter>
         </activity>
 
