@@ -2,6 +2,17 @@ package com.focusshield.ai.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+// Premium Deep Navy & Cyan palette (Compatibility & Default)
+val NavyDark = Color(0xFF0A0F1D)
+val NavySurface = Color(0xFF111827)
+val NavyCard = Color(0xFF1E293B)
+val NavyCardHover = Color(0xFF283548)
+
+val PrimaryIndigo = Color(0xFF6366F1)
+val PrimaryIndigoVariant = Color(0xFF4F46E5)
+val AccentCyan = Color(0xFF06B6D4)
+val AccentCyanLight = Color(0xFF22D3EE)
+
 // Theme 1: Obsidian Silver (Default)
 val ObsidianBg = Color(0xFF000000)
 val ObsidianSurface = Color(0xFF101010)
@@ -34,8 +45,8 @@ val CrimsonRose = Color(0xFFFFB8BC)
 val PearlBg = Color(0xFFF5F4F0)
 val PearlSurface = Color(0xFFFFFFFF)
 val PearlElevated = Color(0xFFECEBE7)
-val PearlAccent = Color(0xFF737373)
-val PearlText = Color(0xFF171717)
+val PearlAccent = Color(0xFF167D68)
+val PearlText = Color(0xFF17191D)
 
 // Common Status & Classification Tokens
 val UrgencyRed = Color(0xFFEF4444)
@@ -43,6 +54,9 @@ val ImportantAmber = Color(0xFFF59E0B)
 val BatchBlue = Color(0xFF3B82F6)
 val LowPrioritySlate = Color(0xFF64748B)
 
+val SuccessGreen = Color(0xFF10B981)
+
 val TextPrimary = Color(0xFFF8FAFC)
 val TextSecondary = Color(0xFFA3A3A3)
+val TextMuted = Color(0xFF64748B)
 val BorderSubtle = Color(0xFF303030)
