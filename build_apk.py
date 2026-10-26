@@ -61,11 +61,14 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
@@ -78,8 +81,10 @@ import android.webkit.WebViewClient;
 import com.focusshield.ai.service.FocusShieldNotificationListenerService;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 public class MainActivity extends Activity {
+    private static final String TAG = "QuietPulseAuth";
     private WebView mWebView;
 
     public class QuietPulseBridge {
@@ -92,6 +97,17 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public boolean isAndroidApp() {
             return true;
+        }
+
+        @JavascriptInterface
+        public void openExternalOAuth(final String url) {
+            if (url == null || url.trim().isEmpty()) return;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    openExternalBrowserOAuth(url);
+                }
+            });
         }
 
         @JavascriptInterface
@@ -136,6 +152,52 @@ public class MainActivity extends Activity {
         }
     }
 
+    public void openExternalBrowserOAuth(String url) {
+        if (url == null || url.trim().isEmpty()) return;
+        try {
+            Uri uri = Uri.parse(url);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            // Chrome Custom Tabs Intent configuration
+            Bundle extras = new Bundle();
+            extras.putBinder("android.support.customtabs.extra.SESSION", null);
+            intent.putExtras(extras);
+            intent.putExtra("android.support.customtabs.extra.TOOLBAR_COLOR", Color.parseColor("#167D68"));
+            intent.putExtra("android.support.customtabs.extra.TITLE_VISIBILITY_STATE", 1);
+            intent.putExtra("android.support.customtabs.extra.ENABLE_URLBAR_HIDING", true);
+
+            // Check if Chrome is installed to trigger the native device Google Account Chooser
+            PackageManager pm = getPackageManager();
+            List<ResolveInfo> resolveInfos = pm.queryIntentActivities(intent, 0);
+            String chromePkg = null;
+            if (resolveInfos != null) {
+                for (ResolveInfo info : resolveInfos) {
+                    if (info != null && info.activityInfo != null) {
+                        String p = info.activityInfo.packageName;
+                        if ("com.android.chrome".equals(p) || "com.chrome.beta".equals(p) || "com.chrome.dev".equals(p)) {
+                            chromePkg = p;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (chromePkg != null) {
+                intent.setPackage(chromePkg);
+            }
+
+            startActivity(intent);
+        } catch (Exception e) {
+            try {
+                Intent fallback = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                fallback.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(fallback);
+            } catch (Exception ex) {
+                Log.e(TAG, "Failed to launch external browser for OAuth", ex);
+            }
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -169,6 +231,18 @@ public class MainActivity extends Activity {
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                if (url != null) {
+                    if (url.startsWith("https://accounts.google.com") ||
+                        url.contains("/auth/v1/authorize") ||
+                        url.startsWith("https://accounts.youtube.com")) {
+                        openExternalBrowserOAuth(url);
+                        return true;
+                    }
+                    if (url.startsWith("quietpulse://")) {
+                        handleDeepLinkUri(Uri.parse(url));
+                        return true;
+                    }
+                }
                 view.loadUrl(url);
                 return true;
             }
@@ -233,6 +307,44 @@ public class MainActivity extends Activity {
         mWebView.setWebChromeClient(new WebChromeClient());
 
         mWebView.loadUrl("file:///android_asset/index.html");
+
+        // Handle deep link if app was launched directly from an OAuth callback
+        handleDeepLink(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleDeepLink(intent);
+    }
+
+    private void handleDeepLink(Intent intent) {
+        if (intent == null) return;
+        Uri uri = intent.getData();
+        if (uri != null) {
+            handleDeepLinkUri(uri);
+        }
+    }
+
+    private void handleDeepLinkUri(Uri uri) {
+        if (uri == null) return;
+        final String uriStr = uri.toString();
+        Log.d(TAG, "Handling deep link callback: " + uriStr);
+        if (uriStr.startsWith("quietpulse://")) {
+            if (mWebView != null) {
+                mWebView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        String escaped = uriStr.replace("\\\\", "\\\\\\\\").replace("'", "\\\\'");
+                        mWebView.evaluateJavascript(
+                            "if (window.handleQuietPulseAuthCallback) { window.handleQuietPulseAuthCallback('" + escaped + "'); }",
+                            null
+                        );
+                    }
+                });
+            }
+        }
     }
 
     @Override
@@ -459,8 +571,11 @@ with open(os.path.join(RES_VALUES, "strings.xml"), "w", encoding="utf-8") as f:
 </resources>
 """)
 
-# 4. Copy Web Dist Assets
-shutil.copytree(WEB_DIST, ASSETS_DIR)
+# 4. Copy Web Dist Assets (excluding any APK files to prevent recursive bundling)
+def ignore_apks(folder, files):
+    return [f for f in files if f.endswith(".apk")]
+
+shutil.copytree(WEB_DIST, ASSETS_DIR, ignore=ignore_apks)
 
 # 5. Write AndroidManifest.xml
 MANIFEST_PATH = os.path.join(BUILD_DIR, "AndroidManifest.xml")
@@ -478,6 +593,17 @@ with open(MANIFEST_PATH, "w", encoding="utf-8") as f:
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="https" />
+        </intent>
+        <package android:name="com.android.chrome" />
+        <package android:name="com.chrome.beta" />
+        <package android:name="com.chrome.dev" />
+    </queries>
+
     <application
         android:allowBackup="false"
         android:icon="@drawable/ic_launcher"
@@ -488,11 +614,26 @@ with open(MANIFEST_PATH, "w", encoding="utf-8") as f:
         <activity
             android:name="com.focusshield.ai.MainActivity"
             android:exported="true"
+            android:launchMode="singleTask"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Native deep link filters for Supabase Google OAuth callback -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="quietpulse" android:host="auth" android:path="/callback" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="quietpulse" />
             </intent-filter>
         </activity>
 
@@ -562,20 +703,23 @@ print("DEX exists:", os.path.exists(DEX_FILE))
 with zipfile.ZipFile(UNALIGNED_APK, "a") as z:
     z.write(DEX_FILE, "classes.dex")
 
-# 11. Create Debug Keystore if needed
-KEYSTORE_PATH = os.path.join(BUILD_DIR, "debug.keystore")
-run([
-    KEYTOOL_EXE,
-    "-genkeypair",
-    "-keystore", KEYSTORE_PATH,
-    "-storepass", "android",
-    "-alias", "androiddebugkey",
-    "-keypass", "android",
-    "-keyalg", "RSA",
-    "-keysize", "2048",
-    "-validity", "10000",
-    "-dname", "CN=QuietPulse, OU=HackoRuv, O=QuietPulse, L=Nagpur, S=MH, C=IN"
-])
+# 11. Create or Load Persistent Keystore
+KEYSTORE_DIR = os.path.join(BASE_DIR, "keystore")
+os.makedirs(KEYSTORE_DIR, exist_ok=True)
+KEYSTORE_PATH = os.path.join(KEYSTORE_DIR, "quietpulse-debug.keystore")
+if not os.path.exists(KEYSTORE_PATH):
+    run([
+        KEYTOOL_EXE,
+        "-genkeypair",
+        "-keystore", KEYSTORE_PATH,
+        "-storepass", "android",
+        "-alias", "androiddebugkey",
+        "-keypass", "android",
+        "-keyalg", "RSA",
+        "-keysize", "2048",
+        "-validity", "10000",
+        "-dname", "CN=QuietPulse, OU=HackoRuv, O=QuietPulse, L=Nagpur, ST=MH, C=IN"
+    ])
 
 # 12. Sign with jarsigner (v1 JAR signature scheme)
 run([

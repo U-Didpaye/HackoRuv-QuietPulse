@@ -81,10 +81,45 @@ export async function getCurrentUser(): Promise<User | null> {
   return data.user;
 }
 
-export async function signInWithGoogle(): Promise<{ error: Error | null }> {
+export async function signInWithGoogle(): Promise<{ error: Error | null; url?: string }> {
   if (!supabase) {
     return { error: new Error('Supabase is not configured.') };
   }
+
+  // Detect whether running inside the QuietPulse Android native shell
+  const isAndroid = typeof window !== 'undefined' && Boolean((window as any).QuietPulseAndroid?.isAndroidApp());
+
+  if (isAndroid) {
+    try {
+      // In Android: Use skipBrowserRedirect so Supabase returns the OAuth URL,
+      // and redirect to quietpulse://auth/callback so the native intent filter catches the response.
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: 'quietpulse://auth/callback',
+          skipBrowserRedirect: true,
+        },
+      });
+
+      if (error) {
+        return { error: new Error(error.message) };
+      }
+
+      if (data?.url) {
+        const bridge = (window as any).QuietPulseAndroid;
+        if (bridge && typeof bridge.openExternalOAuth === 'function') {
+          bridge.openExternalOAuth(data.url);
+        } else {
+          window.location.href = data.url;
+        }
+        return { error: null, url: data.url };
+      }
+    } catch (err: any) {
+      return { error: new Error(err?.message || 'Failed to initiate Google authentication on Android.') };
+    }
+  }
+
+  // Web application OAuth redirect (100% preserved)
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
@@ -92,6 +127,84 @@ export async function signInWithGoogle(): Promise<{ error: Error | null }> {
     },
   });
   return { error: error ? new Error(error.message) : null };
+}
+
+/**
+ * Handles incoming OAuth callback URIs delivered from Android deep links or browser redirects.
+ * Supports both PKCE authorization codes (?code=...) and implicit tokens (#access_token=...).
+ */
+export async function handleOAuthCallbackUrl(callbackUrl: string): Promise<{ success: boolean; email?: string; error?: Error }> {
+  if (!supabase) {
+    return { success: false, error: new Error('Supabase is not configured.') };
+  }
+
+  try {
+    let hash = '';
+    let search = '';
+
+    if (callbackUrl.includes('#')) {
+      hash = callbackUrl.substring(callbackUrl.indexOf('#') + 1);
+    }
+    if (callbackUrl.includes('?')) {
+      const qIndex = callbackUrl.indexOf('?');
+      const endIndex = callbackUrl.includes('#') ? callbackUrl.indexOf('#') : callbackUrl.length;
+      search = callbackUrl.substring(qIndex + 1, endIndex);
+    }
+
+    const hashParams = new URLSearchParams(hash);
+    const searchParams = new URLSearchParams(search);
+
+    const errorDesc = searchParams.get('error_description') || hashParams.get('error_description');
+    if (errorDesc) {
+      return { success: false, error: new Error(decodeURIComponent(errorDesc)) };
+    }
+
+    const accessToken = hashParams.get('access_token') || searchParams.get('access_token');
+    const refreshToken = hashParams.get('refresh_token') || searchParams.get('refresh_token');
+
+    if (accessToken && refreshToken) {
+      const { data, error } = await supabase.auth.setSession({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+      });
+
+      if (error) {
+        return { success: false, error: new Error(error.message) };
+      }
+
+      const email = data.session?.user?.email;
+      if (email) {
+        localStorage.setItem('quietpulse_user', email);
+        return { success: true, email };
+      }
+      return { success: true };
+    }
+
+    const code = searchParams.get('code') || hashParams.get('code');
+    if (code) {
+      const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+      if (error) {
+        return { success: false, error: new Error(error.message) };
+      }
+      const email = data.session?.user?.email;
+      if (email) {
+        localStorage.setItem('quietpulse_user', email);
+        return { success: true, email };
+      }
+      return { success: true };
+    }
+
+    // Fallback: Verify if a session was registered in the client
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (sessionData.session?.user?.email) {
+      localStorage.setItem('quietpulse_user', sessionData.session.user.email);
+      return { success: true, email: sessionData.session.user.email };
+    }
+
+    return { success: false, error: new Error('Authentication token or code not found in callback.') };
+  } catch (err: any) {
+    return { success: false, error: new Error(err?.message || 'Error processing authentication callback.') };
+  }
 }
 
 /**

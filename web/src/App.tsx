@@ -21,7 +21,8 @@ import {
   getCurrentSession,
   signOutUser,
   syncPreferencesToCloud,
-  fetchPreferencesFromCloud
+  fetchPreferencesFromCloud,
+  handleOAuthCallbackUrl
 } from './data/supabaseClient';
 
 import { BurstDetector } from './intelligence/burstDetector';
@@ -268,6 +269,31 @@ function QuietPulseApp() {
       subscription.unsubscribe();
     };
   }, []);
+
+  // Global handler for Android OAuth callback deep-link & direct redirect
+  useEffect(() => {
+    const handleGlobalAuthCallback = async (url: string) => {
+      const res = await handleOAuthCallbackUrl(url);
+      if (res.success && res.email) {
+        setUserEmail(res.email);
+        localStorage.setItem('quietpulse_user', res.email);
+        if (currentRoute === 'login') {
+          setCurrentRoute('dashboard');
+        }
+      }
+    };
+
+    if (!(window as any).handleQuietPulseAuthCallback) {
+      (window as any).handleQuietPulseAuthCallback = handleGlobalAuthCallback;
+    }
+
+    if (typeof window !== 'undefined') {
+      const href = window.location.href;
+      if (href.includes('access_token=') || href.includes('code=')) {
+        handleGlobalAuthCallback(href);
+      }
+    }
+  }, [currentRoute]);
 
   // Detect Android Native Bridge & Poll Captured Notifications
   const checkAndroidAccess = useCallback(() => {
